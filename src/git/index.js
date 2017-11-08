@@ -1,4 +1,6 @@
 "use strict";
+
+const execa = require("execa");
 const {spawnSync, execSync} = require("child_process");
 
 function git(cmd, ...args) {
@@ -11,14 +13,19 @@ function git(cmd, ...args) {
   return output;
 }
 
+function egit(cmd, ...args) {
+  return execa("git", [cmd].concat(args));
+}
+
 module.exports = {
   git,
+  egit,
   /**
    *
    * @param args
    */
   checkout(...args) {
-    return git("checkout", ...args);
+    return egit("checkout", ...args);
   },
   /**
    *
@@ -53,14 +60,14 @@ module.exports = {
    * @returns {*}
    */
   refreshRepository() {
-    return module.exports.fetch("-all", "--prune", "--tags");
+    return egit("fetch", "--all", "--prune", "--tags");
   },
   /**
    *
    * @param args
    */
   push(...args) {
-    return git("push", ...args);
+    return egit("push", ...args);
   },
   /**
    *
@@ -82,14 +89,14 @@ module.exports = {
    * @param branch
    */
   checkBranchRemoteStatus(branch) {
-    return git("cherry", branch, `origin/${branch}`);
+    return egit("cherry", branch, `origin/${branch}`);
   },
   /**
    *
    * @param args
    */
   rebase(...args) {
-    return git("rebase", ...args);
+    return egit("rebase", ...args);
   },
   /**
    *

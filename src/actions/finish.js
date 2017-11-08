@@ -1,3 +1,4 @@
+"use strict";
 const {refreshRepository, currentBranchName, branch, checkout, merge, push, rebase} = require("../git/index");
 
 const DEFAULT_OPTIONS = {
@@ -25,30 +26,33 @@ module.exports = (options = DEFAULT_OPTIONS) => {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
 
   const featureBranch = currentBranchName();
-  refreshRepository();
+  return refreshRepository()
+    .then(() => {
+      if (options.master !== featureBranch) {
+        console.log("Start publishing branch feature");
 
-  if (options.master !== featureBranch) {
-    console.log("Start publishing branch feature");
+        doFetch(options);
 
-    doFetch(options);
+        merge("--no-ff", "-m", `"${featureBranch}"`, featureBranch);
 
-    merge("--no-ff", "-m", `"${featureBranch}"`, featureBranch);
+        push("origin", options.production);
+        push("origin", `:${featureBranch}`);
+        branch("-d", featureBranch);
 
-    push("origin", options.production);
-    push("origin", `:${featureBranch}`);
-    branch("-d", featureBranch);
+        console.log(`${featureBranch} FINISH DONE`);
+        return;
+      }
 
-    console.log(`${featureBranch} FINISH DONE`);
-    return;
-  }
+      console.log(`Start publishing ${options.master} branch (group features)`);
+      doFetch(options);
 
-  console.log(`Start publishing ${options.master} branch (group features)`);
-  doFetch(options);
+      merge("--no-ff", "-m", `"${featureBranch}"`, options.master);
+      push("origin", options.master);
+      push("origin", options.production);
 
-  merge("--no-ff", "-m", `"${featureBranch}"`, options.master);
-  push("origin", options.master);
-  push("origin", options.production);
+      console.log(`${options.master} FINISH DONE`);
+    });
 
-  console.log(`${options.master} FINISH DONE`);
+
 };
 
