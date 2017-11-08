@@ -12,7 +12,11 @@
   "author": "Romain Lenzotti",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^2.3.0",
     "commander": "^2.11.0",
-    "inquirer": "^3.3.0"
+    "figure": "^0.0.0",
+    "figures": "^2.0.0",
+    "inquirer": "^3.3.0",
+    "listr": "^0.13.0"
   }
 }

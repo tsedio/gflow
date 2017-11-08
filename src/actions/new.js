@@ -9,8 +9,9 @@ const DEFAULT_OPTIONS = {
 module.exports = (options = DEFAULT_OPTIONS) => {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-  const branch = `${options.type}_${options.branchName}`;
+  options.branch = `${options.type}_${options.branchName}`;
   refreshRepository();
-  checkout("--no-track", "-b", branch, options.from);
-  console.log("New feature", branch, "CREATION DONE from MASTER HEAD");
+  checkout("--no-track", "-b", options.branch, options.from);
+
+  return options;
 };

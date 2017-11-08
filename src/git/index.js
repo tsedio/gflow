@@ -1,8 +1,8 @@
 "use strict";
-const {spawnSync} = require("child_process");
+const {spawnSync, execSync} = require("child_process");
 
 function git(cmd, ...args) {
-  console.log("git", cmd, args.join(" "));
+  // console.log("git", cmd, args.join(" "));
   const response = spawnSync("git", [cmd].concat(args));
   if (response.error) {
     throw response.error;
@@ -96,16 +96,19 @@ module.exports = {
    * @returns {Array}
    */
   branches(...args) {
-    return module.exports.branch("-r", ...args)
+    const branches = module.exports.branch("-r", ...args)[0].split("\n");
+    return branches
       .filter((branch) => String(branch).indexOf("HEAD") === -1)
+      .filter((branch) => !!branch)
       .map((o) => o.trim());
   },
   /**
    *
    * @param args
    */
-  show(...args) {
-    return git("show", ...args)[0];
+  show(branch) {
+    const response = execSync(`git show --format="%ci|%cr|%an" ${branch} | head -n 1`);
+    return response.toString().trim();
   },
   /**
    *
@@ -114,9 +117,9 @@ module.exports = {
   branchesInfos() {
     return module.exports.branches()
       .map((branch) => {
-        const [date, creation, author] = module.exports.show(`--format="%ci|%cr|%an"`, branch, "| head -n 1").split("|");
+        const [date, creation, author] = module.exports.show(branch).split("|");
         return {branch, date, creation, author};
       })
-      .sort((info1, info2) => info1.date > info2.date);
+      .sort((info1, info2) => info1.date < info2.date);
   }
 };

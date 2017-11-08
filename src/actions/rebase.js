@@ -6,8 +6,8 @@ const DEFAULT_OPTIONS = {
 
 module.exports = (options = DEFAULT_OPTIONS) => {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
-
   refreshRepository();
   rebase(options.from);
+  return options;
 };
 
