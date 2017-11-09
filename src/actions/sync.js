@@ -66,7 +66,7 @@ function runInteractive(options = {}) {
         },
         {
           title: `Reset hard ${options.master}`,
-          task: () => egit("reset", "--hard", "refs/heads/production")
+          task: () => egit("reset", "--hard", `refs/heads/${options.production}`)
         },
         {
           title: `Push ${options.master}`,

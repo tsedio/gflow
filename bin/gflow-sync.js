@@ -13,5 +13,5 @@ let options = {};
 
 getConfiguration()
   .then((config) =>
-    sync(Object.assign(config, options))
+    sync(Object.assign({}, config, options))
   );

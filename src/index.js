@@ -34,10 +34,16 @@ module.exports = {
 
     return readPkgUp().then(({pkg}) => {
       gflowConfiguration = _.cloneDeep(pkg.gflow || {});
-      return pkg.gflow || {};
+      return pkg.gflow || {
+        production: "production",
+        master: "master"
+      };
     })
       .catch((er) => {
-        return {};
+        return {
+          production: "production",
+          master: "master"
+        };
       });
   }
 };

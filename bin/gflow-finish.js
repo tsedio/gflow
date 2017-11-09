@@ -13,7 +13,7 @@ commander
 
 getConfiguration()
   .then((config) => {
-    finish(Object.assign({}, {
+    finish(Object.assign({}, config, {
       test: !commander.skip
     }));
   });

@@ -18,5 +18,5 @@ getConfiguration()
     if (commander.from) {
       options.from = commander.from;
     }
-    rebase(Object.assign(config, options));
+    rebase(Object.assign({}, config, options));
   });

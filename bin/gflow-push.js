@@ -23,5 +23,5 @@ getConfiguration()
     if (commander.from) {
       options.from = commander.from;
     }
-    push(Object.assign(config, options));
+    push(Object.assign({}, config, options));
   });

@@ -36,6 +36,6 @@ getConfiguration()
     if (commander.from) {
       options.from = commander.from;
     }
-    newBranch(Object.assign(config, options));
+    newBranch(Object.assign({}, config, options));
   });
 
