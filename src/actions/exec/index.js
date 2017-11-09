@@ -2,6 +2,7 @@ require("any-observable/register/rxjs-all"); // eslint-disable-line import/no-un
 const Observable = require("any-observable");
 const streamToObservable = require("stream-to-observable");
 const execa = require("execa");
+const split = require("split");
 
 module.exports = (cmd, args) => {
   // Use `Observable` support if merged https://github.com/sindresorhus/execa/pull/26

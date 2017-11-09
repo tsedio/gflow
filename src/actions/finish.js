@@ -55,7 +55,7 @@ function runInteractive(options = {}) {
         new Listr([
           {
             title: `${options.master}`,
-            skip: () => currentBranch !== options.master,
+            enabled: () => currentBranch === options.master,
             task: () => push("origin", options.master)
           },
           {
@@ -64,12 +64,12 @@ function runInteractive(options = {}) {
           },
           {
             title: `Remove branch origin/${currentBranch}`,
-            skip: () => currentBranch === options.master,
+            enabled: () => currentBranch !== options.master,
             task: () => push("origin", `:${currentBranch}`)
           },
           {
             title: `Remove branch ${currentBranch}`,
-            skip: () => currentBranch === options.master,
+            enabled: () => currentBranch !== options.master,
             task: () => branch("-d", currentBranch)
           }
         ], {concurrency: false})
