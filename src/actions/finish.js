@@ -46,7 +46,7 @@ function runInteractive(options = {}) {
           renderer: "verbose",
           task: () => merge("--no-ff", "-m", `Merge ${currentBranch}`, currentBranch)
         }
-      ], {concurrency: false})
+      ], {concurrency: false, renderer: "verbose"})
     },
     require("./install")(options),
     require("./test")(options),
@@ -73,9 +73,9 @@ function runInteractive(options = {}) {
             enabled: () => currentBranch !== options.master,
             task: () => branch("-d", currentBranch)
           }
-        ], {concurrency: false})
+        ], {concurrency: false, renderer: "verbose"})
     }
-  ]);
+  ], {renderer: "verbose"});
 
   return tasks
     .run()
@@ -83,7 +83,8 @@ function runInteractive(options = {}) {
       console.log(chalk.green(figures.tick), "Branch", currentBranch, " is finished");
     })
     .catch(err => {
-      console.error(chalk.red(String(err)));
+      console.error(String(err));
+      return Promise.resolve();
     });
 }
 

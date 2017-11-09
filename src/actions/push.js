@@ -81,7 +81,8 @@ function runInteractive(options = DEFAULT_OPTIONS) {
       console.log(chalk.green(figures.tick), "Branch", options.featureBranch, "rebased and pushed.");
     })
     .catch(err => {
-      console.error(chalk.red(String(err)), err);
+      console.error(String(err));
+      return Promise.resolve();
     });
 }
 
