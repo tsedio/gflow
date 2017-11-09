@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 "use strict";
+const readPkgUp = require("read-pkg-up");
 const commander = require("commander");
-const {finish} = require("../src");
+const {finish, getConfiguration} = require("../src");
 
 commander
   .usage("gflow-rebase")
@@ -10,9 +11,10 @@ commander
   })
   .parse(process.argv);
 
-let options = {
-  test: !commander.skip
-};
-
-finish(options);
+getConfiguration()
+  .then((config) => {
+    finish(Object.assign({}, {
+      test: !commander.skip
+    }));
+  });
 

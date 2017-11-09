@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 "use strict";
 const commander = require("commander");
-const {rebase, git} = require("../src");
+const {rebase, getConfiguration} = require("../src");
 
 commander
   .usage("gflow-rebase")
@@ -16,5 +16,7 @@ if (commander.from) {
   options.from = commander.from;
 }
 
-rebase(options);
-
+getConfiguration()
+  .then((config) =>
+    rebase(Object.assign(config, options))
+  );
