@@ -2,7 +2,7 @@
 const Listr = require("listr");
 const chalk = require("chalk");
 const figures = require("figures");
-const {refreshRepository, rebase, currentBranchName} = require("../git/index");
+const {refreshRepository, rebase, currentBranchName} = require("./git/index");
 
 const DEFAULT_OPTIONS = {
   from: "origin/production"
@@ -19,7 +19,8 @@ function runInteractive(options = DEFAULT_OPTIONS) {
     {
       title: "Rebase current branch",
       task: () => rebase(options.from)
-    }
+    },
+    require("./install")(options)
   ]);
 
   return tasks

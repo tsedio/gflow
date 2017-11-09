@@ -1,5 +1,5 @@
 "use strict";
-const git = require("./git");
+const git = require("./actions/git");
 const branches = require("./actions/branches");
 const newBranch = require("./actions/new");
 const rebase = require("./actions/rebase");

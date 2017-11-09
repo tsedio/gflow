@@ -1,6 +1,6 @@
 "use strict";
 
-const execa = require("execa");
+const exec = require("../exec");
 const {spawnSync, execSync} = require("child_process");
 
 function git(cmd, ...args) {
@@ -14,7 +14,7 @@ function git(cmd, ...args) {
 }
 
 function egit(cmd, ...args) {
-  return execa("git", [cmd].concat(args));
+  return exec("git", [cmd].concat(args));
 }
 
 module.exports = {

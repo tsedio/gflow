@@ -3,7 +3,7 @@ const Listr = require("listr");
 const execa = require("execa");
 const chalk = require("chalk");
 const figures = require("figures");
-const {refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatus} = require("../git");
+const {refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatus} = require("./git");
 
 const DEFAULT_OPTIONS = {
   test: false,
@@ -67,36 +67,8 @@ function runInteractive(options = DEFAULT_OPTIONS) {
         ], {concurrent: false});
       }
     },
-    {
-      title: "Install",
-      task: () => {
-        return new Listr([
-          {
-            title: "Install package dependencies with Yarn",
-            task: (ctx, task) => execa("yarn")
-              .catch(() => {
-                ctx.yarn = false;
-
-                task.title = `${task.title} (or not)`;
-                task.skip("Yarn not available");
-              })
-          },
-          {
-            title: "Install package dependencies with npm",
-            skip: ctx => ctx.yarn !== false && "Dependencies already installed with Yarn",
-            task: (ctx, task) => {
-              task.output = "Installing dependencies...";
-
-              return execa("npm", ["install"]);
-            }
-          }
-        ], {concurrency: false});
-      }
-    },
-    {
-      title: "Test",
-      task: (ctx) => execa(ctx.yarn ? "yarn" : "npm", ["test"])
-    },
+    require("./install")(options),
+    require("./test")(options),
     {
       title: "Push",
       task: () => push("-u", "-f", "origin", options.featureBranch)

@@ -1,7 +1,7 @@
 "use strict";
 const chalk = require("chalk");
 const figures = require("figures");
-const {branchesInfos, currentBranchName} = require("../git");
+const {branchesInfos, currentBranchName} = require("./git");
 const DEFAULT_OPTIONS = {
   master: "master",
   production: "production"

@@ -2,7 +2,7 @@
 const Listr = require("listr");
 const chalk = require("chalk");
 const figures = require("figures");
-const {refreshRepository, checkout} = require("../git/index");
+const {refreshRepository, checkout} = require("./git/index");
 
 const DEFAULT_OPTIONS = {
   branchName: "branch_name",
@@ -23,7 +23,8 @@ function runInteractive(options = DEFAULT_OPTIONS) {
     {
       title: "Create branch",
       task: () => checkout("--no-track", "-b", options.branch, options.from)
-    }
+    },
+    require("./install")(options)
   ]);
 
   return tasks

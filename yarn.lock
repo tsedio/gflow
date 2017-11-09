@@ -139,10 +139,6 @@ external-editor@^2.0.4:
     jschardet "^1.4.2"
     tmp "^0.0.33"
 
-figure@^0.0.0:
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/figure/-/figure-0.0.0.tgz#31be806f897973633130f49ed8e5a98e3ff3903e"
-
 figures@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/figures/-/figures-1.7.0.tgz#cbe1e3affcf1cd44b80cadfed28dc793a9701d2e"
@@ -169,6 +165,10 @@ has-ansi@^2.0.0:
 has-flag@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-2.0.0.tgz#e8207af1cc7b30d446cc70b734b5e8be18f88d51"
+
+has-yarn@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/has-yarn/-/has-yarn-1.0.0.tgz#89e25db604b725c8f5976fff0addc921b828a5a7"
 
 iconv-lite@^0.4.17:
   version "0.4.19"
