@@ -4,7 +4,12 @@
   "description": "A gitflow command line tool",
   "main": "index.js",
   "bin": {
-    "glow": "./bin/gflow.js"
+    "glow": "./bin/gflow.js",
+    "glow-branches": "./bin/gflow-branches.js",
+    "glow-finish": "./bin/gflow-finish.js",
+    "glow-new": "./bin/gflow-new.js",
+    "glow-push": "./bin/gflow-push.js",
+    "glow-rebase": "./bin/gflow-rebase.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0"
