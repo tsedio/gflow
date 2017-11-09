@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-
 "use strict";
 
 const commander = require("commander");
 const chalk = require("chalk");
-const {newBranch} = require("../src");
+const {newBranch, getConfiguration} = require("../src");
 let branchName;
 
 commander
@@ -34,5 +33,9 @@ if (commander.from) {
   options.from = commander.from;
 }
 
-newBranch(options);
+
+getConfiguration()
+  .then((config) =>
+    newBranch(Object.assign(config, options))
+  );
 

@@ -1,5 +1,8 @@
 #!/usr/bin/env node
+"use strict";
+const {branches, getConfiguration} = require("../src");
 
-const {branches} = require("../src");
-
-branches();
+getConfiguration()
+  .then((config) =>
+    branches(config)
+  );

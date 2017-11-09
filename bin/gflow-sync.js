@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 "use strict";
 const commander = require("commander");
-const {sync} = require("../src");
+const {sync, getConfiguration} = require("../src");
 
 commander
   .usage("gflow-rebase")
@@ -11,5 +11,7 @@ commander
 
 let options = {};
 
-sync(options);
-
+getConfiguration()
+  .then((config) =>
+    sync(Object.assign(config, options))
+  );

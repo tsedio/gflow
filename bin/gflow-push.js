@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 const commander = require("commander");
-const chalk = require("chalk");
-const figures = require("figures");
-const {push, git} = require("../src");
+const {push, getConfiguration} = require("../src");
 
 commander
   .usage("gflow-push")
@@ -22,4 +20,7 @@ if (commander.from) {
   options.from = commander.from;
 }
 
-push(options);
+getConfiguration()
+  .then((config) =>
+    push(Object.assign(config, options))
+  );
