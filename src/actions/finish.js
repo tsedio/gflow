@@ -43,10 +43,9 @@ function runInteractive(options = {}) {
         },
         {
           title: `Merging branch ${currentBranch}`,
-          renderer: "verbose",
           task: () => merge("--no-ff", "-m", `Merge ${currentBranch}`, currentBranch)
         }
-      ], {concurrency: false, renderer: "verbose"})
+      ], {concurrency: false})
     },
     require("./install")(options),
     require("./test")(options),
@@ -73,7 +72,7 @@ function runInteractive(options = {}) {
             enabled: () => currentBranch !== options.master,
             task: () => branch("-d", currentBranch)
           }
-        ], {concurrency: false, renderer: "verbose"})
+        ], {concurrency: false})
     }
   ], {renderer: "verbose"});
 
