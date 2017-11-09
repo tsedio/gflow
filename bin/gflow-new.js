@@ -25,17 +25,17 @@ let options = {
   branchName
 };
 
-if (commander.type) {
-  options.type = commander.type;
-}
-
-if (commander.from) {
-  options.from = commander.from;
-}
-
 
 getConfiguration()
-  .then((config) =>
-    newBranch(Object.assign(config, options))
-  );
+  .then((config) => {
+    options.from = "origin/" + config.production;
+    if (commander.type) {
+      options.type = commander.type;
+    }
+
+    if (commander.from) {
+      options.from = commander.from;
+    }
+    newBranch(Object.assign(config, options));
+  });
 

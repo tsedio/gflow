@@ -12,11 +12,11 @@ commander
 
 let options = {};
 
-if (commander.from) {
-  options.from = commander.from;
-}
-
 getConfiguration()
-  .then((config) =>
-    rebase(Object.assign(config, options))
-  );
+  .then((config) => {
+    options.from = "origin/" + config.production;
+    if (commander.from) {
+      options.from = commander.from;
+    }
+    rebase(Object.assign(config, options));
+  });

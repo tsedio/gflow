@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"use strict";
 const commander = require("commander");
 const {push, getConfiguration} = require("../src");
 
@@ -16,11 +17,11 @@ let options = {
   force: !!commander.force
 };
 
-if (commander.from) {
-  options.from = commander.from;
-}
-
 getConfiguration()
-  .then((config) =>
-    push(Object.assign(config, options))
-  );
+  .then((config) => {
+    options.from = "origin/" + config.production;
+    if (commander.from) {
+      options.from = commander.from;
+    }
+    push(Object.assign(config, options));
+  });
