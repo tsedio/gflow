@@ -34,6 +34,7 @@ function runInteractive(options = {}) {
           task: (ctx, task) => branch("-D", options.production)
             .catch(() => {
               task.skip(`Local branch ${options.production} not found`);
+              return Promise.resolve();
             })
         },
         {

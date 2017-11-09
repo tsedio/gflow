@@ -4,7 +4,6 @@ const exec = require("../exec");
 const {spawnSync, execSync} = require("child_process");
 
 function git(cmd, ...args) {
-  // console.log("git", cmd, args.join(" "));
   const response = spawnSync("git", [cmd].concat(args));
   if (response.error) {
     throw response.error;

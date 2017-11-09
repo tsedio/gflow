@@ -5,6 +5,7 @@ const newBranch = require("./actions/new");
 const rebase = require("./actions/rebase");
 const push = require("./actions/push");
 const finish = require("./actions/finish");
+const sync = require("./actions/sync");
 
 module.exports = {
   git,
@@ -12,5 +13,6 @@ module.exports = {
   newBranch,
   rebase,
   push,
-  finish
+  finish,
+  sync
 };

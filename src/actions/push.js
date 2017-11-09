@@ -53,7 +53,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
             task: () => refreshRepository()
           },
           {
-            title: "Synchronise",
+            title: "Synchronize",
             task: () => push("-f", "origin", "refs/remotes/" + options.from + ":refs/heads/master")
           },
           {
