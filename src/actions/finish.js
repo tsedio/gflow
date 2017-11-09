@@ -74,7 +74,7 @@ function runInteractive(options = {}) {
           }
         ], {concurrency: false})
     }
-  ], {renderer: "verbose"});
+  ], {});
 
   return tasks
     .run()
