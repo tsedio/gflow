@@ -82,7 +82,7 @@ module.exports = {
    * @returns {boolean}
    */
   branchExists(branch) {
-    return !!git("branch", "-a")[0].split("\n").indexOf(`remotes/origin/${branch}`);
+    return git("branch", "-a")[0].split("\n").indexOf(`remotes/origin/${branch}`) > -1;
   },
   /**
    *
@@ -103,7 +103,7 @@ module.exports = {
    * @returns {Array}
    */
   branches(...args) {
-    const branches = module.exports.branch("-r", ...args)[0].split("\n");
+    const branches = git("branch", ["-r"].concat(args))[0].split("\n");
     return branches
       .filter((branch) => String(branch).indexOf("HEAD") === -1)
       .filter((branch) => !!branch)
