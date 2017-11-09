@@ -1,5 +1,8 @@
 "use strict";
-
+const Listr = require("listr");
+const execa = require("execa");
+const chalk = require("chalk");
+const figures = require("figures");
 const {refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatus} = require("../git");
 
 const DEFAULT_OPTIONS = {
@@ -10,67 +13,104 @@ const DEFAULT_OPTIONS = {
 
 /**
  *
+ * @param options
+ * @returns {*}
  */
-function doFetch(options) {
-  remote("-v");
-  refreshRepository();
+function doCheck(options) {
 
-  console.log("Fetch done");
+  const isBranchExists = branchExists(options.featureBranch);
 
-  push("-f", "origin", "refs/remotes/" + options.from + ":refs/heads/master");
+  if (isBranchExists && !options.force) {
+    return checkBranchRemoteStatus(options.featureBranch)
+      .then((result) => options)
+      .catch((er) => {
+        throw new Error("Remote branch did not changed");
+      });
 
-  console.log("Pushed production on master");
+  }
+  return Promise.resolve(options);
 }
 
 /**
  *
  * @param options
- * @returns {Promise.<TResult>}
  */
-function doTest(options) {
-  return Promise.resolve()
-    .then(() => yarn("install"))
-    .then(() => {
-      if (options.test) {
-        return yarn("test");
+function runInteractive(options = DEFAULT_OPTIONS) {
+  options = Object.assign({}, DEFAULT_OPTIONS, options);
+  options.featureBranch = currentBranchName();
+
+  const tasks = new Listr([
+    {
+      title: "Refresh local repository",
+      task: () => {
+        return new Listr([
+          {
+            title: "Remote",
+            task: () => remote("-v")
+          },
+          {
+            title: "Fetch",
+            task: () => refreshRepository()
+          },
+          {
+            title: "Synchronise",
+            task: () => push("-f", "origin", "refs/remotes/" + options.from + ":refs/heads/master")
+          },
+          {
+            title: "Check status",
+            task: () => doCheck(options)
+          },
+          {
+            title: "Rebase",
+            task: () => rebase(options.from)
+          }
+        ], {concurrent: false});
       }
-    })
+    },
+    {
+      title: "Install",
+      task: () => {
+        return new Listr([
+          {
+            title: "Install package dependencies with Yarn",
+            task: (ctx, task) => execa("yarn")
+              .catch(() => {
+                ctx.yarn = false;
+
+                task.title = `${task.title} (or not)`;
+                task.skip("Yarn not available");
+              })
+          },
+          {
+            title: "Install package dependencies with npm",
+            skip: ctx => ctx.yarn !== false && "Dependencies already installed with Yarn",
+            task: (ctx, task) => {
+              task.output = "Installing dependencies...";
+
+              return execa("npm", ["install"]);
+            }
+          }
+        ], {concurrency: false});
+      }
+    },
+    {
+      title: "Test",
+      task: (ctx) => execa(ctx.yarn ? "yarn" : "npm", ["test"])
+    },
+    {
+      title: "Push",
+      task: () => push("-u", "-f", "origin", options.featureBranch)
+    }
+  ]);
+
+  return tasks
+    .run()
     .then(() => {
-
+      console.log(chalk.green(figures.tick), "Branch", options.featureBranch, "rebased and pushed.");
     })
-    .catch(() => {
-
+    .catch(err => {
+      console.error(chalk.red(String(err)));
     });
 }
 
-module.exports = (options = DEFAULT_OPTIONS) => {
-  let featureBranch, isBranchExists;
-
-  options = Object.assign({}, DEFAULT_OPTIONS, options);
-
-  return Promise.resolve()
-    .then(() => {
-      doFetch(options);
-
-      featureBranch = currentBranchName();
-      isBranchExists = branchExists(featureBranch);
-
-      if (isBranchExists && options.force && checkBranchRemoteStatus(featureBranch)) {
-        console.warn("Remote branch did not changed");
-        return;
-      }
-
-      console.log("Remote branch did not changed");
-
-      rebase(options.from);
-
-      console.log("Branch rebased");
-
-      return doTest(options);
-    })
-    .then(() => {
-      git("push", "-u", "-f", "origin", featureBranch);
-      console.log(`${featureBranch} PUBLISH DONE`);
-      console.log("End publishfeat");
-    });
-};
+module.exports = runInteractive;

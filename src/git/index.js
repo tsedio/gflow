@@ -1,4 +1,6 @@
 "use strict";
+
+const execa = require("execa");
 const {spawnSync, execSync} = require("child_process");
 
 function git(cmd, ...args) {
@@ -11,56 +13,61 @@ function git(cmd, ...args) {
   return output;
 }
 
+function egit(cmd, ...args) {
+  return execa("git", [cmd].concat(args));
+}
+
 module.exports = {
   git,
+  egit,
   /**
    *
    * @param args
    */
   checkout(...args) {
-    return git("checkout", ...args);
+    return egit("checkout", ...args);
   },
   /**
    *
    * @param args
    */
   branch(...args) {
-    return git("branch", ...args);
+    return egit("branch", ...args);
   },
   /**
    *
    * @param args
    */
   merge(...args) {
-    return git("merge", ...args);
+    return egit("merge", ...args);
   },
   /**
    *
    * @param args
    */
   remote(...args) {
-    return git("remote", ...args);
+    return egit("remote", ...args);
   },
   /**
    *
    * @param args
    */
   fetch(...args) {
-    return git("fetch", ...args);
+    return egit("fetch", ...args);
   },
   /**
    *
    * @returns {*}
    */
   refreshRepository() {
-    return module.exports.fetch("-all", "--prune", "--tags");
+    return egit("fetch", "--all", "--prune", "--tags");
   },
   /**
    *
    * @param args
    */
   push(...args) {
-    return git("push", ...args);
+    return egit("push", ...args);
   },
   /**
    *
@@ -82,14 +89,14 @@ module.exports = {
    * @param branch
    */
   checkBranchRemoteStatus(branch) {
-    return git("cherry", branch, `origin/${branch}`);
+    return egit("cherry", branch, `origin/${branch}`);
   },
   /**
    *
    * @param args
    */
   rebase(...args) {
-    return git("rebase", ...args);
+    return egit("rebase", ...args);
   },
   /**
    *

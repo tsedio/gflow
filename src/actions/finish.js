@@ -1,54 +1,118 @@
+"use strict";
+const Listr = require("listr");
+const execa = require("execa");
+const chalk = require("chalk");
+const figures = require("figures");
 const {refreshRepository, currentBranchName, branch, checkout, merge, push, rebase} = require("../git/index");
 
 const DEFAULT_OPTIONS = {
   master: "master",
-  production: "production"
+  production: "production",
+  test: true
 };
 
+function runInteractive(options = {}) {
+  options = Object.assign({}, DEFAULT_OPTIONS, options);
+  const currentBranch = currentBranchName();
 
-function doFetch(options) {
-  rebase(`origin/${options.production}`);
+  const tasks = new Listr([
+    {
+      title: "Refresh local repository",
+      task: () => refreshRepository()
+    },
+    {
+      title: "Rebase and prepare workspace",
+      task: () => new Listr([
+        {
+          title: `Rebase ${currentBranch} from origin/${options.production}`,
+          task: () => rebase(`origin/${options.production}`)
+        },
+        {
+          title: `Delete locale branch ${options.production}`,
+          task: (ctx, task) => branch("-D", options.production)
+            .catch(() => {
+              task.skip(`Local branch ${options.production} not found`);
+            })
+        },
+        {
+          title: `Checkout branch ${options.production}`,
+          task: (ctx, task) => checkout("-b", options.production, `origin/${options.production}`)
+        },
+        {
+          title: `Merging branch ${currentBranch}`,
+          renderer: "verbose",
+          task: () => merge("--no-ff", "-m", `Merge ${currentBranch}`, currentBranch)
+        }
+      ], {concurrency: false})
+    },
+    {
+      title: "Install",
+      task: () => {
+        return new Listr([
+          {
+            title: "Install package dependencies with Yarn",
+            skip: ctx => !options.test,
+            task: (ctx, task) => execa("yarn")
+              .catch(() => {
+                ctx.yarn = false;
 
-  console.log("Try to delete production");
-  try {
-    branch("-D", options.production);
-  } catch (er) {
-    console.log("Local production not found");
-  }
+                task.title = `${task.title} (or not)`;
+                task.skip("Yarn not available");
+              })
+          },
+          {
+            title: "Install package dependencies with npm",
+            skip: ctx => !options.test || ctx.yarn !== false && "Dependencies already installed with Yarn",
+            task: (ctx, task) => {
+              task.output = "Installing dependencies...";
 
-  console.log("Checkout production");
-  checkout("-b", options.production, `origin/${options.production}`);
+              return execa("npm", ["install"]);
+            }
+          }
+        ], {concurrency: false});
+      }
+    },
+    {
+      title: "Test",
+      skip: ctx => !options.test,
+      task: (ctx) => execa(ctx.yarn ? "yarn" : "npm", ["test"])
+    },
+    {
+      title: `Push`,
+      task: () =>
+        new Listr([
+          {
+            title: `${options.production}`,
+            skip: () => currentBranch !== options.master,
+            task: () => push("origin", options.master)
+          },
+          {
+            title: `${options.master}`,
+            task: () => push("origin", options.production)
+          },
+          {
+            title: `Remove branch origin/${currentBranch}`,
+            skip: () => currentBranch === options.master,
+            task: () => push("origin", `:${currentBranch}`)
+          },
+          {
+            title: `Remove branch ${currentBranch}`,
+            skip: () => currentBranch === options.master,
+            task: () => branch("-d", currentBranch)
+          }
+        ], {concurrency: false})
+    }
+  ]);
+
+  return tasks
+    .run()
+    .then(() => {
+      console.log(chalk.green(figures.tick), "Branch", currentBranch, " is finished");
+    })
+    .catch(err => {
+      console.error(chalk.red(String(err)));
+    });
 }
 
-module.exports = (options = DEFAULT_OPTIONS) => {
-
-  options = Object.assign({}, DEFAULT_OPTIONS, options);
-
-  const featureBranch = currentBranchName();
-  refreshRepository();
-
-  if (options.master !== featureBranch) {
-    console.log("Start publishing branch feature");
-
-    doFetch(options);
-
-    merge("--no-ff", "-m", `"${featureBranch}"`, featureBranch);
-
-    push("origin", options.production);
-    push("origin", `:${featureBranch}`);
-    branch("-d", featureBranch);
-
-    console.log(`${featureBranch} FINISH DONE`);
-    return;
-  }
-
-  console.log(`Start publishing ${options.master} branch (group features)`);
-  doFetch(options);
-
-  merge("--no-ff", "-m", `"${featureBranch}"`, options.master);
-  push("origin", options.master);
-  push("origin", options.production);
-
-  console.log(`${options.master} FINISH DONE`);
-};
+module.exports = runInteractive;
 

@@ -1,14 +1,16 @@
 "use strict";
 const git = require("./git");
-const yarn = require("./yarn");
 const branches = require("./actions/branches");
 const newBranch = require("./actions/new");
 const rebase = require("./actions/rebase");
+const push = require("./actions/push");
+const finish = require("./actions/finish");
 
 module.exports = {
   git,
-  yarn,
   branches,
   newBranch,
-  rebase
+  rebase,
+  push,
+  finish
 };
