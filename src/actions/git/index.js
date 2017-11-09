@@ -114,8 +114,8 @@ module.exports = {
    * @param args
    */
   show(branch) {
-    const response = execSync(`git show --format="%ci|%cr|%an" ${branch} | head -n 1`);
-    return response.toString().trim();
+    const response = execSync(`git show --format="%ci|%cr|%an" ${branch}`);
+    return response.toString().split("\n")[0].trim();
   },
   /**
    *
