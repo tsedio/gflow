@@ -22,10 +22,8 @@
   },
   "files": [
     "bin/gflow.js",
-    "bin/gflow-branches.js",
-    "bin/gflow-finish.js",
-    "bin/gflow-new.js",
-    "bin/gflow-rebase.js"
+    "bin",
+    "src"
   ],
   "directories": {
     "src": "./src",
