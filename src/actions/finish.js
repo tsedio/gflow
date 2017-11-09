@@ -82,12 +82,12 @@ function runInteractive(options = {}) {
       task: () =>
         new Listr([
           {
-            title: `${options.production}`,
+            title: `${options.master}`,
             skip: () => currentBranch !== options.master,
             task: () => push("origin", options.master)
           },
           {
-            title: `${options.master}`,
+            title: `${options.production}`,
             task: () => push("origin", options.production)
           },
           {
