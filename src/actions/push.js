@@ -2,6 +2,7 @@
 const Listr = require("listr");
 const execa = require("execa");
 const chalk = require("chalk");
+const figures = require("figures");
 const {refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatus} = require("../git");
 
 const DEFAULT_OPTIONS = {
@@ -9,30 +10,6 @@ const DEFAULT_OPTIONS = {
   force: false,
   from: "origin/production"
 };
-
-
-/**
- *
- * @param options
- * @returns {*}
- */
-function doFetch(options) {
-  remote("-v");
-  return refreshRepository().then(() => options);
-}
-
-/**
- *
- * @param options
- * @returns {*}
- */
-function doSync(options) {
-  return push("-f", "origin", "refs/remotes/" + options.from + ":refs/heads/master")
-    .then(() => {
-      options.featureBranch = currentBranchName();
-      return options;
-    });
-}
 
 /**
  *
@@ -58,37 +35,9 @@ function doCheck(options) {
  *
  * @param options
  */
-function doRebase(options) {
-  return rebase(options.from).then(() => options);
-}
-
-/**
- *
- * @param options
- * @returns {Promise.<TResult>}
- */
-function doTest(options) {
-  return Promise.resolve()
-    .then(() => yarn("install"))
-    .then(() => {
-      if (options.test) {
-        return yarn("test");
-      }
-    })
-    .then(() => options);
-}
-
-function doPush(options) {
-  return push("-u", "-f", "origin", options.featureBranch)
-    .then(() => options);
-}
-
-/**
- *
- * @param options
- */
 function runInteractive(options = DEFAULT_OPTIONS) {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
+  options.featureBranch = currentBranchName();
 
   const tasks = new Listr([
     {
@@ -96,20 +45,24 @@ function runInteractive(options = DEFAULT_OPTIONS) {
       task: () => {
         return new Listr([
           {
+            title: "Remote",
+            task: () => remote("-v")
+          },
+          {
             title: "Fetch",
-            task: () => Promise.resolve(doFetch(options))
+            task: () => refreshRepository()
           },
           {
             title: "Synchronise",
-            task: () => Promise.resolve(doSync(options))
+            task: () => push("-f", "origin", "refs/remotes/" + options.from + ":refs/heads/master")
           },
           {
             title: "Check status",
-            task: () => Promise.resolve(doCheck(options))
+            task: () => doCheck(options)
           },
           {
             title: "Rebase",
-            task: () => Promise.resolve(doRebase(options))
+            task: () => rebase(options.from)
           }
         ], {concurrent: false});
       }
@@ -137,7 +90,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
               return execa("npm", ["install"]);
             }
           }
-        ]);
+        ], {concurrency: false});
       }
     },
     {
@@ -146,11 +99,15 @@ function runInteractive(options = DEFAULT_OPTIONS) {
     },
     {
       title: "Push",
-      task: () => doPush(options)
+      task: () => push("-u", "-f", "origin", options.featureBranch)
     }
   ]);
 
-  return tasks.run()
+  return tasks
+    .run()
+    .then(() => {
+      console.log(chalk.green(figures.tick), "Branch", options.featureBranch, "rebased and pushed.");
+    })
     .catch(err => {
       console.error(chalk.red(String(err)));
     });

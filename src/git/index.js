@@ -32,28 +32,28 @@ module.exports = {
    * @param args
    */
   branch(...args) {
-    return git("branch", ...args);
+    return egit("branch", ...args);
   },
   /**
    *
    * @param args
    */
   merge(...args) {
-    return git("merge", ...args);
+    return egit("merge", ...args);
   },
   /**
    *
    * @param args
    */
   remote(...args) {
-    return git("remote", ...args);
+    return egit("remote", ...args);
   },
   /**
    *
    * @param args
    */
   fetch(...args) {
-    return git("fetch", ...args);
+    return egit("fetch", ...args);
   },
   /**
    *
