@@ -36,5 +36,13 @@
   "gflow": {
     "master": "master",
     "production": "production"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Romakita/gflow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Romakita/gflow/issues"
+  },
+  "homepage": "https://github.com/Romakita/gflow"
 }
