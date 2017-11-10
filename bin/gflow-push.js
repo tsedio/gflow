@@ -4,7 +4,8 @@ const commander = require("commander");
 const {push, getConfiguration} = require("../src");
 
 commander
-  .usage("gflow-push")
+  .usage("[options]")
+  .alias("gflow push")
   .option("-o, --from <fromBranch>", "Rebase a branch from another branch. By default origin/production.")
   .option("-f, --force <fromBranch>", "Force pushing branch.", (v, t) => t + 1, 0)
   .option("-s, --skip", "Skip the unit test.", (v, t) => t + 1, 0)
