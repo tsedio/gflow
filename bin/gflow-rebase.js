@@ -4,7 +4,7 @@ const commander = require("commander");
 const {rebase, getConfiguration} = require("../src");
 
 commander
-  .usage("gflow-rebase")
+  .alias("gflow rebase")
   .option("-o, --from <fromBranch>", "Rebase a branch from another branch. By default origin/production.")
   .action(() => {
   })

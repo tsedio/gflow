@@ -21,7 +21,8 @@
     "listr": "^0.13.0",
     "lodash": "^4.17.4",
     "read-pkg-up": "^3.0.0",
-    "split": "^1.0.1"
+    "split": "^1.0.1",
+    "update-notifier": "^2.3.0"
   },
   "files": [
     "bin/gflow.js",

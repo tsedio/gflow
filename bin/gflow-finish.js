@@ -5,7 +5,7 @@ const commander = require("commander");
 const {finish, getConfiguration} = require("../src");
 
 commander
-  .usage("gflow-rebase")
+  .alias("gflow rebase")
   .option("-s, --skip", "Skip the unit test.", (v, t) => t + 1, 0)
   .action(() => {
   })
