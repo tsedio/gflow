@@ -68,19 +68,26 @@ function switchBranch(branch, options) {
  *
  * @returns {Array.<*>}
  */
-function branches() {
+function branches(options) {
 
   const remoteBranches = branchesInfos("-r");
   const localBranches = branchesInfos();
 
   remoteBranches.forEach((branchInfo) => {
     const branch = branchInfo.branch.split("/")[1];
+
+    if (branch === options.production) {
+      branchInfo.$order = -1;
+    } else {
+      branchInfo.$order = 0;
+    }
     BRANCHES.set(branch, branchInfo);
   });
 
   localBranches.forEach((branchInfo) => {
     const branch = branchInfo.branch;
     if (!BRANCHES.has(branch)) {
+      branchInfo.$order = 0;
       BRANCHES.set(branch, branchInfo);
     } else {
       BRANCHES.get(branch).local = branchInfo;
@@ -96,7 +103,16 @@ function branches() {
     }
     list.push(branch);
   });
-  return list.sort((info1, info2) => info1.date < info2.date);
+  return list.sort()
+    .sort((info1, info2) => {
+      if (info1.date === info2.date) {
+        if (info1.$order < info2.$order) {
+          return 1;
+        }
+        return 0;
+      }
+      return info1.date < info2.date ? 1 : -1;
+    });
 }
 
 /**
@@ -108,9 +124,9 @@ function buildBranchesList(options) {
   let isUnderProduction = false;
   const currentBranch = currentBranchName();
 
-  return branches()
+  return branches(options)
     .map((info) => {
-      const branch = info.branch.split("/")[1];
+      const branch = info.branch.split("/")[1] || info.branch;
       const line = info.date + " " + column(info.creation, 15) + " " + " " + column(info.author, 20) + " " + info.branch;
       let current = " ";
       if (currentBranch === branch) {
