@@ -102,15 +102,17 @@ module.exports = {
    * @returns {Array}
    */
   branches(...args) {
-    const branches = git("branch", ["-r"].concat(args))[0].split("\n");
+    const branches = git("branch", ...args)[0].split("\n");
+
     return branches
+      .map((branch) => branch.replace("* ", ""))
       .filter((branch) => String(branch).indexOf("HEAD") === -1)
       .filter((branch) => !!branch)
       .map((o) => o.trim());
   },
   /**
    *
-   * @param args
+   * @param branch
    */
   show(branch) {
     const response = execSync(`git show --format="%ci|%cr|%an" ${branch}`);
@@ -120,8 +122,8 @@ module.exports = {
    *
    * @returns {Array}
    */
-  branchesInfos() {
-    return module.exports.branches()
+  branchesInfos(...args) {
+    return module.exports.branches(...args)
       .map((branch) => {
         const [date, creation, author] = module.exports.show(branch).split("|");
         return {branch, date, creation, author};
