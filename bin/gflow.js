@@ -16,7 +16,7 @@ commander
   .command("startfeat", "Create a new feature branch from the latest commit of production branch")
   .command("startfix", "Create a new fix branch from the latest commit of production branch")
   .command("push", "Rebase the current branch from production and push all commit (run test before)")
-  .command("publish", "Alias of push command (old cmd)")
+  .command("publish", "Alias of push command")
   .command("rebase", "Rebase the current branch from production")
   //.command("rebase-all", "Rebase all branches")
   .command("sync", "Synchronise master branch and production")
