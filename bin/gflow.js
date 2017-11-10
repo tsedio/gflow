@@ -5,7 +5,7 @@ const updateNotifier = require("update-notifier");
 const cliPkg = require("../package.json");
 const pkg = require("../package.json");
 
-updateNotifier({pkg}).notify();
+updateNotifier({pkg, updateCheckInterval: 0}).notify();
 
 commander
   .version(cliPkg.version)
