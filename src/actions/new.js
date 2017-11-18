@@ -13,7 +13,7 @@ const DEFAULT_OPTIONS = {
 function runInteractive(options = DEFAULT_OPTIONS) {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-  options.branch = `${options.type}_${options.branchName}`;
+  options.branch = `${options.type ? options.type + "_" : ""}${options.branchName}`;
 
   const tasks = new Listr([
     {
