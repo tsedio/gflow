@@ -31,6 +31,7 @@ npm install -g gflow
     push        Rebase the current branch from production and push all commit (run test before)
     publish     Alias of push command
     rebase      Rebase the current branch from production
+    fetch       Download objects and refs from another repository (--all and --prune)
     sync        Synchronise master branch and production
     help [cmd]  display help for [cmd]
 ```

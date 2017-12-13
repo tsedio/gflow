@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-"use strict";
-const {init} = require("../src");
+'use strict'
+const { init } = require('../src')
 
-let options = {};
+let options = {}
 
-init(options);
+init(options)
