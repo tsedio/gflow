@@ -18,6 +18,7 @@ commander
   .command('push', 'Rebase the current branch from production and push all commit (run test before)')
   .command('publish', 'Alias of push command')
   .command('rebase', 'Rebase the current branch from production')
+  .command('rebase-all', 'Rebase all branches from production')
   .command('fetch', 'Download objects and refs from another repository (--all and --prune)')
   .command('sync', 'Synchronise master branch and production')
   .parse(process.argv)

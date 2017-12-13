@@ -6,6 +6,7 @@ const branches = require('./actions/branches')
 const fetch = require('./actions/fetch')
 const newBranch = require('./actions/new')
 const rebase = require('./actions/rebase')
+const rebaseAll = require('./actions/rebaseAll')
 const push = require('./actions/push')
 const finish = require('./actions/finish')
 const sync = require('./actions/sync')
@@ -23,6 +24,7 @@ module.exports = {
   branches,
   newBranch,
   rebase,
+  rebaseAll,
   push,
   finish,
   sync,
