@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-'use strict'
-const commander = require('commander')
-const { push, getConfiguration } = require('../src')
+'use strict';
+const commander = require('commander');
+const { push, getConfiguration } = require('../src');
 
 commander
   .usage('[options]')
@@ -11,18 +11,18 @@ commander
   .option('-s, --skip', 'Skip the unit test.', (v, t) => t + 1, 0)
   .action(() => {
   })
-  .parse(process.argv)
+  .parse(process.argv);
 
 let options = {
   test: !commander.skip,
   force: !!commander.force
-}
+};
 
 getConfiguration()
   .then((config) => {
-    options.from = 'origin/' + config.production
+    options.from = 'origin/' + config.production;
     if (commander.from) {
-      options.from = commander.from
+      options.from = commander.from;
     }
-    push(Object.assign({}, config, options))
-  })
+    push(Object.assign({}, config, options));
+  });

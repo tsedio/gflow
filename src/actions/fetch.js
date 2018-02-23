@@ -1,29 +1,29 @@
-const chalk = require('chalk')
-const Listr = require('listr')
-const { refreshRepository } = require('./git')
+const chalk = require('chalk');
+const Listr = require('listr');
+const { refreshRepository } = require('./git');
 
 function runInteractive() {
-  let output = []
+  let output = [];
   const tasks = new Listr([
     {
       title: 'Refresh local repository',
       task: () => {
-        const observable = refreshRepository()
+        const observable = refreshRepository();
 
         observable.subscribe(result => {
-          output.push(result)
-        })
+          output.push(result);
+        });
 
-        return observable
+        return observable;
       }
     }
-  ])
+  ]);
 
   return tasks.run()
     .then(() => console.log(output.filter(l => !l.match('Fetching')).join('\n')))
     .catch(err => {
-      console.error(chalk.red(String(err)))
-    })
+      console.error(chalk.red(String(err)));
+    });
 }
 
-module.exports = runInteractive
+module.exports = runInteractive;
