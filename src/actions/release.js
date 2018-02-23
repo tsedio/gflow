@@ -13,7 +13,7 @@ const DEFAULT_OPTIONS = {
 function runInteractive(options = {}) {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-  const pkg = JSON.stringify(fs.readFileSync('./package.json', { encoding: 'utf8' }));
+  const pkg = JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' }));
   const {
     version,
     repository: { url }

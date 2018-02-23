@@ -5,8 +5,6 @@ const { release, getConfiguration } = require('../src');
 
 commander
   .alias('gflow release')
-  .action(() => {
-  })
   .parse(process.argv);
 
 getConfiguration()
