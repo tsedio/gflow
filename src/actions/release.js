@@ -29,10 +29,11 @@ function runInteractive(options = {}) {
 
   const { TRAVIS_BUILD_NUMBER, GH_TOKEN } = process.env;
 
-  if (TRAVIS_BUILD_NUMBER) {
-    console.log(`TRAVIS BUILD:    ${TRAVIS_BUILD_NUMBER}`);
+  if (!TRAVIS_BUILD_NUMBER || !GH_TOKEN) {
+    return Promise.resolve();
   }
 
+  console.log(`TRAVIS BUILD:    ${TRAVIS_BUILD_NUMBER}`);
   git('remote', 'add', 'origin-repo', `https://${GH_TOKEN}@${repository}`);
 
   const tasks = new Listr([
