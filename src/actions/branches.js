@@ -1,39 +1,39 @@
-'use strict'
-const chalk = require('chalk')
-const figures = require('figures')
-const inquirer = require('inquirer')
+'use strict';
+const chalk = require('chalk');
+const figures = require('figures');
+const inquirer = require('inquirer');
 
-const { branchesInfos, currentBranchName, checkout } = require('./git')
+const { branchesInfos, currentBranchName, checkout } = require('./git');
 const DEFAULT_OPTIONS = {
   master: 'master',
   production: 'production'
-}
-const BRANCHES = new Map()
+};
+const BRANCHES = new Map();
 
 /**
  *
  * @param options
  */
 function runInteractive(options = DEFAULT_OPTIONS) {
-  options = Object.assign({}, DEFAULT_OPTIONS, options)
+  options = Object.assign({}, DEFAULT_OPTIONS, options);
   const choices = buildBranchesList(options)
     .map((info) => {
-      return { value: info.branch, name: info.message, short: info.branch }
-    })
+      return { value: info.branch, name: info.message, short: info.branch };
+    });
 
   inquirer.prompt([
     {
       'type': 'list',
       'name': 'branchChoice',
       'message': 'Select branch to switch on',
-      'choices': choices.concat([new inquirer.Separator(), 'exit'])
+      'choices': choices.concat([ new inquirer.Separator(), 'exit' ])
     }
   ])
     .then((answers) => {
       if (answers.branchChoice !== 'exit') {
-        switchBranch(answers.branchChoice, options)
+        switchBranch(answers.branchChoice, options);
       }
-    }).catch(er => console.error(er))
+    }).catch(er => console.error(er));
 }
 
 /**
@@ -42,26 +42,26 @@ function runInteractive(options = DEFAULT_OPTIONS) {
  * @param options
  */
 function switchBranch(branch, options) {
-  let branchInfo = BRANCHES.get(branch)
-  let observable
+  let branchInfo = BRANCHES.get(branch);
+  let observable;
 
   if (branchInfo) {
-    observable = checkout(branchInfo.local ? branchInfo.local.branch : branchInfo.branch)
+    observable = checkout(branchInfo.local ? branchInfo.local.branch : branchInfo.branch);
   } else {
-    const branchName = branch.split('/')[1]
-    branchInfo = BRANCHES.get(branchName)
+    const branchName = branch.split('/')[ 1 ];
+    branchInfo = BRANCHES.get(branchName);
     if (branchInfo.local) {
-      observable = checkout(branchInfo.local.branch)
+      observable = checkout(branchInfo.local.branch);
     } else {
-      observable = checkout('-b', branchName, branchInfo.branch)
+      observable = checkout('-b', branchName, branchInfo.branch);
     }
   }
 
   observable.subscribe((o) => {
-    console.log(o)
-  })
+    console.log(o);
+  });
 
-  return observable
+  return observable;
 }
 
 /**
@@ -70,49 +70,49 @@ function switchBranch(branch, options) {
  */
 function branches(options) {
 
-  const remoteBranches = branchesInfos('-r')
-  const localBranches = branchesInfos()
+  const remoteBranches = branchesInfos('-r');
+  const localBranches = branchesInfos();
 
   remoteBranches.forEach((branchInfo) => {
-    const branch = branchInfo.branch.split('/')[1]
+    const branch = branchInfo.branch.split('/')[ 1 ];
 
     if (branch === options.production) {
-      branchInfo.$order = -1
+      branchInfo.$order = -1;
     } else {
-      branchInfo.$order = 0
+      branchInfo.$order = 0;
     }
-    BRANCHES.set(branch, branchInfo)
-  })
+    BRANCHES.set(branch, branchInfo);
+  });
 
   localBranches.forEach((branchInfo) => {
-    const branch = branchInfo.branch
+    const branch = branchInfo.branch;
     if (!BRANCHES.has(branch)) {
-      branchInfo.$order = 0
-      BRANCHES.set(branch, branchInfo)
+      branchInfo.$order = 0;
+      BRANCHES.set(branch, branchInfo);
     } else {
-      BRANCHES.get(branch).local = branchInfo
+      BRANCHES.get(branch).local = branchInfo;
     }
-  })
+  });
 
-  const list = []
+  const list = [];
   BRANCHES.forEach(branch => {
     if (branch.local) {
       if (branch.date !== branch.local.date) {
-        list.push(branch.local)
+        list.push(branch.local);
       }
     }
-    list.push(branch)
-  })
+    list.push(branch);
+  });
   return list.sort()
     .sort((info1, info2) => {
       if (info1.date === info2.date) {
         if (info1.$order < info2.$order) {
-          return 1
+          return 1;
         }
-        return 0
+        return 0;
       }
-      return info1.date < info2.date ? 1 : -1
-    })
+      return info1.date < info2.date ? 1 : -1;
+    });
 }
 
 /**
@@ -121,49 +121,49 @@ function branches(options) {
  * @returns {*}
  */
 function buildBranchesList(options) {
-  let isUnderProduction = false
-  const currentBranch = currentBranchName()
+  let isUnderProduction = false;
+  const currentBranch = currentBranchName();
 
   return branches(options)
     .map((info) => {
-      const branch = info.branch.split('/')[1] || info.branch
-      const line = info.date + ' ' + column(info.creation, 15) + ' ' + ' ' + column(info.author, 20) + ' ' + info.branch
-      let current = ' '
+      const branch = info.branch.split('/')[ 1 ] || info.branch;
+      const line = info.date + ' ' + column(info.creation, 15) + ' ' + ' ' + column(info.author, 20) + ' ' + info.branch;
+      let current = ' ';
       if (currentBranch === branch) {
-        current = chalk.yellow(figures.star)
+        current = chalk.yellow(figures.star);
       }
 
       if (branch === options.production) {
-        isUnderProduction = true
-        info.message = current + ' ' + chalk.yellow(figures.warning) + ' ' + chalk.yellow(line)
-        return info
+        isUnderProduction = true;
+        info.message = current + ' ' + chalk.yellow(figures.warning) + ' ' + chalk.yellow(line);
+        return info;
       }
 
       if (branch === 'origin/' + options.master) {
-        info.message = current + ' ' + chalk.gray(figures.bullet) + ' ' + chalk.gray(line)
-        return info
+        info.message = current + ' ' + chalk.gray(figures.bullet) + ' ' + chalk.gray(line);
+        return info;
       }
 
       if (!isUnderProduction) {
-        info.message = current + ' ' + chalk.green(figures.tick) + ' ' + line
-        return info
+        info.message = current + ' ' + chalk.green(figures.tick) + ' ' + line;
+        return info;
       }
 
-      info.message = current + ' ' + chalk.red(figures.cross) + ' ' + chalk.red(line)
-      return info
-    })
+      info.message = current + ' ' + chalk.red(figures.cross) + ' ' + chalk.red(line);
+      return info;
+    });
 }
 
 function line(str = '', length = 100, char = '-') {
-  let finalStr = str
+  let finalStr = str;
   for (let i = str.length; i < length; i++) {
-    finalStr += char
+    finalStr += char;
   }
-  return finalStr
+  return finalStr;
 }
 
 function column(str = '', length = 30, char = ' ') {
-  return line(str, length, char)
+  return line(str, length, char);
 }
 
-module.exports = runInteractive
+module.exports = runInteractive;

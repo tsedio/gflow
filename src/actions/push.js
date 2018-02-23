@@ -1,15 +1,15 @@
-'use strict'
-const Listr = require('listr')
-const execa = require('execa')
-const chalk = require('chalk')
-const figures = require('figures')
-const { refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatus } = require('./git')
+'use strict';
+const Listr = require('listr');
+const execa = require('execa');
+const chalk = require('chalk');
+const figures = require('figures');
+const { refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatus } = require('./git');
 
 const DEFAULT_OPTIONS = {
   test: false,
   force: false,
   from: 'origin/production'
-}
+};
 
 /**
  *
@@ -18,17 +18,17 @@ const DEFAULT_OPTIONS = {
  */
 function doCheck(options) {
 
-  const isBranchExists = branchExists(options.featureBranch)
+  const isBranchExists = branchExists(options.featureBranch);
 
   if (isBranchExists && !options.force) {
     return checkBranchRemoteStatus(options.featureBranch)
       .then((result) => options)
       .catch((er) => {
-        throw new Error('Remote branch did not changed')
-      })
+        throw new Error('Remote branch did not changed');
+      });
 
   }
-  return Promise.resolve(options)
+  return Promise.resolve(options);
 }
 
 /**
@@ -36,8 +36,8 @@ function doCheck(options) {
  * @param options
  */
 function runInteractive(options = DEFAULT_OPTIONS) {
-  options = Object.assign({}, DEFAULT_OPTIONS, options)
-  options.featureBranch = currentBranchName()
+  options = Object.assign({}, DEFAULT_OPTIONS, options);
+  options.featureBranch = currentBranchName();
 
   const tasks = new Listr([
     {
@@ -64,7 +64,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
             title: 'Rebase',
             task: () => rebase(options.from)
           }
-        ], { concurrent: false })
+        ], { concurrent: false });
       }
     },
     require('./install')(options),
@@ -73,17 +73,17 @@ function runInteractive(options = DEFAULT_OPTIONS) {
       title: 'Push',
       task: () => push('-u', '-f', 'origin', options.featureBranch)
     }
-  ])
+  ]);
 
   return tasks
     .run()
     .then(() => {
-      console.log(chalk.green(figures.tick), 'Branch', options.featureBranch, 'rebased and pushed.')
+      console.log(chalk.green(figures.tick), 'Branch', options.featureBranch, 'rebased and pushed.');
     })
     .catch(err => {
-      console.error(String(err))
-      return Promise.resolve()
-    })
+      console.error(String(err));
+      return Promise.resolve();
+    });
 }
 
-module.exports = runInteractive
+module.exports = runInteractive;

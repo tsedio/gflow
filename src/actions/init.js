@@ -1,9 +1,9 @@
-'use strict'
-const inquirer = require('inquirer')
-const path = require('path')
-const fs = require('fs-extra')
-const _ = require('lodash')
-const cwd = process.cwd()
+'use strict';
+const inquirer = require('inquirer');
+const path = require('path');
+const fs = require('fs-extra');
+const _ = require('lodash');
+const cwd = process.cwd();
 
 const questions = [
   {
@@ -18,18 +18,18 @@ const questions = [
     message: 'What is your production branch name ?',
     default: 'production'
   }
-]
+];
 
 function mergeJson(fileName, newContent) {
-  const destinationPath = path.join(cwd, fileName)
-  const content = fs.readJSONSync(destinationPath, {})
+  const destinationPath = path.join(cwd, fileName);
+  const content = fs.readJSONSync(destinationPath, {});
 
   _.mergeWith(content, newContent, (a, b) => {
     if (_.isArray(a)) {
-      return _.uniq(a.concat(b))
+      return _.uniq(a.concat(b));
     }
-  })
-  return fs.writeJSON(destinationPath, content, { spaces: 2 })
+  });
+  return fs.writeJSON(destinationPath, content, { spaces: 2 });
 }
 
 function runInteractive() {
@@ -40,8 +40,8 @@ function runInteractive() {
           'master': answers.master,
           'production': answers.production
         }
-      })
-    })
+      });
+    });
 }
 
-module.exports = runInteractive
+module.exports = runInteractive;

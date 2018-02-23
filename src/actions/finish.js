@@ -1,21 +1,21 @@
-'use strict'
-const Listr = require('listr')
-const chalk = require('chalk')
-const figures = require('figures')
+'use strict';
+const Listr = require('listr');
+const chalk = require('chalk');
+const figures = require('figures');
 
-const hasYarn = require('has-yarn')
-const { refreshRepository, currentBranchName, branch, checkout, merge, push, rebase } = require('./git/index')
+const hasYarn = require('has-yarn');
+const { refreshRepository, currentBranchName, branch, checkout, merge, push, rebase } = require('./git/index');
 
 const DEFAULT_OPTIONS = {
   master: 'master',
   production: 'production',
   test: true,
   yarn: hasYarn()
-}
+};
 
 function runInteractive(options = {}) {
-  options = Object.assign({}, DEFAULT_OPTIONS, options)
-  const currentBranch = currentBranchName()
+  options = Object.assign({}, DEFAULT_OPTIONS, options);
+  const currentBranch = currentBranchName();
 
   const tasks = new Listr([
     {
@@ -33,8 +33,8 @@ function runInteractive(options = {}) {
           title: `Delete locale branch ${options.production}`,
           task: (ctx, task) => branch('-D', options.production)
             .catch(() => {
-              task.skip(`Local branch ${options.production} not found`)
-              return Promise.resolve()
+              task.skip(`Local branch ${options.production} not found`);
+              return Promise.resolve();
             })
         },
         {
@@ -74,18 +74,18 @@ function runInteractive(options = {}) {
           }
         ], { concurrency: false })
     }
-  ], {})
+  ], {});
 
   return tasks
     .run()
     .then(() => {
-      console.log(chalk.green(figures.tick), 'Branch', currentBranch, ' is finished')
+      console.log(chalk.green(figures.tick), 'Branch', currentBranch, ' is finished');
     })
     .catch(err => {
-      console.error(String(err))
-      return Promise.resolve()
-    })
+      console.error(String(err));
+      return Promise.resolve();
+    });
 }
 
-module.exports = runInteractive
+module.exports = runInteractive;
 
