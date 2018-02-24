@@ -46,6 +46,10 @@ module.exports = {
   remote(...args) {
     return egit('remote', ...args);
   },
+  
+  remoteSync(...args) {
+    return egit('remote', ...args);
+  },
   /**
    *
    * @param args
