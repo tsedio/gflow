@@ -36,7 +36,18 @@ module.exports = (() => {
         ORIGIN: 'origin-git'
       };
     }
+    return {
+      NAME: 'Unsupported CI',
+      BUILD_NUMBER: '',
+      ORIGIN: 'origin-git'
+    };
   }
-  return false;
+  /// local
+  return {
+    NAME: 'LOCAL',
+    BUILD_NUMBER: '',
+    ORIGIN: 'origin'
+  };
+
 })();
 

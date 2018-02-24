@@ -59,48 +59,52 @@ module.exports = {
    * @returns {*}
    */
   post(options = {}) {
-    options = Object.assign({}, DEFAULT_OPTIONS, options);
+    try {
+      options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-    const { GH_TOKEN } = process.env;
-    const pkg = readPackage();
-    const {
-      version,
-      repository: { url }
-    } = pkg;
-    const repository = url.replace('https://', '');
+      const { GH_TOKEN } = process.env;
+      const pkg = readPackage();
+      const {
+        version,
+        repository: { url }
+      } = pkg;
+      const repository = url.replace('https://', '');
 
-    if (!CI) {
-      console.log('[Gflow release]', chalk.yellow(figures.cross), `Not in CI environment`);
-      return Promise.resolve();
+      if (!CI) {
+        console.log('[Gflow release]', chalk.yellow(figures.cross), `Not in CI environment`);
+        return Promise.resolve();
+      }
+
+      console.log('[Gflow release]', `Generate release tag for v${version}`);
+      console.log('[Gflow release]', `REPOSITORY:      ${repository}`);
+      console.log('[Gflow release]', `RELEASE_BRANCH:  ${options.production}`);
+      console.log('[Gflow release]', `MASTER_BRANCH:   ${options.master}`);
+      console.log('[Gflow release]', `BUILD:           ${CI.BUILD_NUMBER}`);
+
+      if (GH_TOKEN) {
+        console.log('[Gflow release]', `Configure remote repository ${repository}`);
+        remoteSync('add', CI.ORIGIN, `https://${GH_TOKEN}@${repository}`);
+      }
+
+      console.log('[Gflow release]', 'Adding files to commit');
+      addSync('-A');
+
+      console.log('[Gflow release]', 'Reset .npmrc');
+      resetSync('--', '.npmrc');
+
+      console.log('[Gflow release]', `Commit files`);
+      commitSync('-m', `${CI.NAME} build: ${CI.BUILD_NUMBER} v${version} [ci skip]`);
+
+      console.log('[Gflow release]', `Push to ${options.production}`);
+      pushSync('--quiet', '--set-upstream', CI.ORIGIN, options.production);
+
+      console.log('[Gflow release]', `Sync ${options.master} with ${options.production}`);
+      pushSync('-f', CI.ORIGIN, `${options.production}:refs/heads/${options.master}`);
+
+      console.log(chalk.green(figures.tick), 'Release tag are applied on git');
+    } catch (er) {
+      console.log(chalk.red(figures.cross), String(er));
     }
-
-    console.log('[Gflow release]', `Generate release tag for v${version}`);
-    console.log('[Gflow release]', `REPOSITORY:      ${repository}`);
-    console.log('[Gflow release]', `RELEASE_BRANCH:  ${options.production}`);
-    console.log('[Gflow release]', `MASTER_BRANCH:   ${options.master}`);
-    console.log('[Gflow release]', `BUILD:           ${CI.BUILD_NUMBER}`);
-
-    if (GH_TOKEN) {
-      remoteSync('add', CI.ORIGIN, `https://${GH_TOKEN}@${repository}`);
-    }
-
-    console.log('[Gflow release]', 'Adding files to commit');
-    addSync('-A');
-
-    console.log('[Gflow release]', 'Reset .npmrc');
-    resetSync('--', '.npmrc');
-
-    console.log('[Gflow release]', `Commit files`);
-    commitSync('-m', `${CI.NAME} build: ${CI.BUILD_NUMBER} v${version} [ci skip]`);
-
-    console.log('[Gflow release]', `Push to ${options.production}`);
-    pushSync('--quiet', '--set-upstream', CI.ORIGIN, options.production);
-
-    console.log('[Gflow release]', `Sync ${options.master} with ${options.production}`);
-    pushSync('-f', CI.ORIGIN, `${options.production}:refs/heads/${options.master}`);
-
-    console.log(chalk.green(figures.tick), 'Release tag are applied on git');
-
     return Promise.resolve();
   }
 };
