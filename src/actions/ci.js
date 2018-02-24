@@ -1,9 +1,8 @@
 module.exports = (() => {
   const { env } = process;
   const { GIT_USER_NAME, GIT_USER_EMAIL } = env;
-
   if (env.CI) {
-    if (env.TRAVIS_CI) {
+    if (env.TRAVIS) {
       const { TRAVIS_BUILD_NUMBER } = env;
 
       return {

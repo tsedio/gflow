@@ -1,5 +1,4 @@
 'use strict';
-const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
 const { git, addSync, commitSync, resetSync, pushSync, remoteSync } = require('./git/index');
