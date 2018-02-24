@@ -17,7 +17,6 @@ commander
   .option('-t --type <type>', 'Type of the branch (feat, fix, chore, docs)', /^(feat|fix|docs|chore)$/i)
   .option('-o, --from <fromBranch>', 'Create a branch from another branch. By default production.')
   .action((_type_, _branchName_) => {
-    console.log(_type_, _branchName_);
     if (!_branchName_) {
       _branchName_ = _type_;
       _type_ = '';
