@@ -16,6 +16,7 @@ commander
 
 getConfiguration()
   .then((config) => {
+    console.log('[Gflow release] Start', options.action, 'action');
     release[ options.action ](Object.assign({}, config, {}));
   });
 

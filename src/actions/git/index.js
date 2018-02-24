@@ -68,18 +68,46 @@ module.exports = {
   push(...args) {
     return egit('push', ...args);
   },
+  /**
+   *
+   * @param args
+   */
+  pushSync(...args) {
+    return egit('push', ...args);
+  },
 
   add(...args) {
     return egit('add', ...args);
+  },
+
+  addSync(...args) {
+    return git('add', ...args);
   },
 
   reset(...args) {
     return egit('reset', ...args);
   },
 
+  resetSync(...args) {
+    return git('reset', ...args);
+  },
+
   commit(...args) {
     return egit('commit', ...args);
   },
+
+  commitSync(...args) {
+    return git('commit', ...args);
+  },
+
+  remote(...args) {
+    return egit('remote', ...args);
+  },
+
+  removeSync(...args) {
+    return git('remote', ...args);
+  },
+
   /**
    *
    * @returns {string}
