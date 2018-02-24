@@ -80,35 +80,28 @@ module.exports = {
     console.log('[Gflow release]', `MASTER_BRANCH:   ${options.master}`);
     console.log('[Gflow release]', `BUILD:           ${CI.BUILD_NUMBER}`);
 
-    return Promise.resolve()
-      .then(() => {
+    if (GH_TOKEN) {
+      remoteSync('add', CI.ORIGIN, `https://${GH_TOKEN}@${repository}`);
+    }
 
-        if (GH_TOKEN) {
-          remoteSync('add', CI.ORIGIN, `https://${GH_TOKEN}@${repository}`);
-        }
+    console.log('[Gflow release]', 'Adding files to commit');
+    addSync('-A');
 
-        console.log('[Gflow release]', 'Adding files to commit');
-        addSync('-A');
+    console.log('[Gflow release]', 'Reset .npmrc');
+    resetSync('--', '.npmrc');
 
-        console.log('[Gflow release]', 'Reset .npmrc');
-        resetSync('--', '.npmrc');
+    console.log('[Gflow release]', `Commit files`);
+    commitSync('-m', `${CI.NAME} build: ${CI.BUILD_NUMBER} v${version} [ci skip]`);
 
-        console.log('[Gflow release]', `Commit files`);
-        commitSync('-m', `${CI.NAME} build: ${CI.BUILD_NUMBER} v${version} [ci skip]`);
+    console.log('[Gflow release]', `Push to ${options.production}`);
+    pushSync('--quiet', '--set-upstream', CI.ORIGIN, options.production);
 
-        console.log('[Gflow release]', `Push to ${options.production}`);
-        pushSync('--quiet', '--set-upstream', CI.ORIGIN, options.production);
+    console.log('[Gflow release]', `Sync ${options.master} with ${options.production}`);
+    pushSync('-f', CI.ORIGIN, `${options.production}:refs/heads/${options.master}`);
 
-        console.log('[Gflow release]', `Sync ${options.master} with ${options.production}`);
-        pushSync('-f', CI.ORIGIN, `${options.production}:refs/heads/${options.master}`);
+    console.log(chalk.green(figures.tick), 'Release tag are applied on git');
 
-        console.log(chalk.green(figures.tick), 'Release tag are applied on git');
-
-      })
-      .catch(err => {
-        console.error(String(err));
-        return Promise.resolve();
-      });
+    return Promise.resolve();
   }
 };
 

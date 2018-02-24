@@ -8,8 +8,7 @@ function git(cmd, ...args) {
   if (response.error) {
     throw response.error;
   }
-  const output = response.output.filter(o => !!o).map((o) => o.toString());
-  return output;
+  return response.output.filter(o => !!o).map((o) => o.toString());
 }
 
 function egit(cmd, ...args) {
