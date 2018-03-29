@@ -51,7 +51,7 @@ function runInteractive(options = {}) {
       task: () =>
         new Listr([
           {
-            title: `${options.master}`,
+            title: `${config.develop}`,
             enabled: () => currentBranch === config.develop,
             task: () => push(config.remote, config.develop)
           },
