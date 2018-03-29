@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 'use strict';
-const { branches, getConfiguration } = require('../src');
+const { branches, config } = require('../src');
 
-getConfiguration()
+config
   .then((config) =>
     branches(config)
-  );
+  )
+  .catch(er => {
+    console.error(er);
+  });

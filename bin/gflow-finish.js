@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const commander = require('commander');
-const { finish, getConfiguration } = require('../src');
-
+const {finish, config} = require('../src');
 commander
   .alias('gflow finish')
   .option('-s, --skip', 'Skip the unit test.', (v, t) => t + 1, 0)
@@ -10,7 +9,7 @@ commander
   })
   .parse(process.argv);
 
-getConfiguration()
+config
   .then((config) => {
     finish(Object.assign({}, config, {
       test: !commander.skip

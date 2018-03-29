@@ -3,12 +3,12 @@ const Listr = require('listr');
 const execa = require('execa');
 const chalk = require('chalk');
 const figures = require('figures');
+const config = require('./config');
 const { refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatus } = require('./git');
 
 const DEFAULT_OPTIONS = {
   test: false,
-  force: false,
-  from: 'origin/production'
+  force: false
 };
 
 /**
@@ -36,8 +36,7 @@ function doCheck(options) {
  * @param options
  */
 function runInteractive(options = DEFAULT_OPTIONS) {
-  options = Object.assign({}, DEFAULT_OPTIONS, options);
-  options.featureBranch = currentBranchName();
+  const featureBranch = currentBranchName();
 
   const tasks = new Listr([
     {
@@ -54,7 +53,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
           },
           {
             title: 'Synchronize',
-            task: () => push('-f', 'origin', 'refs/remotes/' + options.from + ':refs/heads/master')
+            task: () => push('-f', config.remote, 'refs/remotes/' + config.remoteProduction + ':refs/heads/' + config.develop)
           },
           {
             title: 'Check status',
@@ -62,7 +61,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
           },
           {
             title: 'Rebase',
-            task: () => rebase(options.from)
+            task: () => rebase(config.remoteProduction)
           }
         ], { concurrent: false });
       }
@@ -71,14 +70,14 @@ function runInteractive(options = DEFAULT_OPTIONS) {
     require('./test')(options),
     {
       title: 'Push',
-      task: () => push('-u', '-f', 'origin', options.featureBranch)
+      task: () => push('-u', '-f', config.remote, featureBranch)
     }
   ]);
 
   return tasks
     .run()
     .then(() => {
-      console.log(chalk.green(figures.tick), 'Branch', options.featureBranch, 'rebased and pushed.');
+      console.log(chalk.green(figures.tick), 'Branch', featureBranch, 'rebased and pushed.');
     })
     .catch(err => {
       console.error(String(err));

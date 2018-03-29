@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 'use strict';
 const commander = require('commander');
-const { push, getConfiguration } = require('../src');
+const { push, config } = require('../src');
 
 commander
   .usage('[options]')
   .alias('gflow push')
-  .option('-o, --from <fromBranch>', 'Rebase a branch from another branch. By default origin/production.')
-  .option('-f, --force <fromBranch>', 'Force pushing branch.', (v, t) => t + 1, 0)
+  .option('-f, --force', 'Force pushing branch.', (v, t) => t + 1, 0)
   .option('-s, --skip', 'Skip the unit test.', (v, t) => t + 1, 0)
   .action(() => {
   })
@@ -18,11 +17,7 @@ let options = {
   force: !!commander.force
 };
 
-getConfiguration()
-  .then((config) => {
-    options.from = 'origin/' + config.production;
-    if (commander.from) {
-      options.from = commander.from;
-    }
-    push(Object.assign({}, config, options));
+config
+  .then(() => {
+    push(options);
   });

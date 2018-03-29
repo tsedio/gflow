@@ -1,0 +1,7 @@
+{
+  "production": "production",
+  "develop": "master",
+  "charBranchNameSeparator": "_",
+  "remote": "origin",
+  "ignores": []
+}

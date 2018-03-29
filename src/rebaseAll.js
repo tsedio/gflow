@@ -2,11 +2,8 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
+const config = require('./config');
 const { refreshRepository, rebase, branchesInfos, checkout, push, branch } = require('./git/index');
-
-const DEFAULT_OPTIONS = {
-  from: 'origin/production'
-};
 
 /**
  *
@@ -29,10 +26,10 @@ function rebaseBranches(options) {
 
   const tasks = remoteBranches
     .filter((branchInfo) =>
-      !rules.find(rule => branchInfo.branch.split('/')[ 1 ].match(rule))
+      !rules.find(rule => branchInfo.branch.split('/')[1].match(rule))
     )
     .map((branchInfo) => {
-      const branchName = branchInfo.branch.split('/')[ 1 ];
+      const branchName = branchInfo.branch.split('/')[1];
 
       return {
         title: `${branchInfo.branch}`,
@@ -58,7 +55,7 @@ function rebaseBranches(options) {
           {
             title: 'Push',
             skip: (ctx) => ctx.skipPush,
-            task: () => push('-f', 'origin', `HEAD:${branchName}`)
+            task: () => push('-f', config.remote, `HEAD:${branchName}`)
           },
           {
             title: `Clean`,
@@ -75,8 +72,7 @@ function rebaseBranches(options) {
   return new Listr(tasks);
 }
 
-function runInteractive(options = DEFAULT_OPTIONS) {
-  options = Object.assign({}, DEFAULT_OPTIONS, options);
+function runInteractive(options) {
 
   const tasks = new Listr([
     {

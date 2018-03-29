@@ -1,19 +1,17 @@
 'use strict';
-const _ = require('lodash');
-const readPkgUp = require('read-pkg-up');
-const git = require('./actions/git');
-const branches = require('./actions/branches');
-const fetch = require('./actions/fetch');
-const newBranch = require('./actions/new');
-const rebase = require('./actions/rebase');
-const rebaseAll = require('./actions/rebaseAll');
-const push = require('./actions/push');
-const finish = require('./actions/finish');
-const sync = require('./actions/sync');
-const init = require('./actions/init');
-const release = require('./actions/release');
+const git = require('./git');
+const branches = require('./branches');
+const fetch = require('./fetch');
+const newBranch = require('./new');
+const rebase = require('./rebase');
+const rebaseAll = require('./rebaseAll');
+const push = require('./push');
+const finish = require('./finish');
+const sync = require('./sync');
+const init = require('./init');
+const release = require('./release');
+const config = require('./config');
 
-let gflowConfiguration;
 
 process.on('unhandledRejection', (reason, p) => {
   // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
@@ -32,24 +30,5 @@ module.exports = {
   init,
   fetch,
   release,
-  getConfiguration() {
-
-    if (gflowConfiguration) {
-      return Promise.resolve(gflowConfiguration);
-    }
-
-    return readPkgUp().then(({ pkg }) => {
-      gflowConfiguration = _.cloneDeep(pkg.gflow || {});
-      return pkg.gflow || {
-        production: 'production',
-        master: 'master'
-      };
-    })
-      .catch((er) => {
-        return {
-          production: 'production',
-          master: 'master'
-        };
-      });
-  }
+  config
 };

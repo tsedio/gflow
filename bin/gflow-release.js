@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const commander = require('commander');
-const { release, getConfiguration } = require('../src');
+const { release, config } = require('../src');
 const options = {
   action: 'post'
 };
@@ -14,10 +14,10 @@ commander
   })
   .parse(process.argv);
 
-getConfiguration()
-  .then((config) => {
+config
+  .then((settings) => {
     console.log('[Gflow release] Start', options.action, 'action');
-    release[ options.action ](Object.assign({}, config, {}));
+    release[options.action](settings);
   })
   .catch(er => {
 

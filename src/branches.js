@@ -2,21 +2,13 @@
 const chalk = require('chalk');
 const figures = require('figures');
 const inquirer = require('inquirer');
-
+const config = require('./config');
 const { branchesInfos, currentBranchName, checkout } = require('./git');
-const DEFAULT_OPTIONS = {
-  master: 'master',
-  production: 'production'
-};
+
 const BRANCHES = new Map();
 
-/**
- *
- * @param options
- */
-function runInteractive(options = DEFAULT_OPTIONS) {
-  options = Object.assign({}, DEFAULT_OPTIONS, options);
-  const choices = buildBranchesList(options)
+function runInteractive() {
+  const choices = buildBranchesList()
     .map((info) => {
       return { value: info.branch, name: info.message, short: info.branch };
     });
@@ -26,12 +18,12 @@ function runInteractive(options = DEFAULT_OPTIONS) {
       'type': 'list',
       'name': 'branchChoice',
       'message': 'Select branch to switch on',
-      'choices': choices.concat([ new inquirer.Separator(), 'exit' ])
+      'choices': choices.concat([new inquirer.Separator(), 'exit'])
     }
   ])
     .then((answers) => {
       if (answers.branchChoice !== 'exit') {
-        switchBranch(answers.branchChoice, options);
+        switchBranch(answers.branchChoice);
       }
     }).catch(er => console.error(er));
 }
@@ -39,16 +31,15 @@ function runInteractive(options = DEFAULT_OPTIONS) {
 /**
  *
  * @param branch
- * @param options
  */
-function switchBranch(branch, options) {
+function switchBranch(branch) {
   let branchInfo = BRANCHES.get(branch);
   let observable;
 
   if (branchInfo) {
     observable = checkout(branchInfo.local ? branchInfo.local.branch : branchInfo.branch);
   } else {
-    const branchName = branch.split('/')[ 1 ];
+    const branchName = branch.split('/')[1];
     branchInfo = BRANCHES.get(branchName);
     if (branchInfo.local) {
       observable = checkout(branchInfo.local.branch);
@@ -68,15 +59,15 @@ function switchBranch(branch, options) {
  *
  * @returns {Array.<*>}
  */
-function branches(options) {
+function branches() {
 
   const remoteBranches = branchesInfos('-r');
   const localBranches = branchesInfos();
 
   remoteBranches.forEach((branchInfo) => {
-    const branch = branchInfo.branch.split('/')[ 1 ];
+    const branch = branchInfo.branch.split('/')[1];
 
-    if (branch === options.production) {
+    if (branch === config.production) {
       branchInfo.$order = -1;
     } else {
       branchInfo.$order = 0;
@@ -117,29 +108,28 @@ function branches(options) {
 
 /**
  *
- * @param options
  * @returns {*}
  */
-function buildBranchesList(options) {
+function buildBranchesList() {
   let isUnderProduction = false;
   const currentBranch = currentBranchName();
 
-  return branches(options)
+  return branches()
     .map((info) => {
-      const branch = info.branch.split('/')[ 1 ] || info.branch;
+      const branch = info.branch.split('/')[1] || info.branch;
       const line = info.date + ' ' + column(info.creation, 15) + ' ' + ' ' + column(info.author, 20) + ' ' + info.branch;
       let current = ' ';
       if (currentBranch === branch) {
         current = chalk.yellow(figures.star);
       }
 
-      if (branch === options.production) {
+      if (branch === config.production) {
         isUnderProduction = true;
         info.message = current + ' ' + chalk.yellow(figures.warning) + ' ' + chalk.yellow(line);
         return info;
       }
 
-      if (branch === 'origin/' + options.master) {
+      if (branch === config.remoteDevelop) {
         info.message = current + ' ' + chalk.gray(figures.bullet) + ' ' + chalk.gray(line);
         return info;
       }
