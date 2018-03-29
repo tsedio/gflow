@@ -37,7 +37,7 @@ if (!options.branchName) {
 
 config
   .then((settings) => {
-    options.from = config.fromProduction;
+    options.from = config.remoteProduction;
     if (commander.type) {
       options.type = commander.type;
     }
@@ -48,4 +48,3 @@ config
 
     newBranch(Object.assign({}, settings, options));
   });
-

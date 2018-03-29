@@ -12,8 +12,8 @@ const DEFAULT_OPTIONS = {
 };
 
 function runInteractive(options = DEFAULT_OPTIONS) {
-  const from = config.remoteProduction;
-  const branchName = utils.normalizeBranchName(options.normalizeBranchName, options.type);
+  const from = options.from;
+  const branchName = utils.normalizeBranchName(options.branchName, options.type);
 
   const tasks = new Listr([
     {
