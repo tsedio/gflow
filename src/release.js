@@ -4,11 +4,7 @@ const figures = require('figures');
 const { git, addSync, commitSync, resetSync, pushSync, remoteSync } = require('./git/index');
 const CI = require('./ci');
 const fs = require('fs');
-
-const DEFAULT_OPTIONS = {
-  master: 'master',
-  production: 'production'
-};
+const config = require('./config');
 /**
  *
  * @returns {any}
@@ -28,10 +24,9 @@ const writePackage = (pkg) => {
 module.exports = {
   /**
    *
-   * @param options
+   * @returns {Promise<void>}
    */
-  pre(options = {}) {
-    options = Object.assign({}, DEFAULT_OPTIONS, options);
+  pre() {
 
     const { EMAIL, USER } = CI;
 
@@ -42,8 +37,8 @@ module.exports = {
         git('config', '--global', 'user.name', USER);
       }
 
-      git('checkout', options.production);
-      git('branch', '--set-upstream-to=origin/' + options.production, options.production);
+      git('checkout', config.production);
+      git('branch', '--set-upstream-to=' + config.remoteProduction, config.production);
 
       console.log('[Gflow release]', chalk.green(figures.tick), `${CI.NAME} CI Installed`);
 
@@ -55,13 +50,10 @@ module.exports = {
   },
   /**
    *
-   * @param options
    * @returns {*}
    */
-  post(options = {}) {
+  post() {
     try {
-      options = Object.assign({}, DEFAULT_OPTIONS, options);
-
       const { GH_TOKEN } = process.env;
       const pkg = readPackage();
       const {
@@ -77,8 +69,8 @@ module.exports = {
 
       console.log('[Gflow release]', `Generate release tag for v${version}`);
       console.log('[Gflow release]', `REPOSITORY:      ${repository}`);
-      console.log('[Gflow release]', `RELEASE_BRANCH:  ${options.production}`);
-      console.log('[Gflow release]', `MASTER_BRANCH:   ${options.master}`);
+      console.log('[Gflow release]', `RELEASE_BRANCH:  ${config.production}`);
+      console.log('[Gflow release]', `MASTER_BRANCH:   ${config.master}`);
       console.log('[Gflow release]', `BUILD:           ${CI.BUILD_NUMBER}`);
 
       if (GH_TOKEN) {
@@ -95,11 +87,11 @@ module.exports = {
       console.log('[Gflow release]', `Commit files`);
       commitSync('-m', `${CI.NAME} build: ${CI.BUILD_NUMBER} v${version} [ci skip]`);
 
-      console.log('[Gflow release]', `Push to ${options.production}`);
-      pushSync('--quiet', '--set-upstream', CI.ORIGIN, options.production);
+      console.log('[Gflow release]', `Push to ${config.production}`);
+      pushSync('--quiet', '--set-upstream', CI.ORIGIN, config.production);
 
-      console.log('[Gflow release]', `Sync ${options.master} with ${options.production}`);
-      pushSync('-f', CI.ORIGIN, `${options.production}:refs/heads/${options.master}`);
+      console.log('[Gflow release]', `Sync ${config.develop} with ${config.production}`);
+      pushSync('-f', CI.ORIGIN, `${config.production}:refs/heads/${config.develop}`);
 
       console.log(chalk.green(figures.tick), 'Release tag are applied on git');
     } catch (er) {

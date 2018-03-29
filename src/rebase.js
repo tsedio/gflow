@@ -4,13 +4,7 @@ const chalk = require('chalk');
 const figures = require('figures');
 const { refreshRepository, rebase, currentBranchName } = require('./git/index');
 
-const DEFAULT_OPTIONS = {
-  from: 'origin/production'
-};
-
-function runInteractive(options = DEFAULT_OPTIONS) {
-  options = Object.assign({}, DEFAULT_OPTIONS, options);
-
+module.exports = (options) => {
   const tasks = new Listr([
     {
       title: 'Refresh local repository',
@@ -31,7 +25,5 @@ function runInteractive(options = DEFAULT_OPTIONS) {
     .catch(err => {
       console.error(chalk.red(String(err)));
     });
-}
-
-module.exports = runInteractive;
+};
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 'use strict';
-const { fetch, getConfiguration } = require('../src');
+const { fetch, config } = require('../src');
 
-getConfiguration()
+config
   .then((config) => {
     fetch();
   });

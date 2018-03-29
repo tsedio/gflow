@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const commander = require('commander');
-const { rebaseAll, getConfiguration } = require('../src');
+const { rebaseAll, config } = require('../src');
 
 commander
   .alias('gflow rebase-all')
@@ -12,11 +12,11 @@ commander
 
 let options = {};
 
-getConfiguration()
-  .then((config) => {
-    options.from = 'origin/' + config.production;
+config
+  .then((settings) => {
+    options.from = config.remoteProduction;
     if (commander.from) {
       options.from = commander.from;
     }
-    rebaseAll(Object.assign({}, config, options));
+    rebaseAll(Object.assign({}, settings, options));
   });

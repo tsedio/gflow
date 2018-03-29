@@ -2,15 +2,12 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-
-const hasYarn = require('has-yarn');
+const sync = require('./sync');
+const config = require('./config');
 const { refreshRepository, currentBranchName, branch, checkout, merge, push, rebase } = require('./git/index');
 
 const DEFAULT_OPTIONS = {
-  master: 'master',
-  production: 'production',
-  test: true,
-  yarn: hasYarn()
+  test: true
 };
 
 function runInteractive(options = {}) {
@@ -26,20 +23,20 @@ function runInteractive(options = {}) {
       title: 'Rebase and prepare workspace',
       task: () => new Listr([
         {
-          title: `Rebase ${currentBranch} from origin/${options.production}`,
-          task: () => rebase(`origin/${options.production}`)
+          title: `Rebase ${currentBranch} from ${config.remoteProduction}`,
+          task: () => rebase(config.remoteProduction)
         },
         {
-          title: `Delete locale branch ${options.production}`,
-          task: (ctx, task) => branch('-D', options.production)
+          title: `Delete locale branch ${config.production}`,
+          task: (ctx, task) => branch('-D', config.production)
             .catch(() => {
-              task.skip(`Local branch ${options.production} not found`);
+              task.skip(`Local branch ${config.production} not found`);
               return Promise.resolve();
             })
         },
         {
-          title: `Checkout branch ${options.production}`,
-          task: (ctx, task) => checkout('-b', options.production, `origin/${options.production}`)
+          title: `Checkout branch ${config.production}`,
+          task: (ctx, task) => checkout('-b', config.production, config.remoteProduction)
         },
         {
           title: `Merging branch ${currentBranch}`,
@@ -55,22 +52,28 @@ function runInteractive(options = {}) {
         new Listr([
           {
             title: `${options.master}`,
-            enabled: () => currentBranch === options.master,
-            task: () => push('origin', options.master)
+            enabled: () => currentBranch === config.develop,
+            task: () => push(config.remote, config.develop)
           },
           {
-            title: `${options.production}`,
-            task: () => push('origin', options.production)
+            title: `${config.production}`,
+            task: () => push(config.remote, config.production)
           },
           {
             title: `Remove branch origin/${currentBranch}`,
-            enabled: () => currentBranch !== options.master,
-            task: () => push('origin', `:${currentBranch}`)
+            enabled: () => currentBranch !== config.develop,
+            task: () => push(config.remote, `:${currentBranch}`)
           },
           {
             title: `Remove branch ${currentBranch}`,
-            enabled: () => currentBranch !== options.master,
+            enabled: () => currentBranch !== config.develop,
             task: () => branch('-d', currentBranch)
+          },
+
+          {
+            title: `Post finish ${config.postFinish}`,
+            enabled: () => config.postFinish !== '',
+            task: () => exec(config.postFinish)
           }
         ], { concurrency: false })
     }
@@ -80,6 +83,11 @@ function runInteractive(options = {}) {
     .run()
     .then(() => {
       console.log(chalk.green(figures.tick), 'Branch', currentBranch, ' is finished');
+
+      if (config.syncAfterFinish) {
+        return sync();
+      }
+
     })
     .catch(err => {
       console.error(String(err));

@@ -57,9 +57,36 @@ gflow init
 This command will configure the production and development branches.
 
 
+### Config
+
+Gflow init command generate a `.glfowrc` config file with some options look like:
+
+```json`
+{
+  "production": "production",
+  "develop": "master",
+  "charBranchNameSeparator": "_",
+  "remote": "origin",
+  "ignores": [],
+  "syncAfterFinish": false,
+  "postFinish": ""
+}
+``
+
+Key | Description
+---|---
+`production` | Name of the production branch or the branch use as reference to rebase a feature branch.
+`develop` | Name of the development branch (or the release candidate branch).
+`charBranchNameSeparator` | Char separator of the a branch between branchName and task type (feat, fix, chore, etc...). Example: if char = "/" `feat/branch_name`.
+`remote` | Alias name of the remote repository (origin).
+`ignores` | Disable rebasing for the given branch list when the `rebase-all` command is used.
+`syncAfterFinish` | Perform synchronization between `production` and `develop` branches.
+`postFinish` | Run command after the `finish` command.
+
+
 ### Rebase all
 
-Rebase-all command, rebase all branches from the branch reference.
+Rebase-all command rebase all branches from the branch reference.
 You can add rules to ignore some branches when you run the `gflow rebase-all` command.
 
 Edit your `package.json` and add this configuration:

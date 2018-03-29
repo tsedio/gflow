@@ -3,7 +3,7 @@
 
 const commander = require('commander');
 const chalk = require('chalk');
-const { newBranch, getConfiguration } = require('../src');
+const { newBranch, config } = require('../src');
 
 let options = {
   branchName: '',
@@ -27,7 +27,7 @@ commander
   .parse(process.argv);
 
 if (!options.branchName) {
-  console.error(chalk.red('The branchName is required'));
+  console.error(chalk.red('The normalizeBranchName is required'));
 
   if (!options.branchName) {
     commander.outputHelp((o) => chalk.red(o));
@@ -35,9 +35,9 @@ if (!options.branchName) {
   process.exit(0);
 }
 
-getConfiguration()
-  .then((config) => {
-    options.from = 'origin/' + config.production;
+config
+  .then((settings) => {
+    options.from = config.fromProduction;
     if (commander.type) {
       options.type = commander.type;
     }
@@ -46,6 +46,6 @@ getConfiguration()
       options.from = commander.from;
     }
 
-    newBranch(Object.assign({}, config, options));
+    newBranch(Object.assign({}, settings, options));
   });
 

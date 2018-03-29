@@ -2,18 +2,18 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
+const utils = require('./utils');
+const config = require('./config');
 const { refreshRepository, checkout } = require('./git/index');
 
 const DEFAULT_OPTIONS = {
   branchName: 'branch_name',
-  type: 'feat',
-  from: 'origin/production'
+  type: 'feat'
 };
 
 function runInteractive(options = DEFAULT_OPTIONS) {
-  options = Object.assign({}, DEFAULT_OPTIONS, options);
-
-  options.branch = `${options.type ? options.type + '_' : ''}${options.branchName}`;
+  const from = config.remoteProduction;
+  const branchName = utils.normalizeBranchName(options.normalizeBranchName, options.type);
 
   const tasks = new Listr([
     {
@@ -22,7 +22,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
     },
     {
       title: 'Create branch',
-      task: () => checkout('--no-track', '-b', options.branch, options.from)
+      task: () => checkout('--no-track', '-b', branchName, from)
     },
     require('./install')(options)
   ]);
@@ -30,7 +30,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
   return tasks
     .run()
     .then(() => {
-      console.log(chalk.green(figures.tick), 'New branch', options.branch, 'created from ' + options.from + ' HEAD');
+      console.log(chalk.green(figures.tick), `New branch ${branchName} created from ${from} HEAD`);
     })
     .catch(err => {
       console.error(chalk.red(String(err)));

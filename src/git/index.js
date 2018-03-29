@@ -4,7 +4,7 @@ const exec = require('../exec');
 const { spawnSync, execSync } = require('child_process');
 
 function git(cmd, ...args) {
-  const response = spawnSync('git', [ cmd ].concat(args));
+  const response = spawnSync('git', [cmd].concat(args));
   if (response.error) {
     throw response.error;
   }
@@ -12,7 +12,7 @@ function git(cmd, ...args) {
 }
 
 function egit(cmd, ...args) {
-  return exec('git', [ cmd ].concat(args));
+  return exec('git', [cmd].concat(args));
 }
 
 module.exports = {
@@ -46,7 +46,7 @@ module.exports = {
   remote(...args) {
     return egit('remote', ...args);
   },
-  
+
   remoteSync(...args) {
     return egit('remote', ...args);
   },
@@ -116,7 +116,7 @@ module.exports = {
    * @returns {string}
    */
   currentBranchName() {
-    return git('rev-parse', '--abbrev-ref', 'HEAD')[ 0 ].trim();
+    return git('rev-parse', '--abbrev-ref', 'HEAD')[0].trim();
   },
   /**
    *
@@ -124,7 +124,7 @@ module.exports = {
    * @returns {boolean}
    */
   branchExists(branch) {
-    return git('branch', '-a')[ 0 ].split('\n').indexOf(`remotes/origin/${branch}`) > -1;
+    return git('branch', '-a')[0].split('\n').indexOf(`remotes/origin/${branch}`) > -1;
   },
   /**
    *
@@ -145,7 +145,7 @@ module.exports = {
    * @returns {Array}
    */
   branches(...args) {
-    const branches = git('branch', ...args)[ 0 ].split('\n');
+    const branches = git('branch', ...args)[0].split('\n');
 
     return branches
       .map((branch) => branch.replace('* ', ''))
@@ -159,7 +159,7 @@ module.exports = {
    */
   show(branch) {
     const response = execSync(`git show --format="%ci|%cr|%an" ${branch}`);
-    return response.toString().split('\n')[ 0 ].trim();
+    return response.toString().split('\n')[0].trim();
   },
   /**
    *
@@ -168,7 +168,7 @@ module.exports = {
   branchesInfos(...args) {
     return module.exports.branches(...args)
       .map((branch) => {
-        const [ date, creation, author ] = module.exports.show(branch).split('|');
+        const [date, creation, author] = module.exports.show(branch).split('|');
         return { branch, date, creation, author };
       })
       .sort((info1, info2) => info1.date < info2.date);
