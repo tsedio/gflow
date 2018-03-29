@@ -1,6 +1,6 @@
 {
   "name": "gflow",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "A gitflow command line tool",
   "main": "index.js",
   "bin": "bin/gflow.js",
