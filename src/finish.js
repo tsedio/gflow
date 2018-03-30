@@ -4,6 +4,8 @@ const chalk = require('chalk');
 const figures = require('figures');
 const sync = require('./sync');
 const config = require('./config');
+const exec = require('./exec');
+const execa = require('execa');
 const { refreshRepository, currentBranchName, branch, checkout, merge, push, rebase } = require('./git/index');
 
 const DEFAULT_OPTIONS = {
@@ -68,11 +70,6 @@ function runInteractive(options = {}) {
             title: `Remove branch ${currentBranch}`,
             enabled: () => currentBranch !== config.develop,
             task: () => branch('-d', currentBranch)
-          },
-          {
-            title: `Post finish ${config.postFinish}`,
-            enabled: () => config.postFinish !== '',
-            task: () => exec(config.postFinish)
           }
         ], { concurrency: false })
     }
@@ -82,11 +79,16 @@ function runInteractive(options = {}) {
     .run()
     .then(() => {
       console.log(chalk.green(figures.tick), 'Branch', currentBranch, ' is finished');
-
+    })
+    .then(() => {
+      if (config.postFinish) {
+        return execa.shell(config.postFinish, { stdio: ['inherit', 'inherit', 'inherit'] });
+      }
+    })
+    .then(() => {
       if (config.syncAfterFinish) {
         return sync();
       }
-
     })
     .catch(err => {
       console.error(String(err));
