@@ -69,7 +69,6 @@ function runInteractive(options = {}) {
             enabled: () => currentBranch !== config.develop,
             task: () => branch('-d', currentBranch)
           },
-
           {
             title: `Post finish ${config.postFinish}`,
             enabled: () => config.postFinish !== '',

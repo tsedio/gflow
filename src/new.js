@@ -3,7 +3,6 @@ const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
 const utils = require('./utils');
-const config = require('./config');
 const { refreshRepository, checkout } = require('./git/index');
 
 const DEFAULT_OPTIONS = {
