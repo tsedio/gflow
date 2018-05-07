@@ -174,7 +174,7 @@ class Config {
   }
 
   toObject() {
-    return Array.from(this._config.keys).reduce((acc, key) => {
+    return Array.from(this._config.keys()).reduce((acc, key) => {
       acc[key] = this._config.get(key);
       return acc;
     }, {});
