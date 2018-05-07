@@ -54,7 +54,7 @@ function runInteractive(options = {}) {
         new Listr([
           {
             title: `${config.develop}`,
-            enabled: () => currentBranch === config.develop,
+            enabled: () => currentBranch === config.develop && config.develop !== config.production,
             task: () => push(config.remote, config.develop)
           },
           {
@@ -63,12 +63,12 @@ function runInteractive(options = {}) {
           },
           {
             title: `Remove branch origin/${currentBranch}`,
-            enabled: () => currentBranch !== config.develop,
+            enabled: () => currentBranch !== config.develop && currentBranch !== config.production,
             task: () => push(config.remote, `:${currentBranch}`)
           },
           {
             title: `Remove branch ${currentBranch}`,
-            enabled: () => currentBranch !== config.develop,
+            enabled: () => currentBranch !== config.develop && currentBranch !== config.production,
             task: () => branch('-d', currentBranch)
           }
         ], { concurrency: false })

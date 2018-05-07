@@ -12,12 +12,10 @@ commander
   })
   .parse(process.argv);
 
-let options = {
-  test: !commander.skip,
-  force: !!commander.force
-};
-
 config
-  .then(() => {
-    push(options);
-  });
+  .then((settings) =>
+    push({
+      test: commander.skip === undefined ? !settings.skipTest : !commander.skip,
+      force: !!commander.force
+    })
+  );
