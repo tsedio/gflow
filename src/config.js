@@ -10,7 +10,8 @@ const DEFAULT_CONFIG = {
   remote: 'origin',
   ignores: [],
   syncAfterFinish: false,
-  postFinish: ''
+  postFinish: '',
+  skipTest: false
 };
 
 class Config {
@@ -107,6 +108,7 @@ class Config {
       .readFromPkg()
       .then(() => {
         this.readConfiguration();
+        return this.toObject();
       });
   }
 
