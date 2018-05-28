@@ -82,6 +82,7 @@ Key | Description
 `ignores` | Disable rebasing for the given branch list when the `rebase-all` command is used.
 `syncAfterFinish` | Perform synchronization between `production` and `develop` branches.
 `postFinish` | Run command after the `finish` command.
+`skipTest` | Disable unit test step.
 
 
 ### Rebase all

@@ -9,7 +9,4 @@ commander
   })
   .parse(process.argv);
 
-config
-  .then((settings) =>
-    sync(settings)
-  );
+sync(config.toObject());

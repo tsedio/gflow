@@ -2,19 +2,23 @@
 'use strict';
 const commander = require('commander');
 const { finish, config } = require('../src');
+
+const options = {
+  fromBranch: config.remoteProduction
+};
 commander
-  .alias('gflow finish')
+  .alias('gflow finish <fromBranch>')
   .option('-s, --skip', 'Skip the unit test.', (v, t) => t + 1, 0)
-  .action(() => {
+  .action((fromBranch) => {
+    options.fromBranch = fromBranch || config.remoteProduction;
+    options.devBranch = fromBranch || config.remoteDevelop;
   })
   .parse(process.argv);
 
-config
-  .then((settings) => {
-    finish(Object.assign({}, settings, {
-      test: commander.skip === undefined ? !settings.skipTest : !commander.skip
-    }));
-  })
+finish({
+  ...options,
+  test: commander.skip === undefined ? !config.skipTest : !commander.skip
+})
   .catch((er) => {
     console.log(er);
   });

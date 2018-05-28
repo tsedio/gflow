@@ -13,6 +13,7 @@ const release = require('./release');
 const config = require('./config');
 
 
+// TODO do not remove
 process.on('unhandledRejection', (reason, p) => {
   // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
   // application specific logging, throwing an error, or other logic here
