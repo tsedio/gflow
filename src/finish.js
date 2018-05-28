@@ -9,12 +9,20 @@ const execa = require('execa');
 const { refreshRepository, currentBranchName, branch, checkout, merge, push, rebase } = require('./git/index');
 
 const DEFAULT_OPTIONS = {
-  test: true
+  test: true,
+  fromBranch: config.remoteProduction,
+  devBranch: config.remoteDevelop
 };
 
 function runInteractive(options = {}) {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
-  const currentBranch = currentBranchName();
+  const featureBranch = currentBranchName();
+  const fromRemoteBranch = options.fromBranch;
+  const fromLocalBranch = fromRemoteBranch.split('/')[1];
+  const devRemoteBranch = options.devBranch;
+  const devLocalBranch = devRemoteBranch.split('/')[1];
+
+  const isEnabled = featureBranch === devLocalBranch && devLocalBranch !== devLocalBranch;
 
   const tasks = new Listr([
     {
@@ -25,24 +33,24 @@ function runInteractive(options = {}) {
       title: 'Rebase and prepare workspace',
       task: () => new Listr([
         {
-          title: `Rebase ${currentBranch} from ${config.remoteProduction}`,
-          task: () => rebase(config.remoteProduction)
+          title: `Rebase ${featureBranch} from ${fromRemoteBranch}`,
+          task: () => rebase(fromRemoteBranch)
         },
         {
-          title: `Delete locale branch ${config.production}`,
-          task: (ctx, task) => branch('-D', config.production)
+          title: `Delete locale branch ${fromLocalBranch}`,
+          task: (ctx, task) => branch('-D', fromLocalBranch)
             .catch(() => {
-              task.skip(`Local branch ${config.production} not found`);
+              task.skip(`Local branch ${fromLocalBranch} not found`);
               return Promise.resolve();
             })
         },
         {
-          title: `Checkout branch ${config.production}`,
-          task: (ctx, task) => checkout('-b', config.production, config.remoteProduction)
+          title: `Checkout branch ${fromLocalBranch}`,
+          task: (ctx, task) => checkout('-b', fromLocalBranch, fromRemoteBranch)
         },
         {
-          title: `Merging branch ${currentBranch}`,
-          task: () => merge('--no-ff', '-m', `Merge ${currentBranch}`, currentBranch)
+          title: `Merging branch ${featureBranch}`,
+          task: () => merge('--no-ff', '-m', `Merge ${featureBranch}`, featureBranch)
         }
       ], { concurrency: false })
     },
@@ -53,23 +61,23 @@ function runInteractive(options = {}) {
       task: () =>
         new Listr([
           {
-            title: `${config.develop}`,
-            enabled: () => currentBranch === config.develop && config.develop !== config.production,
-            task: () => push(config.remote, config.develop)
+            title: `${devLocalBranch}`,
+            enabled: isEnabled,
+            task: () => push(config.remote, devLocalBranch)
           },
           {
-            title: `${config.production}`,
-            task: () => push(config.remote, config.production)
+            title: `${fromLocalBranch}`,
+            task: () => push(config.remote, fromLocalBranch)
           },
           {
-            title: `Remove branch origin/${currentBranch}`,
-            enabled: () => currentBranch !== config.develop && currentBranch !== config.production,
-            task: () => push(config.remote, `:${currentBranch}`)
+            title: `Remove branch origin/${featureBranch}`,
+            enabled: isEnabled,
+            task: () => push(config.remote, `:${featureBranch}`)
           },
           {
-            title: `Remove branch ${currentBranch}`,
-            enabled: () => currentBranch !== config.develop && currentBranch !== config.production,
-            task: () => branch('-d', currentBranch)
+            title: `Remove branch ${featureBranch}`,
+            enabled: isEnabled,
+            task: () => branch('-d', featureBranch)
           }
         ], { concurrency: false })
     }
@@ -78,7 +86,7 @@ function runInteractive(options = {}) {
   return tasks
     .run()
     .then(() => {
-      console.log(chalk.green(figures.tick), 'Branch', currentBranch, ' is finished');
+      console.log(chalk.green(figures.tick), 'Branch', featureBranch, ' is finished');
     })
     .then(() => {
       if (config.postFinish) {

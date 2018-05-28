@@ -11,24 +11,19 @@ const DEFAULT_CONFIG = {
   ignores: [],
   syncAfterFinish: false,
   postFinish: '',
-  skipTest: false
+  skipTest: false,
+  branchTypes: {
+    feat: 'feat',
+    fix: 'feat',
+    chore: 'chore',
+    docs: 'docs'
+  }
 };
 
-class Config {
+class Config extends Map {
   constructor() {
+    super();
     this.load();
-  }
-
-  get(key) {
-    return this._config.get(key);
-  }
-
-  set(key, value) {
-    return this._config.set(key, value);
-  }
-
-  has(key) {
-    return this._config.has(key);
   }
 
   then(...args) {
@@ -87,12 +82,28 @@ class Config {
     return this.get('charBranchNameSeparator');
   }
 
+  /**
+   *
+   * @returns {*}
+   */
   get syncAfterFinish() {
     return this.get('syncAfterFinish');
   }
 
+  /**
+   *
+   * @returns {*}
+   */
   get postFinish() {
     return this.get('postFinish');
+  }
+
+  get skipTest() {
+    return this.get('skipTest');
+  }
+
+  get branchTypes() {
+    return this.get('branchTypes');
   }
 
   load() {
@@ -101,15 +112,12 @@ class Config {
       return this.promise;
     }
 
-    this._config = new Map();
+    this.clear();
     this.setConfig(DEFAULT_CONFIG);
+    this.readFromPkg();
+    this.readConfiguration();
 
-    this.promise = this
-      .readFromPkg()
-      .then(() => {
-        this.readConfiguration();
-        return this.toObject();
-      });
+    this.promise = Promise.resolve(this.toObject());
   }
 
   /**
@@ -135,24 +143,17 @@ class Config {
     if (this.hasConfiguration()) {
       const conf = JSON.parse(fs.readFileSync(path.join(process.cwd(), CONFIG_BASENAME), 'utf8'));
       this.setConfig(conf);
-      this.set('loaded', true);
     }
   }
 
   readFromPkg() {
-    return readPkgUp()
-      .then(({ pkg }) => {
-        this.setConfig(_.cloneDeep(pkg.gflow || {}));
-        this.set('loaded', true);
-        return this.toObject();
-      })
-      .catch((er) => {
-        return this.toObject();
-      });
-  }
+    try {
+      const { pkg } = readPkgUp.sync();
+      this.setConfig(_.cloneDeep(pkg.gflow || {}));
+    } catch (er) {
+    }
 
-  isLoaded() {
-    return !!this.get('loaded');
+    return this.toObject();
   }
 
   /**
@@ -163,19 +164,18 @@ class Config {
     return fs.existsSync(path.join(process.cwd(), CONFIG_BASENAME), 'utf8');
   }
 
+  /**
+   *
+   */
   writeConfiguration() {
-    const conf = {};
-
-    this._config.forEach((value, key) => {
-      conf[key] = value;
-    });
+    const conf = this.toObject();
 
     fs.writeFileSync(path.join(process.cwd(), CONFIG_BASENAME), JSON.stringify(conf, null, 2), { encoding: 'utf8' });
   }
 
   toObject() {
-    return Array.from(this._config.keys()).reduce((acc, key) => {
-      acc[key] = this._config.get(key);
+    return Array.from(this.keys()).reduce((acc, key) => {
+      acc[key] = this.get(key);
       return acc;
     }, {});
   }

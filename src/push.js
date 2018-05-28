@@ -1,6 +1,5 @@
 'use strict';
 const Listr = require('listr');
-const execa = require('execa');
 const chalk = require('chalk');
 const figures = require('figures');
 const config = require('./config');
@@ -8,7 +7,8 @@ const { refreshRepository, push, remote, rebase, currentBranchName, branchExists
 
 const DEFAULT_OPTIONS = {
   test: false,
-  force: false
+  force: false,
+  fromBranch: undefined
 };
 
 /**
@@ -37,6 +37,8 @@ function doCheck(options) {
  */
 function runInteractive(options = DEFAULT_OPTIONS) {
   const featureBranch = currentBranchName();
+  const fromBranch = options.fromBranch || config.remoteProduction;
+  const devBranch = (options.devBranch || config.remoteDevelop).split('/')[1];
 
   const tasks = new Listr([
     {
@@ -53,15 +55,15 @@ function runInteractive(options = DEFAULT_OPTIONS) {
           },
           {
             title: 'Synchronize',
-            task: () => push('-f', config.remote, 'refs/remotes/' + config.remoteProduction + ':refs/heads/' + config.develop)
+            task: () => push('-f', config.remote, 'refs/remotes/' + fromBranch + ':refs/heads/' + devBranch)
           },
           {
             title: 'Check status',
             task: () => doCheck(options)
           },
           {
-            title: 'Rebase',
-            task: () => rebase(config.remoteProduction)
+            title: `Rebase from ${chalk.green(fromBranch)}`,
+            task: () => rebase(fromBranch)
           }
         ], { concurrent: false });
       }

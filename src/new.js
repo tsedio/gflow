@@ -20,7 +20,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
       task: () => refreshRepository()
     },
     {
-      title: 'Create branch',
+      title: `Create branch from ${chalk.green(from)}`,
       task: () => checkout('--no-track', '-b', branchName, from)
     },
     require('./install')(options)

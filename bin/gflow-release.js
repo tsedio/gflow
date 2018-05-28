@@ -14,12 +14,6 @@ commander
   })
   .parse(process.argv);
 
-config
-  .then((settings) => {
-    console.log('[Gflow release] Start', options.action, 'action');
-    release[options.action](settings);
-  })
-  .catch(er => {
-
-  });
+console.log('[Gflow release] Start', options.action, 'action');
+release[options.action](config.toObject());
 

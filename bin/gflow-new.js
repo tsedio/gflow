@@ -35,16 +35,14 @@ if (!options.branchName) {
   process.exit(0);
 }
 
-config
-  .then((settings) => {
-    options.from = config.remoteProduction;
-    if (commander.type) {
-      options.type = commander.type;
-    }
+options.from = config.remoteProduction;
+if (commander.type) {
+  options.type = commander.type;
+}
 
-    if (commander.from) {
-      options.from = commander.from;
-    }
+if (commander.from) {
+  options.from = commander.from;
+}
 
-    newBranch(Object.assign({}, settings, options));
-  });
+newBranch(Object.assign({}, config.toObject(), options));
+

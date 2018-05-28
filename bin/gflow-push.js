@@ -1,21 +1,33 @@
 #!/usr/bin/env node
 'use strict';
 const commander = require('commander');
-const { push, config } = require('../src');
+const { config, push } = require('../src');
+const options = {};
 
 commander
   .usage('[options]')
-  .alias('gflow push')
+  .alias('gflow push <fromBranch>')
   .option('-f, --force', 'Force pushing branch.', (v, t) => t + 1, 0)
   .option('-s, --skip', 'Skip the unit test.', (v, t) => t + 1, 0)
-  .action(() => {
+  .action((fromBranch) => {
+    options.fromBranch = fromBranch || config.remoteProduction;
+    options.devBranch = fromBranch || config.remoteDevelop;
+  })
+  .on('--help', () => {
+    console.log('');
+    console.log('  Examples:');
+    console.log('');
+    console.log(`    $ gflow rebase`);
+    console.log(`    Is shortcut to: `);
+    console.log(`    $ gflow rebase ${config.remoteProduction}`);
+    console.log('');
   })
   .parse(process.argv);
 
-config
-  .then((settings) =>
-    push({
-      test: commander.skip === undefined ? !settings.skipTest : !commander.skip,
-      force: !!commander.force
-    })
-  );
+
+push({
+  fromBranch: options.fromBranch,
+  devBranch: options.fromBranch,
+  test: commander.skip === undefined ? !config.skipTest : !commander.skip,
+  force: !!commander.force
+});

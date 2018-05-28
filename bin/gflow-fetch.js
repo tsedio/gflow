@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 'use strict';
-const { fetch, config } = require('../src');
+const { fetch } = require('../src');
 
-config
-  .then((config) => {
-    fetch();
-  });
-
+fetch();

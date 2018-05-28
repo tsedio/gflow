@@ -12,11 +12,8 @@ commander
 
 let options = {};
 
-config
-  .then((settings) => {
-    options.from = config.remoteProduction;
-    if (commander.from) {
-      options.from = commander.from;
-    }
-    rebaseAll(Object.assign({}, settings, options));
-  });
+options.from = config.remoteProduction;
+if (commander.from) {
+  options.from = commander.from;
+}
+rebaseAll(Object.assign({}, config.toObject(), options));
