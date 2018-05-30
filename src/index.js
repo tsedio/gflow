@@ -3,6 +3,7 @@ const git = require('./git');
 const branches = require('./branches');
 const fetch = require('./fetch');
 const newBranch = require('./new');
+const newBranchInteractive = require('./new-interactive');
 const rebase = require('./rebase');
 const rebaseAll = require('./rebaseAll');
 const push = require('./push');
@@ -23,6 +24,7 @@ module.exports = {
   git,
   branches,
   newBranch,
+  newBranchInteractive,
   rebase,
   rebaseAll,
   push,

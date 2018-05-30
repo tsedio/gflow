@@ -3,5 +3,17 @@
   "develop": "master",
   "charBranchNameSeparator": "_",
   "remote": "origin",
-  "ignores": []
+  "ignores": [],
+  "syncAfterFinish": false,
+  "postFinish": "",
+  "skipTest": false,
+  "branchTypes": {
+    "feat": "feat",
+    "fix": "fix",
+    "chore": "chore",
+    "docs": "docs"
+  },
+  "refs": {
+    "other_branch": "feat_refs_branches"
+  }
 }

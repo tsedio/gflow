@@ -10,7 +10,7 @@ let options = {
 commander
   .alias('gflow rebase <fromBranch>')
   .action((fromBranch) => {
-    options.fromBranch = fromBranch || config.remoteProduction;
+    options.fromBranch = fromBranch;
   })
   .on('--help', () => {
     console.log('');

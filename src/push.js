@@ -3,6 +3,7 @@ const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
 const config = require('./config');
+const { getBranchName } = require('./utils');
 const { refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatus } = require('./git');
 
 const DEFAULT_OPTIONS = {
@@ -38,7 +39,7 @@ function doCheck(options) {
 function runInteractive(options = DEFAULT_OPTIONS) {
   const featureBranch = currentBranchName();
   const fromBranch = options.fromBranch || config.remoteProduction;
-  const devBranch = (options.devBranch || config.remoteDevelop).split('/')[1];
+  const devBranch = getBranchName(options.devBranch || config.remoteDevelop);
 
   const tasks = new Listr([
     {

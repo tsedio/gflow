@@ -64,6 +64,10 @@ module.exports = {
   refreshRepository() {
     return egit('fetch', '--all', '--prune', '--tags');
   },
+
+  refreshRepositorySync() {
+    return egit('fetch', '--all', '--prune', '--tags');
+  },
   /**
    *
    * @param args
@@ -101,10 +105,6 @@ module.exports = {
 
   commitSync(...args) {
     return git('commit', ...args);
-  },
-
-  remote(...args) {
-    return egit('remote', ...args);
   },
 
   removeSync(...args) {

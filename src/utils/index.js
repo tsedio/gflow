@@ -1,14 +1,5 @@
-const config = require('../config');
-
 module.exports = {
-  /**
-   *
-   * @returns {string}
-   */
-  normalizeBranchName(branchName, type) {
-
-    type = config.branchTypes[type] || type;
-
-    return `${type ? type + config.charBranchNameSeparator : ''}${branchName.replace(/[- ]/gi, '_')}`;
-  }
+  ...require('./normalize-branch'),
+  ...require('./to-remote'),
+  ...require('./get-branche-name')
 };

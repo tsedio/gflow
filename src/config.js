@@ -1,37 +1,13 @@
 const path = require('path');
 const fs = require('fs');
 const readPkgUp = require('read-pkg-up');
-
-const CONFIG_BASENAME = '.gflowrc';
-const DEFAULT_CONFIG = {
-  production: 'production',
-  develop: 'master',
-  charBranchNameSeparator: '_',
-  remote: 'origin',
-  ignores: [],
-  syncAfterFinish: false,
-  postFinish: '',
-  skipTest: false,
-  branchTypes: {
-    feat: 'feat',
-    fix: 'feat',
-    chore: 'chore',
-    docs: 'docs'
-  }
-};
+const { getBranchName } = require('./utils/get-branche-name');
+const { DEFAULT_CONFIG, CONFIG_BASENAME } = require('./base-config');
 
 class Config extends Map {
   constructor() {
     super();
     this.load();
-  }
-
-  then(...args) {
-    return this.promise.then(...args);
-  }
-
-  catch(...args) {
-    return this.promise.catch(...args);
   }
 
   /**
@@ -103,11 +79,88 @@ class Config extends Map {
   }
 
   get branchTypes() {
-    return this.get('branchTypes');
+    return this.get('branchTypes') || {};
+  }
+
+  /**
+   *
+   * @returns {V | undefined}
+   */
+  get refs() {
+    return this.get('refs') || {};
+  }
+
+  /**
+   *
+   * @returns {{label: *, value: string}[]}
+   */
+  getBranchTypes() {
+    return Object.keys(this.branchTypes).map((key) => {
+      return {
+        label: this.branchTypes[key],
+        value: key
+      };
+    });
+  }
+
+  /**
+   *
+   * @param refBranch
+   * @returns {Array}
+   */
+  getRelatedBranches(refBranch) {
+    const refs = this.get('refs');
+    refBranch = getBranchName(refBranch);
+
+    return Object.keys(refs).reduce((acc, branchName) => {
+      if (refs[branchName] === refBranch) {
+        acc.push(branchName);
+      }
+      return acc;
+    }, []);
+  }
+
+  setBranchRef(branch, refBranch) {
+    this.refs[getBranchName(branch)] = getBranchName(refBranch);
+    this.writeConfiguration();
+  }
+
+  /**
+   *
+   * @param branch
+   * @returns {*}
+   */
+  hasBranchRef(branch) {
+    return this.refs[getBranchName(branch)];
+  }
+
+  /**
+   *
+   * @param branch
+   * @returns {*}
+   */
+  getBranchRef(branch) {
+    return this.refs[getBranchName(branch)];
+  }
+
+  /**
+   *
+   * @param branch
+   * @returns {string}
+   */
+  getRemoteBranchRef(branch) {
+    return `${this.remote}/${this.getBranchRef(branch)}`;
+  }
+
+  /**
+   *
+   * @returns {string[]}
+   */
+  getRefBranches() {
+    return Object.values(this.refs).map(o => `${this.remote}/${o}`);
   }
 
   load() {
-
     if (this.promise) {
       return this.promise;
     }
@@ -116,8 +169,6 @@ class Config extends Map {
     this.setConfig(DEFAULT_CONFIG);
     this.readFromPkg();
     this.readConfiguration();
-
-    this.promise = Promise.resolve(this.toObject());
   }
 
   /**
@@ -137,15 +188,9 @@ class Config extends Map {
   }
 
   /**
-   *
+   * @deprecated
+   * @returns {*}
    */
-  readConfiguration() {
-    if (this.hasConfiguration()) {
-      const conf = JSON.parse(fs.readFileSync(path.join(process.cwd(), CONFIG_BASENAME), 'utf8'));
-      this.setConfig(conf);
-    }
-  }
-
   readFromPkg() {
     try {
       const { pkg } = readPkgUp.sync();
@@ -154,6 +199,16 @@ class Config extends Map {
     }
 
     return this.toObject();
+  }
+
+  /**
+   *
+   */
+  readConfiguration() {
+    if (this.hasConfiguration()) {
+      const conf = JSON.parse(fs.readFileSync(path.join(process.cwd(), CONFIG_BASENAME), 'utf8'));
+      this.setConfig(conf);
+    }
   }
 
   /**

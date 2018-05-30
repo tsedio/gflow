@@ -3,6 +3,7 @@ const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
 const sync = require('./sync');
+const { getBranchName } = require('./utils');
 const config = require('./config');
 const exec = require('./exec');
 const execa = require('execa');
@@ -18,9 +19,9 @@ function runInteractive(options = {}) {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
   const featureBranch = currentBranchName();
   const fromRemoteBranch = options.fromBranch;
-  const fromLocalBranch = fromRemoteBranch.split('/')[1];
+  const fromLocalBranch = getBranchName(fromRemoteBranch);
   const devRemoteBranch = options.devBranch;
-  const devLocalBranch = devRemoteBranch.split('/')[1];
+  const devLocalBranch = getBranchName(devRemoteBranch);
 
   const isEnabled = featureBranch === devLocalBranch && devLocalBranch !== devLocalBranch;
 

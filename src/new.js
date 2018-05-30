@@ -11,7 +11,7 @@ const DEFAULT_OPTIONS = {
 };
 
 function runInteractive(options = DEFAULT_OPTIONS) {
-  const from = options.from;
+  const from = options.fromBranch;
   const branchName = utils.normalizeBranchName(options.branchName, options.type);
 
   const tasks = new Listr([
@@ -29,6 +29,9 @@ function runInteractive(options = DEFAULT_OPTIONS) {
   return tasks
     .run()
     .then(() => {
+
+      config.setBranchRef(branchName, from);
+
       console.log(chalk.green(figures.tick), `New branch ${branchName} created from ${from} HEAD`);
     })
     .catch(err => {

@@ -6,7 +6,8 @@ const { config } = require('../src/config');
 const { refreshRepository, rebase, currentBranchName } = require('./git/index');
 
 module.exports = (options) => {
-  const fromBranch = options.fromBranch || config.remoteProduction;
+  const currentBranch = currentBranchName();
+  const fromBranch = options.fromBranch || config.getRemoteBranchRef(currentBranch) || config.remoteProduction;
   const tasks = new Listr([
     {
       title: 'Refresh local repository',
@@ -22,7 +23,7 @@ module.exports = (options) => {
   return tasks
     .run()
     .then(() => {
-      console.log(chalk.green(figures.tick), 'Branch', currentBranchName(), `rebased from ${fromBranch} HEAD`);
+      console.log(chalk.green(figures.tick), `Branch ${chalk.green(currentBranch)} rebased from ${chalk.green(fromBranch)} HEAD`);
     })
     .catch(err => {
       console.error(chalk.red(String(err)));

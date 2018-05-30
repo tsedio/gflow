@@ -20,5 +20,6 @@ commander
   .command('rebase-all', 'Rebase all branches from production')
   .command('fetch', 'Download objects and refs from another repository (--all and --prune)')
   .command('sync', 'Synchronize dev branch and production')
+  .command('config', 'Configuration')
   .parse(process.argv);
 
