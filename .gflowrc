@@ -6,7 +6,7 @@
   "ignores": [],
   "syncAfterFinish": false,
   "postFinish": "",
-  "skipTest": false,
+  "skipTest": true,
   "branchTypes": {
     "feat": "feat",
     "fix": "fix",
@@ -15,6 +15,6 @@
   },
   "refs": {
     "other_branch": "feat_refs_branches",
-    "feat_test_Test": "feat_refs_branches"
+    "fix_push_and_finish_action": "feat_refs_branches"
   }
 }

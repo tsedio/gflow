@@ -70,14 +70,14 @@ function runInteractive(options = {}) {
             task: () => push(config.remote, fromLocalBranch)
           },
           {
-            title: `Remove branch ${chalk.green(branch)}`,
-            enabled: isEnabled,
-            task: () => branch('-d', featureBranch)
-          },
-          {
             title: `Remove branch origin/${chalk.green(featureBranch)}`,
             enabled: branchExists(featureBranch),
             task: () => push(config.remote, `:${featureBranch}`)
+          },
+          {
+            title: `Remove branch ${chalk.green(branch)}`,
+            enabled: isEnabled,
+            task: () => branch('-d', featureBranch)
           }
         ], { concurrency: false })
     }
