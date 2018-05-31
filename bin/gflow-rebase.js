@@ -3,14 +3,12 @@
 const commander = require('commander');
 const { rebase, config } = require('../src');
 
-let options = {
-  fromBranch: config.remoteProduction
-};
+let options = {};
 
 commander
   .alias('gflow rebase <fromBranch>')
   .action((fromBranch) => {
-    options.fromBranch = fromBranch || config.remoteProduction;
+    options.fromBranch = fromBranch;
   })
   .on('--help', () => {
     console.log('');
@@ -23,6 +21,5 @@ commander
   })
   .parse(process.argv);
 
-// console.log(options)
 rebase(options);
 

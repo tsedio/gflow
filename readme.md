@@ -61,17 +61,25 @@ This command will configure the production and development branches.
 
 Gflow init command generate a `.glfowrc` config file with some options look like:
 
-```json`
+```json
 {
   "production": "production",
   "develop": "master",
   "charBranchNameSeparator": "_",
   "remote": "origin",
   "ignores": [],
-  "syncAfterFinish": false,
-  "postFinish": ""
+  "syncAfterFinish": true,
+  "postFinish": "",
+  "skipTest": true,
+  "branchTypes": {
+    "feat": "feat",
+    "fix": "fix",
+    "chore": "chore",
+    "docs": "docs"
+  },
+  "refs": {}
 }
-``
+```
 
 Key | Description
 ---|---
@@ -83,6 +91,8 @@ Key | Description
 `syncAfterFinish` | Perform synchronization between `production` and `develop` branches.
 `postFinish` | Run command after the `finish` command.
 `skipTest` | Disable unit test step.
+`branchTypes` | Configure the branch types for the command `gflow new`.
+`refs` | List of references for each branch when you create your from another branch.
 
 
 ### Rebase all

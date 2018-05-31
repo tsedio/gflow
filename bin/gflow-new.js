@@ -2,47 +2,27 @@
 'use strict';
 
 const commander = require('commander');
-const chalk = require('chalk');
-const { newBranch, config } = require('../src');
+const { newBranchInteractive, config } = require('../src');
+const { assert } = require('./utils/assert');
 
-let options = {
-  branchName: '',
-  type: ''
-};
+let options = {};
 
 commander
-  .usage('[feat|fix|chore|docs] <branchName> [options]')
+  .usage('[feat|fix|chore|docs] <branchName> <fromBranch>')
   .alias('gflow new')
-  .arguments('<arg1> [arg2]')
-  .option('-t --type <type>', 'Type of the branch (feat, fix, chore, docs)', /^(feat|fix|docs|chore)$/i)
-  .option('-o, --from <fromBranch>', 'Create a branch from another branch. By default production.')
-  .action((_type_, _branchName_) => {
-    if (!_branchName_) {
-      _branchName_ = _type_;
-      _type_ = '';
+  .action((...args) => {
+    let [_type_, _branchName_, _fromBranch_] = args.slice(0, args.length - 1);
+
+    if (!config.branchTypes[_type_]) {
+      options.type = '';
+      options.branchName = _type_;
+    } else {
+      options.type = _type_;
+      options.branchName = _branchName_;
     }
-    options.branchName = _branchName_;
-    options.type = _type_ || '';
+
+    options.fromBranch = _fromBranch_;
   })
   .parse(process.argv);
 
-if (!options.branchName) {
-  console.error(chalk.red('The normalizeBranchName is required'));
-
-  if (!options.branchName) {
-    commander.outputHelp((o) => chalk.red(o));
-  }
-  process.exit(0);
-}
-
-options.from = config.remoteProduction;
-if (commander.type) {
-  options.type = commander.type;
-}
-
-if (commander.from) {
-  options.from = commander.from;
-}
-
-newBranch(Object.assign({}, config.toObject(), options));
-
+newBranchInteractive(options).catch((er) => console.error(er));

@@ -3,15 +3,13 @@
 const commander = require('commander');
 const { finish, config } = require('../src');
 
-const options = {
-  fromBranch: config.remoteProduction
-};
+const options = {};
+
 commander
   .alias('gflow finish <fromBranch>')
   .option('-s, --skip', 'Skip the unit test.', (v, t) => t + 1, 0)
   .action((fromBranch) => {
-    options.fromBranch = fromBranch || config.remoteProduction;
-    options.devBranch = fromBranch || config.remoteDevelop;
+    options.fromBranch = fromBranch;
   })
   .parse(process.argv);
 
