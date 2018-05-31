@@ -19,9 +19,13 @@ commander
 assert(!options.branchName, 'The branchName is required');
 assert(!options.refBranch, 'The refBranch is required');
 
-config.setBranchRef(options.branchName, options.refBranch);
+if (config.refs.set(options.branchName, options.refBranch)) {
+  config.writeConfiguration();
+  console.log(
+    chalk.green(figures.tick),
+    `Branch ${chalk.green(options.branchName)} is configured on ${chalk.green(config.remote + '/' + options.refBranch)} reference`
+  );
+}
 
-console.log(
-  chalk.green(figures.tick),
-  `Branch ${chalk.green(options.branchName)} is configured on ${chalk.green(config.remote + '/' + options.refBranch)} reference`
-);
+
+

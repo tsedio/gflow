@@ -30,7 +30,11 @@ function runInteractive(options = DEFAULT_OPTIONS) {
   return tasks
     .run()
     .then(() => {
-      config.setBranchRef(branchName, from);
+
+      if (config.refs.set(options.branchName, options.refBranch)) {
+        config.writeConfiguration();
+      }
+
       console.log(chalk.green(figures.tick), `New branch ${branchName} created from ${from} HEAD`);
     })
     .catch(err => {

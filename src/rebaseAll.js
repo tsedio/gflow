@@ -4,6 +4,8 @@ const chalk = require('chalk');
 const figures = require('figures');
 const config = require('./config');
 const { refreshRepository, rebase, branchesInfos, checkout, push, branch } = require('./git/index');
+const { getBrancheName } = require('./utils/get-branche-name');
+const { rebaseFrom } = require('./utils/get-rebase-info');
 
 /**
  *
@@ -26,10 +28,10 @@ function rebaseBranches(options) {
 
   const tasks = remoteBranches
     .filter((branchInfo) =>
-      !rules.find(rule => branchInfo.branch.split('/')[1].match(rule))
+      !rules.find(rule => getBrancheName(branchInfo.branch).match(rule))
     )
     .map((branchInfo) => {
-      const branchName = branchInfo.branch.split('/')[1];
+      const branchName = getBrancheName(branchInfo.branch);
 
       return {
         title: `${branchInfo.branch}`,
@@ -44,7 +46,7 @@ function rebaseBranches(options) {
           },
           {
             title: `Rebase`,
-            task: (ctx, task) => rebase(options.from)
+            task: (ctx, task) => rebase(config.refs.referenceOf(branchInfo.branch))
               .catch(() => {
                 ctx.skipPush = true;
                 branchesFailed.push(branchInfo);

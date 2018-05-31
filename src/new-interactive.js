@@ -11,7 +11,7 @@ function runInteractive(options = {}) {
   const currentBranch = currentBranchName();
   let startFromBranches = [config.remoteProduction, toRemote(currentBranch)];
 
-  const refBranches = config.getRefBranches()
+  const refBranches = config.refs.references()
     .filter((name) => branchExists(name))
     .map((name) => toRemote(name));
 

@@ -4,7 +4,7 @@
   "charBranchNameSeparator": "_",
   "remote": "origin",
   "ignores": [],
-  "syncAfterFinish": false,
+  "syncAfterFinish": true,
   "postFinish": "",
   "skipTest": true,
   "branchTypes": {
@@ -13,5 +13,7 @@
     "chore": "chore",
     "docs": "docs"
   },
-  "refs": {}
+  "refs": {
+    "docs_update_readme": "fix_finish_action"
+  }
 }

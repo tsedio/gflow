@@ -1,12 +1,32 @@
+const { Refs } = require('./refs');
 const path = require('path');
 const fs = require('fs');
 const readPkgUp = require('read-pkg-up');
-const { getBranchName } = require('./utils/get-branche-name');
 const { DEFAULT_CONFIG, CONFIG_BASENAME } = require('./base-config');
 
 class Config extends Map {
   constructor() {
     super();
+    this._refs = new Refs({
+      /**
+       *
+       * @param branch
+       * @returns {boolean}
+       */
+      onSet: (branch) => {
+        return branch === this.production;
+      },
+      /**
+       *
+       * @returns {string}
+       */
+      onReferenceOf: () => this.remoteProduction,
+      /**
+       *
+       * @returns {*}
+       */
+      onRemote: () => this.remote
+    });
     this.load();
   }
 
@@ -87,7 +107,7 @@ class Config extends Map {
    * @returns {V | undefined}
    */
   get refs() {
-    return this.get('refs') || {};
+    return this._refs;
   }
 
   /**
@@ -103,86 +123,12 @@ class Config extends Map {
     });
   }
 
-  /**
-   *
-   * @param refBranch
-   * @returns {Array}
-   */
-  getRelatedBranches(refBranch) {
-    const refs = this.get('refs');
-    refBranch = getBranchName(refBranch);
-
-    return Object.keys(refs).reduce((acc, branchName) => {
-      if (refs[branchName] === refBranch) {
-        acc.push(branchName);
-      }
-      return acc;
-    }, []);
-  }
-
-  setBranchRef(branch, refBranch) {
-    if (refBranch === this.production) {
-      this.refs[getBranchName(branch)] = getBranchName(refBranch);
-      this.writeConfiguration();
-    }
-  }
-
-  /**
-   *
-   * @param branch
-   * @returns {*}
-   */
-  hasBranchRef(branch) {
-    return this.refs[getBranchName(branch)];
-  }
-
-  removeBranchRef(branch) {
-
-    if (this.hasBranchRef(branch)) {
-
-      delete this.refs[getBranchName(branch)];
-
-      this.writeConfiguration();
-
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   *
-   * @param branch
-   * @returns {*}
-   */
-  getBranchRef(branch) {
-    return this.refs[getBranchName(branch)];
-  }
-
-  /**
-   *
-   * @param branch
-   * @returns {string}
-   */
-  getRemoteBranchRef(branch) {
-    if (this.hasBranchRef(branch)) {
-      return `${this.remote}/${this.getBranchRef(branch)}`;
-    }
-  }
-
-  /**
-   *
-   * @returns {string[]}
-   */
-  getRefBranches() {
-    return Object.values(this.refs).map(o => `${this.remote}/${o}`);
-  }
-
   load() {
     if (this.promise) {
       return this.promise;
     }
 
+    this._refs.clear();
     this.clear();
     this.setConfig(DEFAULT_CONFIG);
     this.readFromPkg();
@@ -201,7 +147,13 @@ class Config extends Map {
         key = 'develop';
       }
 
-      this.set(key, value);
+      if (this[`_${key}`] instanceof Map) {
+        Object.keys(value).forEach((k) => {
+          this[`_${key}`].set(k, value[k]);
+        });
+      } else {
+        this.set(key, value);
+      }
     });
   }
 
@@ -246,9 +198,22 @@ class Config extends Map {
     fs.writeFileSync(path.join(process.cwd(), CONFIG_BASENAME), JSON.stringify(conf, null, 2), { encoding: 'utf8' });
   }
 
+  /**
+   *
+   * @returns {K}
+   */
   toObject() {
-    return Array.from(this.keys()).reduce((acc, key) => {
-      acc[key] = this.get(key);
+    return Array.from(this.keys()).concat('refs').reduce((acc, key) => {
+      if (this['_' + key] instanceof Map) {
+        acc[key] = {};
+
+        this['_' + key].forEach((v, k) => {
+          acc[key][k] = v;
+        });
+      } else {
+        acc[key] = this.get(key);
+      }
+
       return acc;
     }, {});
   }

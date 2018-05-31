@@ -16,8 +16,8 @@ commander
   })
   .parse(process.argv);
 
-const refBranch = config.getBranchRef(options.branchName) || config.develop;
-const relatedBranches = config.getRelatedBranches(options.branchName);
+const refBranch = config.refs.get(options.branchName) || config.production;
+const relatedBranches = config.refs.relatedBranchesOf(options.branchName);
 
 console.log(`Branch ${chalk.green(options.branchName)} follow ${chalk.green(config.remote + '/' + refBranch)} branch`);
 

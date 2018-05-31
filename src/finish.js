@@ -39,11 +39,9 @@ function runInteractive(options = {}) {
         },
         {
           title: 'Clean references configuration',
-          enabled: config.hasBranchRef(featureBranch),
+          enabled: config.refs.has(featureBranch),
           task: () => {
-
-            config.removeBranchRef(featureBranch);
-
+            config.refs.delete(featureBranch);
             cleanRefs();
 
             addSync('.gflowrc');
