@@ -34,15 +34,16 @@ npm install -g gflow
 
     branches    List all branches status
     finish      Merge the current branch on the production branch and delete it
+    release     Create the release tag on the production branch. Synchronize the dev branch and production branch  (for CI like travis)
     init        Create a new git flow project
     new         Create a new branch from the latest commit of production branch
-    startfeat   Create a new feature branch from the latest commit of production branch
-    startfix    Create a new fix branch from the latest commit of production branch
     push        Rebase the current branch from production and push all commit (run test before)
     publish     Alias of push command
     rebase      Rebase the current branch from production
+    rebase-all  Rebase all branches from production
     fetch       Download objects and refs from another repository (--all and --prune)
-    sync        Synchronise master branch and production
+    sync        Synchronize dev branch and production
+    config      Configuration
     help [cmd]  display help for [cmd]
 ```
 
