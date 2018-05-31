@@ -2,12 +2,12 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-const { config } = require('../src/config');
-const { refreshRepository, rebase, currentBranchName } = require('./git/index');
+const { refreshRepository, rebase } = require('./git/index');
+const { getRebaseInfo } = require('./utils/get-rebase-info');
 
 module.exports = (options) => {
-  const currentBranch = currentBranchName();
-  const fromBranch = options.fromBranch || config.getRemoteBranchRef(currentBranch) || config.remoteProduction;
+  const { branch, fromBranch } = getRebaseInfo(options.fromBranch);
+
   const tasks = new Listr([
     {
       title: 'Refresh local repository',
@@ -23,7 +23,7 @@ module.exports = (options) => {
   return tasks
     .run()
     .then(() => {
-      console.log(chalk.green(figures.tick), `Branch ${chalk.green(currentBranch)} rebased from ${chalk.green(fromBranch)} HEAD`);
+      console.log(chalk.green(figures.tick), `Branch ${chalk.green(branch)} rebased from ${chalk.green(fromBranch)} HEAD`);
     })
     .catch(err => {
       console.error(chalk.red(String(err)));

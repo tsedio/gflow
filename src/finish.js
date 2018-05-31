@@ -4,26 +4,25 @@ const chalk = require('chalk');
 const figures = require('figures');
 const sync = require('./sync');
 const { getBranchName } = require('./utils');
+const { getRebaseInfo } = require('./utils/get-rebase-info');
 const config = require('./config');
 const exec = require('./exec');
 const execa = require('execa');
-const { refreshRepository, currentBranchName, branch, checkout, merge, push, rebase } = require('./git/index');
+const { refreshRepository, branchExists, checkout, branch, merge, push, rebase } = require('./git/index');
 
 const DEFAULT_OPTIONS = {
-  test: true,
-  fromBranch: config.remoteProduction,
-  devBranch: config.remoteDevelop
+  test: true
 };
 
 function runInteractive(options = {}) {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
-  const featureBranch = currentBranchName();
-  const fromRemoteBranch = options.fromBranch;
-  const fromLocalBranch = getBranchName(fromRemoteBranch);
-  const devRemoteBranch = options.devBranch;
-  const devLocalBranch = getBranchName(devRemoteBranch);
 
-  const isEnabled = featureBranch === devLocalBranch && devLocalBranch !== devLocalBranch;
+  const { branch: featureBranch, fromBranch } = getRebaseInfo(options.fromBranch);
+
+  const fromLocalBranch = getBranchName(fromBranch);
+  const devRemoteBranch = config.remoteDevelop;
+  const devLocalBranch = getBranchName(devRemoteBranch);
+  const isEnabled = branch === devLocalBranch && devLocalBranch !== devLocalBranch;
 
   const tasks = new Listr([
     {
@@ -34,23 +33,23 @@ function runInteractive(options = {}) {
       title: 'Rebase and prepare workspace',
       task: () => new Listr([
         {
-          title: `Rebase ${featureBranch} from ${fromRemoteBranch}`,
-          task: () => rebase(fromRemoteBranch)
+          title: `Rebase ${chalk.green(featureBranch)} from ${chalk.green(fromBranch)}`,
+          task: () => rebase(fromBranch)
         },
         {
-          title: `Delete locale branch ${fromLocalBranch}`,
+          title: `Delete locale branch ${chalk.green(fromLocalBranch)}`,
           task: (ctx, task) => branch('-D', fromLocalBranch)
             .catch(() => {
-              task.skip(`Local branch ${fromLocalBranch} not found`);
+              task.skip(`Local branch ${chalk.green(fromLocalBranch)} not found`);
               return Promise.resolve();
             })
         },
         {
-          title: `Checkout branch ${fromLocalBranch}`,
-          task: (ctx, task) => checkout('-b', fromLocalBranch, fromRemoteBranch)
+          title: `Checkout branch ${chalk.green(fromLocalBranch)}`,
+          task: (ctx, task) => checkout('-b', fromLocalBranch, fromBranch)
         },
         {
-          title: `Merging branch ${featureBranch}`,
+          title: `Merging branch ${chalk.green(featureBranch)}`,
           task: () => merge('--no-ff', '-m', `Merge ${featureBranch}`, featureBranch)
         }
       ], { concurrency: false })
@@ -71,14 +70,14 @@ function runInteractive(options = {}) {
             task: () => push(config.remote, fromLocalBranch)
           },
           {
-            title: `Remove branch origin/${featureBranch}`,
-            enabled: isEnabled,
-            task: () => push(config.remote, `:${featureBranch}`)
-          },
-          {
-            title: `Remove branch ${featureBranch}`,
+            title: `Remove branch ${chalk.green(branch)}`,
             enabled: isEnabled,
             task: () => branch('-d', featureBranch)
+          },
+          {
+            title: `Remove branch origin/${chalk.green(featureBranch)}`,
+            enabled: branchExists(featureBranch),
+            task: () => push(config.remote, `:${featureBranch}`)
           }
         ], { concurrency: false })
     }
@@ -87,7 +86,7 @@ function runInteractive(options = {}) {
   return tasks
     .run()
     .then(() => {
-      console.log(chalk.green(figures.tick), 'Branch', featureBranch, ' is finished');
+      console.log(chalk.green(figures.tick), 'Branch', chalk.green(featureBranch), ' is finished');
     })
     .then(() => {
       if (config.postFinish) {

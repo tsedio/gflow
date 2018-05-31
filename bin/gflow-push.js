@@ -10,8 +10,7 @@ commander
   .option('-f, --force', 'Force pushing branch.', (v, t) => t + 1, 0)
   .option('-s, --skip', 'Skip the unit test.', (v, t) => t + 1, 0)
   .action((fromBranch) => {
-    options.fromBranch = fromBranch || config.remoteProduction;
-    options.devBranch = fromBranch || config.remoteDevelop;
+    options.fromBranch = fromBranch;
   })
   .on('--help', () => {
     console.log('');
@@ -27,7 +26,6 @@ commander
 
 push({
   fromBranch: options.fromBranch,
-  devBranch: options.fromBranch,
   test: commander.skip === undefined ? !config.skipTest : !commander.skip,
   force: !!commander.force
 });

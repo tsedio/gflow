@@ -3,7 +3,7 @@ const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
 const config = require('./config');
-const { getBranchName } = require('./utils');
+const { getRebaseInfo } = require('./utils/get-rebase-info');
 const { refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatus } = require('./git');
 
 const DEFAULT_OPTIONS = {
@@ -19,10 +19,10 @@ const DEFAULT_OPTIONS = {
  */
 function doCheck(options) {
 
-  const isBranchExists = branchExists(options.featureBranch);
+  const isBranchExists = branchExists(options.branch);
 
   if (isBranchExists && !options.force) {
-    return checkBranchRemoteStatus(options.featureBranch)
+    return checkBranchRemoteStatus(options.branch)
       .then((result) => options)
       .catch((er) => {
         throw new Error('Remote branch did not changed');
@@ -37,9 +37,7 @@ function doCheck(options) {
  * @param options
  */
 function runInteractive(options = DEFAULT_OPTIONS) {
-  const featureBranch = currentBranchName();
-  const fromBranch = options.fromBranch || config.remoteProduction;
-  const devBranch = getBranchName(options.devBranch || config.remoteDevelop);
+  const { branch, fromBranch } = getRebaseInfo(options.fromBranch);
 
   const tasks = new Listr([
     {
@@ -55,12 +53,8 @@ function runInteractive(options = DEFAULT_OPTIONS) {
             task: () => refreshRepository()
           },
           {
-            title: 'Synchronize',
-            task: () => push('-f', config.remote, 'refs/remotes/' + fromBranch + ':refs/heads/' + devBranch)
-          },
-          {
             title: 'Check status',
-            task: () => doCheck(options)
+            task: () => doCheck({ force: options.force, branch })
           },
           {
             title: `Rebase from ${chalk.green(fromBranch)}`,
@@ -73,14 +67,14 @@ function runInteractive(options = DEFAULT_OPTIONS) {
     require('./test')(options),
     {
       title: 'Push',
-      task: () => push('-u', '-f', config.remote, featureBranch)
+      task: () => push('-u', '-f', config.remote, branch)
     }
   ]);
 
   return tasks
     .run()
     .then(() => {
-      console.log(chalk.green(figures.tick), 'Branch', featureBranch, 'rebased and pushed.');
+      console.log(chalk.green(figures.tick), 'Branch', chalk.green(branch), 'rebased and pushed.');
     })
     .catch(err => {
       console.error(String(err));

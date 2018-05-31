@@ -149,7 +149,9 @@ class Config extends Map {
    * @returns {string}
    */
   getRemoteBranchRef(branch) {
-    return `${this.remote}/${this.getBranchRef(branch)}`;
+    if (this.hasBranchRef(branch)) {
+      return `${this.remote}/${this.getBranchRef(branch)}`;
+    }
   }
 
   /**

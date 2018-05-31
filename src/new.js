@@ -2,7 +2,8 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-const utils = require('./utils');
+const { normalizeBranchName } = require('./utils');
+const config = require('./config');
 const { refreshRepository, checkout } = require('./git/index');
 
 const DEFAULT_OPTIONS = {
@@ -12,7 +13,7 @@ const DEFAULT_OPTIONS = {
 
 function runInteractive(options = DEFAULT_OPTIONS) {
   const from = options.fromBranch;
-  const branchName = utils.normalizeBranchName(options.branchName, options.type);
+  const branchName = normalizeBranchName(options.branchName, options.type);
 
   const tasks = new Listr([
     {
@@ -29,9 +30,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
   return tasks
     .run()
     .then(() => {
-
       config.setBranchRef(branchName, from);
-
       console.log(chalk.green(figures.tick), `New branch ${branchName} created from ${from} HEAD`);
     })
     .catch(err => {

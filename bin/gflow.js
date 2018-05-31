@@ -4,6 +4,7 @@ const commander = require('commander');
 const updateNotifier = require('update-notifier');
 const cliPkg = require('../package.json');
 const pkg = require('../package.json');
+const chalk = require('chalk');
 
 updateNotifier({ pkg, updateCheckInterval: 0 }).notify();
 
