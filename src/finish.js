@@ -81,7 +81,7 @@ function runInteractive(options = {}) {
     },
     require('./install')(options),
     require('./test')(options),
-    /*{
+    {
       title: `Push`,
       task: () => {
         return new Listr([
@@ -101,7 +101,7 @@ function runInteractive(options = {}) {
           }
         ], { concurrency: false });
       }
-    }*/
+    }
   ], {});
 
   return tasks
