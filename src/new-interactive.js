@@ -9,7 +9,11 @@ function runInteractive(options = {}) {
   refreshRepository();
 
   const currentBranch = currentBranchName();
-  let startFromBranches = [config.remoteProduction, toRemote(currentBranch)];
+  let startFromBranches = [config.remoteProduction];
+
+  if (startFromBranches.indexOf(toRemote(currentBranch)) > -1) {
+    startFromBranches = startFromBranches.concat(toRemote(currentBranch));
+  }
 
   const refBranches = config.refs.references()
     .filter((name) => branchExists(name, config.remote))
