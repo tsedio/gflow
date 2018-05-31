@@ -68,7 +68,7 @@ function runInteractive(options = {}) {
         when: !options.fromBranch || currentBranch !== config.develop
       }
     ])
-    .then((answers) => newBranch(answers));
+    .then((answers) => newBranch(Object.assign(options, answers)));
 }
 
 module.exports = runInteractive;

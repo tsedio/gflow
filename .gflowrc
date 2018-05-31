@@ -13,9 +13,5 @@
     "chore": "chore",
     "docs": "docs"
   },
-  "refs": {
-    "other_branch": "feat_refs_branches",
-    "fix_push_and_finish_action": "feat_refs_branches",
-    "fix_typo": "feat_refs_branches"
-  }
+  "refs": {}
 }

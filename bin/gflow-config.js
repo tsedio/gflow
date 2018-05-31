@@ -11,6 +11,6 @@ commander
   .version(cliPkg.version)
   .command('set-ref', 'Set a branch reference for a given branch')
   .command('get-ref', 'Get branch reference')
-  .command('rm-ref', 'Remove reference branch entry')
+  .command('clean-refs', 'Clean entries')
   .parse(process.argv);
 

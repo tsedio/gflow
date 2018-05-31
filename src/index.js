@@ -11,6 +11,7 @@ const finish = require('./finish');
 const sync = require('./sync');
 const init = require('./init');
 const release = require('./release');
+const cleanRefs = require('./clean-refs');
 const config = require('./config');
 
 
@@ -33,5 +34,6 @@ module.exports = {
   init,
   fetch,
   release,
-  config
+  config,
+  cleanRefs
 };

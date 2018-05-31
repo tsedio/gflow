@@ -3,12 +3,13 @@ const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
 const sync = require('./sync');
+const cleanRefs = require('./clean-refs');
 const { getBranchName } = require('./utils');
 const { getRebaseInfo } = require('./utils/get-rebase-info');
 const config = require('./config');
 const exec = require('./exec');
 const execa = require('execa');
-const { refreshRepository, branchExists, checkout, branch, merge, push, rebase } = require('./git/index');
+const { refreshRepository, branchExists, checkout, branch, merge, push, rebase, addSync } = require('./git/index');
 
 const DEFAULT_OPTIONS = {
   test: true
@@ -37,6 +38,19 @@ function runInteractive(options = {}) {
           task: () => rebase(fromBranch)
         },
         {
+          title: 'Clean references configuration',
+          enabled: config.hasBranchRef(featureBranch),
+          task: () => {
+
+            config.removeBranchRef(featureBranch);
+
+            cleanRefs();
+
+            addSync('.gflowrc');
+            return commit('--amend', '--no-edit');
+          }
+        },
+        {
           title: `Delete locale branch ${chalk.green(fromLocalBranch)}`,
           task: (ctx, task) => branch('-D', fromLocalBranch)
             .catch(() => {
@@ -58,8 +72,8 @@ function runInteractive(options = {}) {
     require('./test')(options),
     {
       title: `Push`,
-      task: () =>
-        new Listr([
+      task: () => {
+        return new Listr([
           {
             title: `${devLocalBranch}`,
             enabled: isEnabled,
@@ -70,7 +84,7 @@ function runInteractive(options = {}) {
             task: () => push(config.remote, fromLocalBranch)
           },
           {
-            title: `Remove branch origin/${chalk.green(featureBranch)}`,
+            title: `Remove branch ${chalk.green('origin/' + featureBranch)}`,
             enabled: branchExists(featureBranch),
             task: () => push(config.remote, `:${featureBranch}`)
           },
@@ -79,7 +93,8 @@ function runInteractive(options = {}) {
             enabled: isEnabled,
             task: () => branch('-d', featureBranch)
           }
-        ], { concurrency: false })
+        ], { concurrency: false });
+      }
     }
   ], {});
 

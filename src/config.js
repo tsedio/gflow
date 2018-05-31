@@ -121,8 +121,10 @@ class Config extends Map {
   }
 
   setBranchRef(branch, refBranch) {
-    this.refs[getBranchName(branch)] = getBranchName(refBranch);
-    this.writeConfiguration();
+    if (refBranch === this.production) {
+      this.refs[getBranchName(branch)] = getBranchName(refBranch);
+      this.writeConfiguration();
+    }
   }
 
   /**
@@ -132,6 +134,20 @@ class Config extends Map {
    */
   hasBranchRef(branch) {
     return this.refs[getBranchName(branch)];
+  }
+
+  removeBranchRef(branch) {
+
+    if (this.hasBranchRef(branch)) {
+
+      delete this.refs[getBranchName(branch)];
+
+      this.writeConfiguration();
+
+      return true;
+    }
+
+    return false;
   }
 
   /**
