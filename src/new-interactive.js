@@ -12,7 +12,7 @@ function runInteractive(options = {}) {
   let startFromBranches = [config.remoteProduction, toRemote(currentBranch)];
 
   const refBranches = config.refs.references()
-    .filter((name) => branchExists(name))
+    .filter((name) => branchExists(name, config.remote))
     .map((name) => toRemote(name));
 
   if (refBranches.length) {
@@ -46,7 +46,7 @@ function runInteractive(options = {}) {
             return 'Branch name is required';
           }
 
-          if (branchExists(branch)) {
+          if (branchExists(branch, config.remote)) {
             return `${branch} already exists`;
           }
 

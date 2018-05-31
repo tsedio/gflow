@@ -115,9 +115,9 @@ class Refs extends Map {
     const list = [];
     this
       .forEach((ref, branch) => {
-        if (!branchExists(ref)) {
-          this.delete(branch);
-          list.push({ branch, ref });
+        if (!branchExists(ref, this.callHook('onRemote'))) {
+          // this.delete(branch);
+          // list.push({ branch, ref });;
         }
       });
 

@@ -9,7 +9,7 @@ const { getRebaseInfo } = require('./utils/get-rebase-info');
 const config = require('./config');
 const exec = require('./exec');
 const execa = require('execa');
-const { refreshRepository, branchExists, checkout, branch, merge, push, rebase, addSync } = require('./git/index');
+const { refreshRepository, branchExists, checkout, branch, merge, push, rebase, addSync, commit } = require('./git/index');
 
 const DEFAULT_OPTIONS = {
   test: true
@@ -21,9 +21,23 @@ function runInteractive(options = {}) {
   const { branch: featureBranch, fromBranch } = getRebaseInfo(options.fromBranch);
 
   const fromLocalBranch = getBranchName(fromBranch);
-  const devRemoteBranch = config.remoteDevelop;
-  const devLocalBranch = getBranchName(devRemoteBranch);
-  const isEnabled = branch === devLocalBranch && devLocalBranch !== devLocalBranch;
+
+  // Can't finish a production branch
+  if (featureBranch === config.production) {
+    console.error(chalk.red(`${figures.cross} ${config.production} cannot be finished`));
+    return Promise.resolve();
+  }
+
+  const removeRemoteBranch = () => branchExists(featureBranch, config.remote) && featureBranch !== config.develop;
+  const removeBranch = () => featureBranch !== config.develop && featureBranch !== config.production;
+
+  /*
+  console.log('featureBranch', featureBranch);
+  console.log('fromBranch', fromBranch);
+  console.log('featureBranch will be removed (origin) ?', removeRemoteBranch());
+  console.log('featureBranch will be removed (locale) ?', removeBranch());
+
+  return Promise.resolve(); */
 
   const tasks = new Listr([
     {
@@ -39,7 +53,6 @@ function runInteractive(options = {}) {
         },
         {
           title: 'Clean references configuration',
-          enabled: config.refs.has(featureBranch),
           task: () => {
             config.refs.delete(featureBranch);
             cleanRefs();
@@ -68,32 +81,27 @@ function runInteractive(options = {}) {
     },
     require('./install')(options),
     require('./test')(options),
-    {
+    /*{
       title: `Push`,
       task: () => {
         return new Listr([
           {
-            title: `${devLocalBranch}`,
-            enabled: isEnabled,
-            task: () => push(config.remote, devLocalBranch)
-          },
-          {
-            title: `${fromLocalBranch}`,
+            title: `Push ${fromLocalBranch}`,
             task: () => push(config.remote, fromLocalBranch)
           },
           {
-            title: `Remove branch ${chalk.green('origin/' + featureBranch)}`,
-            enabled: branchExists(featureBranch),
+            title: `Remove ${chalk.green(config.remote + '/' + featureBranch)}`,
+            enabled: removeRemoteBranch,
             task: () => push(config.remote, `:${featureBranch}`)
           },
           {
-            title: `Remove branch ${chalk.green(featureBranch)}`,
-            enabled: isEnabled,
+            title: `Remove ${chalk.green(featureBranch)}`,
+            enabled: removeBranch,
             task: () => branch('-d', featureBranch)
           }
         ], { concurrency: false });
       }
-    }
+    }*/
   ], {});
 
   return tasks

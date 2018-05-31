@@ -35,7 +35,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
         config.writeConfiguration();
       }
 
-      console.log(chalk.green(figures.tick), `New branch ${branchName} created from ${from} HEAD`);
+      console.log(chalk.green(figures.tick), `New branch ${chalk.green(branchName)} created from ${chalk.green(from)} HEAD`);
     })
     .catch(err => {
       console.error(chalk.red(String(err)));

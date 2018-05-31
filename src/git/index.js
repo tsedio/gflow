@@ -191,15 +191,23 @@ module.exports = {
    * @param branch
    * @returns {boolean}
    */
-  branchExists(branch) {
-    return gitSync('branch', '-a')[0].split('\n').indexOf(`remotes/origin/${branch}`) > -1;
+  branchExists(branch, remote = 'origin') {
+    return gitSync('branch', '-a').join('\n').trim().indexOf(`remotes/${remote}/${branch}`) > -1;
   },
   /**
    *
    * @param branch
    */
   checkBranchRemoteStatus(branch) {
-    return gitAsync('cherry', branch, `origin/${branch}`);
+    return gitAsync('cherry', branch, `origin/${branch}`).join('').trim();
+  },
+  /**
+   *
+   * @param branch
+   * @returns {*}
+   */
+  checkBranchRemoteStatusSync(branch) {
+    return gitSync('cherry', branch, `origin/${branch}`);
   },
   /**
    *

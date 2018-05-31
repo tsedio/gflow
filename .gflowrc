@@ -13,7 +13,5 @@
     "chore": "chore",
     "docs": "docs"
   },
-  "refs": {
-    "docs_update_readme": "fix_finish_action"
-  }
+  "refs": {}
 }

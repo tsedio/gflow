@@ -4,7 +4,7 @@ const chalk = require('chalk');
 const figures = require('figures');
 const config = require('./config');
 const { getRebaseInfo } = require('./utils/get-rebase-info');
-const { refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatus } = require('./git');
+const { refreshRepository, push, remote, rebase, currentBranchName, branchExists, checkBranchRemoteStatusSync } = require('./git');
 
 const DEFAULT_OPTIONS = {
   test: false,
@@ -19,15 +19,11 @@ const DEFAULT_OPTIONS = {
  */
 function doCheck(options) {
 
-  const isBranchExists = branchExists(options.branch);
+  const isBranchExists = branchExists(options.branch, config.remote);
 
   if (isBranchExists && !options.force) {
-    return checkBranchRemoteStatus(options.branch)
-      .then((result) => options)
-      .catch((er) => {
-        throw new Error('Remote branch did not changed');
-      });
-
+    const result = checkBranchRemoteStatusSync(options.branch);
+    return result ? Promise.resolve(options) : Promise.reject(new Error('Remote branch changed, check diff before continue'));
   }
   return Promise.resolve(options);
 }

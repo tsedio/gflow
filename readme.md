@@ -61,7 +61,7 @@ This command will configure the production and development branches.
 
 Gflow init command generate a `.glfowrc` config file with some options look like:
 
-```json`
+```json
 {
   "production": "production",
   "develop": "master",
@@ -79,7 +79,7 @@ Gflow init command generate a `.glfowrc` config file with some options look like
   },
   "refs": {}
 }
-``
+```
 
 Key | Description
 ---|---
