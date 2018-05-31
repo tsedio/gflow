@@ -5,24 +5,23 @@ const commander = require('commander');
 const { newBranchInteractive, config } = require('../src');
 const { assert } = require('./utils/assert');
 
-let options = {
-  interactive: true
-};
+let options = {};
 
 commander
   .usage('[feat|fix|chore|docs] <branchName> <fromBranch>')
   .alias('gflow new')
-  .action((_type_, _branchName_, _fromBranch_) => {
-    if (!_branchName_) {
-      _branchName_ = _type_;
-      _fromBranch_ = _branchName_;
-      _type_ = '';
+  .action((...args) => {
+    let [_type_, _branchName_, _fromBranch_] = args.slice(0, args.length - 1);
+
+    if (!config.branchTypes[_type_]) {
+      options.type = '';
+      options.branchName = _type_;
+    } else {
+      options.type = _type_;
+      options.branchName = _branchName_;
     }
 
-    options.interactive = false;
-    options.branchName = _branchName_;
-    options.fromBranch = _fromBranch_ || config.remoteProduction;
-    options.type = _type_ || '';
+    options.fromBranch = _fromBranch_;
   })
   .parse(process.argv);
 

@@ -75,7 +75,7 @@ function runInteractive(options = {}) {
             task: () => push(config.remote, `:${featureBranch}`)
           },
           {
-            title: `Remove branch ${chalk.green(branch)}`,
+            title: `Remove branch ${chalk.green(featureBranch)}`,
             enabled: isEnabled,
             task: () => branch('-d', featureBranch)
           }
