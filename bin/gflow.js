@@ -4,7 +4,6 @@ const commander = require('commander');
 const updateNotifier = require('update-notifier');
 const cliPkg = require('../package.json');
 const pkg = require('../package.json');
-const chalk = require('chalk');
 
 updateNotifier({ pkg, updateCheckInterval: 0 }).notify();
 
@@ -12,7 +11,10 @@ commander
   .version(cliPkg.version)
   .command('branches', 'List all branches status')
   .command('finish', 'Merge the current branch on the production branch and delete it')
-  .command('release', 'Create the release tag on the production branch. Synchronize the dev branch and production branch  (for CI like travis)')
+  .command(
+    'release',
+    'Create the release tag on the production branch. Synchronize the dev branch and production branch  (for CI like travis)'
+  )
   .command('init', 'Create a new git flow project')
   .command('new', 'Create a new branch from the latest commit of production branch')
   .command('push', 'Rebase the current branch from production and push all commit (run test before)')
@@ -23,4 +25,3 @@ commander
   .command('sync', 'Synchronize dev branch and production')
   .command('config', 'Configuration')
   .parse(process.argv);
-

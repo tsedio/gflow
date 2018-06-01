@@ -5,7 +5,10 @@
   "main": "src/index.js",
   "bin": "bin/gflow.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "lint": "eslint \"{bin,src,test}/**/*.js\"",
+    "lint:fix": "eslint --fix  \"{bin,src,test}/**/*.js\"",
+    "prettier": "prettier '{bin,src,test}/**/*.js' --write"
   },
   "author": "Romain Lenzotti",
   "license": "MIT",
@@ -21,9 +24,18 @@
     "inquirer": "^3.3.0",
     "listr": "^0.13.0",
     "lodash": "^4.17.4",
-    "read-pkg-up": "^3.0.0",
     "split": "^1.0.1",
     "update-notifier": "^2.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "husky": "^0.14.3",
+    "prettier": "^1.13.3"
+  },
+  "husky": {
+    "pre-commit": "lint-staged"
   },
   "files": [
     "bin/gflow.js",

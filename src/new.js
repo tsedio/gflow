@@ -1,4 +1,4 @@
-'use strict';
+/* eslint-disable global-require */
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
@@ -30,7 +30,6 @@ function runInteractive(options = DEFAULT_OPTIONS) {
   return tasks
     .run()
     .then(() => {
-
       if (config.refs.set(options.branchName, options.refBranch)) {
         config.writeConfiguration();
       }

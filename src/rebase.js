@@ -1,4 +1,4 @@
-'use strict';
+/* eslint-disable global-require */
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
@@ -6,8 +6,7 @@ const { refreshRepository, rebase } = require('./git/index');
 const { getRebaseInfo } = require('./utils/get-rebase-info');
 const cleanRefs = require('./clean-refs');
 
-module.exports = (options) => {
-
+module.exports = options => {
   cleanRefs();
 
   const { branch, fromBranch } = getRebaseInfo(options.fromBranch);
@@ -33,4 +32,3 @@ module.exports = (options) => {
       console.error(chalk.red(String(err)));
     });
 };
-

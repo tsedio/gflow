@@ -1,5 +1,9 @@
+const normalize = require('./normalize-branch');
+const toRemote = require('./to-remote');
+const getBrancheName = require('./get-branche-name');
+
 module.exports = {
-  ...require('./normalize-branch'),
-  ...require('./to-remote'),
-  ...require('./get-branche-name')
+  ...normalize,
+  ...toRemote,
+  ...getBrancheName
 };

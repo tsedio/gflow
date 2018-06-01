@@ -17,6 +17,8 @@ class Refs extends Map {
     if (!this.callHook('onSet', value)) {
       return super.set(getBranchName(key), value);
     }
+
+    return undefined;
   }
 
   /**
@@ -45,14 +47,12 @@ class Refs extends Map {
   relatedBranchesOf(refBranch) {
     refBranch = getBranchName(refBranch);
 
-    return Array
-      .from(this.keys())
-      .reduce((acc, branchName) => {
-        if (this.get(branchName) === refBranch) {
-          acc.push(branchName);
-        }
-        return acc;
-      }, []);
+    return Array.from(this.keys()).reduce((acc, branchName) => {
+      if (this.get(branchName) === refBranch) {
+        acc.push(branchName);
+      }
+      return acc;
+    }, []);
   }
 
   /**
@@ -64,6 +64,7 @@ class Refs extends Map {
     if (this.has(branch)) {
       return `${this.remote}/${this.get(branch)}`;
     }
+    return undefined;
   }
 
   /**
@@ -113,13 +114,12 @@ class Refs extends Map {
    */
   cleanReferences() {
     const list = [];
-    this
-      .forEach((ref, branch) => {
-        if (!branchExists(ref, this.callHook('onRemote'))) {
-          // this.delete(branch);
-          // list.push({ branch, ref });;
-        }
-      });
+    this.forEach((ref, branch) => {
+      if (!branchExists(ref, this.callHook('onRemote'))) {
+        this.delete(branch);
+        list.push({ branch, ref });
+      }
+    });
 
     return list;
   }

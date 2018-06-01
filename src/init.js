@@ -1,9 +1,8 @@
-'use strict';
 const inquirer = require('inquirer');
 const config = require('./config');
 
-module.exports = () => {
-  return inquirer
+module.exports = () =>
+  inquirer
     .prompt([
       {
         type: 'input',
@@ -24,8 +23,7 @@ module.exports = () => {
         default: config.production
       }
     ])
-    .then((answers) => {
+    .then(answers => {
       config.setConfig(answers);
       config.writeConfiguration();
     });
-};

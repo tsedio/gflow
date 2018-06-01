@@ -1,7 +1,8 @@
-'use strict';
 const chalk = require('chalk');
 const figures = require('figures');
-const { git, addSync, commitSync, resetSync, pushSync, remoteSync } = require('./git/index');
+const {
+  git, addSync, commitSync, resetSync, pushSync, remoteSync
+} = require('./git/index');
 const CI = require('./ci');
 const fs = require('fs');
 const config = require('./config');
@@ -9,14 +10,12 @@ const config = require('./config');
  *
  * @returns {any}
  */
-const readPackage = () => {
-  return writePackage(JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' })));
-};
+const readPackage = () => writePackage(JSON.parse(fs.readFileSync('./package.json', { encoding: 'utf8' })));
 /**
  *
  * @param pkg
  */
-const writePackage = (pkg) => {
+const writePackage = pkg => {
   fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2), { encoding: 'utf8' });
   return pkg;
 };
@@ -27,23 +26,20 @@ module.exports = {
    * @returns {Promise<void>}
    */
   pre() {
-
     const { EMAIL, USER } = CI;
 
     if (CI) {
-
       if (EMAIL && USER) {
         git('config', '--global', 'user.email', EMAIL);
         git('config', '--global', 'user.name', USER);
       }
 
       git('checkout', config.production);
-      git('branch', '--set-upstream-to=' + config.remoteProduction, config.production);
+      git('branch', `--set-upstream-to=${config.remoteProduction}`, config.production);
 
       console.log('[Gflow release]', chalk.green(figures.tick), `${CI.NAME} CI Installed`);
-
     } else {
-      console.log('[Gflow release]', chalk.yellow(figures.cross), `Not in CI environment`);
+      console.log('[Gflow release]', chalk.yellow(figures.cross), 'Not in CI environment');
     }
 
     return Promise.resolve();
@@ -63,7 +59,7 @@ module.exports = {
       const repository = url.replace('https://', '');
 
       if (!CI) {
-        console.log('[Gflow release]', chalk.yellow(figures.cross), `Not in CI environment`);
+        console.log('[Gflow release]', chalk.yellow(figures.cross), 'Not in CI environment');
         return Promise.resolve();
       }
 
@@ -84,7 +80,7 @@ module.exports = {
       console.log('[Gflow release]', 'Reset .npmrc');
       resetSync('--', '.npmrc');
 
-      console.log('[Gflow release]', `Commit files`);
+      console.log('[Gflow release]', 'Commit files');
       commitSync('-m', `${CI.NAME} build: ${CI.BUILD_NUMBER} v${version} [ci skip]`);
 
       console.log('[Gflow release]', `Push to ${config.production}`);
@@ -100,4 +96,3 @@ module.exports = {
     return Promise.resolve();
   }
 };
-

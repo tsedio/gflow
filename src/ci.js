@@ -42,12 +42,10 @@ module.exports = (() => {
       ORIGIN: 'origin-git'
     };
   }
-  /// local
+  // / local
   return {
     NAME: 'LOCAL',
     BUILD_NUMBER: '',
     ORIGIN: 'origin'
   };
-
 })();
-
