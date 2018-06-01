@@ -4,8 +4,12 @@ const chalk = require('chalk');
 const figures = require('figures');
 const { refreshRepository, rebase } = require('./git/index');
 const { getRebaseInfo } = require('./utils/get-rebase-info');
+const cleanRefs = require('./clean-refs');
 
 module.exports = (options) => {
+
+  cleanRefs();
+
   const { branch, fromBranch } = getRebaseInfo(options.fromBranch);
 
   const tasks = new Listr([

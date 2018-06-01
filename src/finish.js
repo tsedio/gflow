@@ -7,7 +7,6 @@ const cleanRefs = require('./clean-refs');
 const { getBranchName } = require('./utils');
 const { getRebaseInfo } = require('./utils/get-rebase-info');
 const config = require('./config');
-const exec = require('./exec');
 const execa = require('execa');
 const { refreshRepository, branchExists, checkout, branch, merge, push, rebase, addSync, commit } = require('./git/index');
 
@@ -15,7 +14,27 @@ const DEFAULT_OPTIONS = {
   test: true
 };
 
+/**
+ *
+ * @param featureBranch
+ * @returns {*|boolean}
+ */
+function removeRemoteBranch(featureBranch) {
+  return branchExists(featureBranch, config.remote) && featureBranch !== config.develop;
+}
+
+/**
+ *
+ * @param featureBranch
+ * @returns {boolean}
+ */
+function removeBranch(featureBranch) {
+  return featureBranch !== config.develop && featureBranch !== config.production;
+}
+
 function runInteractive(options = {}) {
+  cleanRefs();
+
   options = Object.assign({}, DEFAULT_OPTIONS, options);
 
   const { branch: featureBranch, fromBranch } = getRebaseInfo(options.fromBranch);
@@ -28,16 +47,6 @@ function runInteractive(options = {}) {
     return Promise.resolve();
   }
 
-  const removeRemoteBranch = () => branchExists(featureBranch, config.remote) && featureBranch !== config.develop;
-  const removeBranch = () => featureBranch !== config.develop && featureBranch !== config.production;
-
-  /*
-  console.log('featureBranch', featureBranch);
-  console.log('fromBranch', fromBranch);
-  console.log('featureBranch will be removed (origin) ?', removeRemoteBranch());
-  console.log('featureBranch will be removed (locale) ?', removeBranch());
-
-  return Promise.resolve(); */
 
   const tasks = new Listr([
     {
@@ -91,12 +100,12 @@ function runInteractive(options = {}) {
           },
           {
             title: `Remove ${chalk.green(config.remote + '/' + featureBranch)}`,
-            enabled: removeRemoteBranch,
+            enabled: () => removeRemoteBranch(featureBranch),
             task: () => push(config.remote, `:${featureBranch}`)
           },
           {
             title: `Remove ${chalk.green(featureBranch)}`,
-            enabled: removeBranch,
+            enabled: () => removeBranch(featureBranch),
             task: () => branch('-d', featureBranch)
           }
         ], { concurrency: false });
