@@ -1,5 +1,3 @@
-'use strict';
-
 const exec = require('../exec');
 const { spawnSync, execSync } = require('child_process');
 
@@ -8,7 +6,7 @@ function gitSync(cmd, ...args) {
   if (response.error) {
     throw response.error;
   }
-  return response.output.filter(o => !!o).map((o) => o.toString());
+  return response.output.filter(o => !!o).map(o => o.toString());
 }
 
 function gitAsync(cmd, ...args) {
@@ -192,14 +190,21 @@ module.exports = {
    * @returns {boolean}
    */
   branchExists(branch, remote = 'origin') {
-    return gitSync('branch', '-a').join('\n').trim().indexOf(`remotes/${remote}/${branch}`) > -1;
+    return (
+      gitSync('branch', '-a')
+        .join('\n')
+        .trim()
+        .indexOf(`remotes/${remote}/${branch}`) > -1
+    );
   },
   /**
    *
    * @param branch
    */
   checkBranchRemoteStatus(branch) {
-    return gitAsync('cherry', branch, `origin/${branch}`).join('').trim();
+    return gitAsync('cherry', branch, `origin/${branch}`)
+      .join('')
+      .trim();
   },
   /**
    *
@@ -232,10 +237,10 @@ module.exports = {
     const branches = gitSync('branch', ...args)[0].split('\n');
 
     return branches
-      .map((branch) => branch.replace('* ', ''))
-      .filter((branch) => String(branch).indexOf('HEAD') === -1)
-      .filter((branch) => !!branch)
-      .map((o) => o.trim());
+      .map(branch => branch.replace('* ', ''))
+      .filter(branch => String(branch).indexOf('HEAD') === -1)
+      .filter(branch => !!branch)
+      .map(o => o.trim());
   },
   /**
    *
@@ -243,17 +248,26 @@ module.exports = {
    */
   show(branch) {
     const response = execSync(`git show --format="%ci|%cr|%an" ${branch}`);
-    return response.toString().split('\n')[0].trim();
+    return response
+      .toString()
+      .split('\n')[0]
+      .trim();
   },
   /**
    *
    * @returns {Array}
    */
   branchesInfos(...args) {
-    return module.exports.branches(...args)
-      .map((branch) => {
+    return module.exports
+      .branches(...args)
+      .map(branch => {
         const [date, creation, author] = module.exports.show(branch).split('|');
-        return { branch, date, creation, author };
+        return {
+          branch,
+          date,
+          creation,
+          author
+        };
       })
       .sort((info1, info2) => info1.date < info2.date);
   }

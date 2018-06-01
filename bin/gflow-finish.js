@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-'use strict';
+
 const commander = require('commander');
 const { finish, config } = require('../src');
 
@@ -8,7 +8,7 @@ const options = {};
 commander
   .alias('gflow finish <fromBranch>')
   .option('-s, --skip', 'Skip the unit test.', (v, t) => t + 1, 0)
-  .action((fromBranch) => {
+  .action(fromBranch => {
     options.fromBranch = fromBranch;
   })
   .parse(process.argv);
@@ -16,8 +16,6 @@ commander
 finish({
   ...options,
   test: commander.skip === undefined ? !config.skipTest : !commander.skip
-})
-  .catch((er) => {
-    console.log(er);
-  });
-
+}).catch(er => {
+  console.log(er);
+});

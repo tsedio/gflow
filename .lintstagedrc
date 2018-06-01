@@ -1,0 +1,9 @@
+{
+  "concurrent": true,
+  "linters": {
+    "*.js": [
+      "npm run lint:fix",
+      "git add"
+    ]
+  }
+}

@@ -23,9 +23,6 @@ if (config.refs.set(options.branchName, options.refBranch)) {
   config.writeConfiguration();
   console.log(
     chalk.green(figures.tick),
-    `Branch ${chalk.green(options.branchName)} is configured on ${chalk.green(config.remote + '/' + options.refBranch)} reference`
+    `Branch ${chalk.green(options.branchName)} is configured on ${chalk.green(`${config.remote}/${options.refBranch}`)} reference`
   );
 }
-
-
-

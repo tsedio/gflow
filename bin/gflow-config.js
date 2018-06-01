@@ -13,4 +13,3 @@ commander
   .command('get-ref', 'Get branch reference')
   .command('clean-refs', 'Clean entries')
   .parse(process.argv);
-

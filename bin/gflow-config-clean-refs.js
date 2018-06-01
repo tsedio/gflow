@@ -5,13 +5,8 @@ const chalk = require('chalk');
 const figures = require('figures');
 const { cleanRefs } = require('../src');
 
-commander
-  .alias('gflow config clean-refs')
-  .parse(process.argv);
+commander.alias('gflow config clean-refs').parse(process.argv);
 
 cleanRefs();
 
-console.log(
-  chalk.green(figures.tick),
-  `References configuration cleaned`
-);
+console.log(chalk.green(figures.tick), 'References configuration cleaned');

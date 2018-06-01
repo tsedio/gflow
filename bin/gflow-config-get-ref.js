@@ -11,7 +11,7 @@ const options = {
 
 commander
   .alias('gflow config get-ref <branchName>')
-  .action((branchName) => {
+  .action(branchName => {
     options.branchName = branchName;
   })
   .parse(process.argv);
@@ -19,13 +19,12 @@ commander
 const refBranch = config.refs.get(options.branchName) || config.production;
 const relatedBranches = config.refs.relatedBranchesOf(options.branchName);
 
-console.log(`Branch ${chalk.green(options.branchName)} follow ${chalk.green(config.remote + '/' + refBranch)} branch`);
+console.log(`Branch ${chalk.green(options.branchName)} follow ${chalk.green(`${config.remote}/${refBranch}`)} branch`);
 
 if (relatedBranches.length) {
   console.log(`Branch ${chalk.green(options.branchName)} has theses related branches:`);
 
-  relatedBranches.forEach((branch) => {
+  relatedBranches.forEach(branch => {
     console.log('- ', branch);
   });
 }
-

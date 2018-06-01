@@ -1,4 +1,3 @@
-'use strict';
 const git = require('./git');
 const branches = require('./branches');
 const fetch = require('./fetch');
@@ -14,9 +13,8 @@ const release = require('./release');
 const cleanRefs = require('./clean-refs');
 const config = require('./config');
 
-
 // TODO do not remove
-process.on('unhandledRejection', (reason, p) => {
+process.on('unhandledRejection', () => {
   // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
   // application specific logging, throwing an error, or other logic here
 });

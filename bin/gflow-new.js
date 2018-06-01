@@ -1,17 +1,15 @@
 #!/usr/bin/env node
-'use strict';
 
 const commander = require('commander');
 const { newBranchInteractive, config } = require('../src');
-const { assert } = require('./utils/assert');
 
-let options = {};
+const options = {};
 
 commander
   .usage('[feat|fix|chore|docs] <branchName> <fromBranch>')
   .alias('gflow new')
   .action((...args) => {
-    let [_type_, _branchName_, _fromBranch_] = args.slice(0, args.length - 1);
+    const [_type_, _branchName_, _fromBranch_] = args.slice(0, args.length - 1);
 
     if (!config.branchTypes[_type_]) {
       options.type = '';
@@ -25,4 +23,4 @@ commander
   })
   .parse(process.argv);
 
-newBranchInteractive(options).catch((er) => console.error(er));
+newBranchInteractive(options).catch(er => console.error(er));

@@ -3,7 +3,7 @@ const Listr = require('listr');
 const { refreshRepository } = require('./git');
 
 function runInteractive() {
-  let output = [];
+  const output = [];
   const tasks = new Listr([
     {
       title: 'Refresh local repository',
@@ -19,7 +19,8 @@ function runInteractive() {
     }
   ]);
 
-  return tasks.run()
+  return tasks
+    .run()
     .then(() => console.log(output.filter(l => !l.match('Fetching')).join('\n')))
     .catch(err => {
       console.error(chalk.red(String(err)));

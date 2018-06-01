@@ -1,8 +1,9 @@
-'use strict';
 const inquirer = require('inquirer');
 const config = require('./config');
 const newBranch = require('./new');
-const { currentBranchName, refreshRepository, branchesInfos, branchExists } = require('./git');
+const {
+  currentBranchName, refreshRepository, branchesInfos, branchExists
+} = require('./git');
 const { toRemote, normalizeBranchName } = require('./utils');
 
 function runInteractive(options = {}) {
@@ -15,9 +16,10 @@ function runInteractive(options = {}) {
     startFromBranches = startFromBranches.concat(toRemote(currentBranch));
   }
 
-  const refBranches = config.refs.references()
-    .filter((name) => branchExists(name, config.remote))
-    .map((name) => toRemote(name));
+  const refBranches = config.refs
+    .references()
+    .filter(name => branchExists(name, config.remote))
+    .map(name => toRemote(name));
 
   if (refBranches.length) {
     startFromBranches = startFromBranches.concat(new inquirer.Separator(), refBranches);
@@ -25,7 +27,7 @@ function runInteractive(options = {}) {
 
   const remoteBranches = branchesInfos('-r')
     .map(info => info.branch)
-    .filter((name) => startFromBranches.indexOf(name) === -1 && !(name === config.remoteDevelop || name === config.remoteProduction));
+    .filter(name => startFromBranches.indexOf(name) === -1 && !(name === config.remoteDevelop || name === config.remoteProduction));
 
   if (remoteBranches.length) {
     startFromBranches = startFromBranches.concat(new inquirer.Separator(), remoteBranches);
@@ -72,7 +74,7 @@ function runInteractive(options = {}) {
         when: !options.fromBranch || currentBranch !== config.develop
       }
     ])
-    .then((answers) => newBranch(Object.assign(options, answers)));
+    .then(answers => newBranch(Object.assign(options, answers)));
 }
 
 module.exports = runInteractive;
