@@ -12,7 +12,7 @@ function runInteractive(options = {}) {
   const currentBranch = currentBranchName();
   let startFromBranches = [config.remoteProduction];
 
-  if (startFromBranches.indexOf(toRemote(currentBranch)) > -1) {
+  if (startFromBranches.indexOf(toRemote(currentBranch)) === -1) {
     startFromBranches = startFromBranches.concat(toRemote(currentBranch));
   }
 
