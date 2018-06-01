@@ -2,9 +2,9 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-const { refreshRepository, rebase } = require('./git/index');
-const { getRebaseInfo } = require('./utils/get-rebase-info');
-const cleanRefs = require('./clean-refs');
+const git = require('../git/index');
+const { getRebaseInfo } = require('../utils/get-rebase-info');
+const { cleanRefs } = require('../config/clean-refs');
 
 module.exports = options => {
   cleanRefs();
@@ -14,13 +14,13 @@ module.exports = options => {
   const tasks = new Listr([
     {
       title: 'Refresh local repository',
-      task: () => refreshRepository()
+      task: () => git.refreshRepository()
     },
     {
       title: `Rebase current branch from ${chalk.green(fromBranch)}`,
-      task: () => rebase(fromBranch)
+      task: () => git.rebase(fromBranch)
     },
-    require('./install')(options)
+    require('../install/index')(options)
   ]);
 
   return tasks

@@ -2,8 +2,8 @@
 const chalk = require('chalk');
 const figures = require('figures');
 const inquirer = require('inquirer');
-const config = require('./config');
-const { branchesInfos, currentBranchName, checkout } = require('./git');
+const config = require('../config/config');
+const git = require('../git/index');
 
 const BRANCHES = new Map();
 
@@ -36,14 +36,14 @@ function switchBranch(branch) {
   let observable;
 
   if (branchInfo) {
-    observable = checkout(branchInfo.local ? branchInfo.local.branch : branchInfo.branch);
+    observable = git.checkout(branchInfo.local ? branchInfo.local.branch : branchInfo.branch);
   } else {
     const branchName = branch.split('/')[1];
     branchInfo = BRANCHES.get(branchName);
     if (branchInfo.local) {
-      observable = checkout(branchInfo.local.branch);
+      observable = git.checkout(branchInfo.local.branch);
     } else {
-      observable = checkout('-b', branchName, branchInfo.branch);
+      observable = git.checkout('-b', branchName, branchInfo.branch);
     }
   }
 
@@ -59,8 +59,8 @@ function switchBranch(branch) {
  * @returns {Array.<*>}
  */
 function branches() {
-  const remoteBranches = branchesInfos('-r');
-  const localBranches = branchesInfos();
+  const remoteBranches = git.branchesInfos('-r');
+  const localBranches = git.branchesInfos();
 
   remoteBranches.forEach(branchInfo => {
     const branch = branchInfo.branch.split('/')[1];
@@ -109,7 +109,7 @@ function branches() {
  */
 function buildBranchesList() {
   let isUnderProduction = false;
-  const currentBranch = currentBranchName();
+  const currentBranch = git.currentBranchName();
 
   return branches().map(info => {
     const branch = info.branch.split('/')[1] || info.branch;

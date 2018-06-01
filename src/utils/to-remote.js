@@ -7,7 +7,7 @@ module.exports = {
    * @returns {string}
    */
   toRemote(branch) {
-    const info = branch.split('/');
-    return `${config.remote}/${info[1] || info[0]}`;
+    branch = branch.replace(`${config.remote}/`);
+    return `${config.remote}/${branch}`;
   }
 };

@@ -2,12 +2,10 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-const config = require('./config');
-const { getRebaseInfo } = require('./utils/get-rebase-info');
-const {
-  refreshRepository, push, remote, rebase, branchExists, checkBranchRemoteStatusSync
-} = require('./git');
-const cleanRefs = require('./clean-refs');
+const config = require('../config/index');
+const git = require('../git/index');
+const { getRebaseInfo } = require('../utils/get-rebase-info');
+const { cleanRefs } = require('../config/clean-refs');
 
 const DEFAULT_OPTIONS = {
   test: false,
@@ -21,10 +19,10 @@ const DEFAULT_OPTIONS = {
  * @returns {*}
  */
 function doCheck(options) {
-  const isBranchExists = branchExists(options.branch, config.remote);
+  const isBranchExists = git.branchExists(options.branch, config.remote);
 
   if (isBranchExists && !options.force) {
-    const result = checkBranchRemoteStatusSync(options.branch);
+    const result = git.checkBranchRemoteStatusSync(options.branch);
     return result ? Promise.resolve(options) : Promise.reject(new Error('Remote branch changed, check diff before continue'));
   }
   return Promise.resolve(options);
@@ -47,11 +45,11 @@ function runInteractive(options = DEFAULT_OPTIONS) {
           [
             {
               title: 'Remote',
-              task: () => remote('-v')
+              task: () => git.remote('-v')
             },
             {
               title: 'Fetch',
-              task: () => refreshRepository()
+              task: () => git.refreshRepository()
             },
             {
               title: 'Check status',
@@ -59,17 +57,17 @@ function runInteractive(options = DEFAULT_OPTIONS) {
             },
             {
               title: `Rebase from ${chalk.green(fromBranch)}`,
-              task: () => rebase(fromBranch)
+              task: () => git.rebase(fromBranch)
             }
           ],
           { concurrent: false }
         )
     },
-    require('./install')(options),
-    require('./test')(options),
+    require('../install/index')(options),
+    require('../test/index')(options),
     {
       title: 'Push',
-      task: () => push('-u', '-f', config.remote, branch)
+      task: () => git.push('-u', '-f', config.remote, branch)
     }
   ]);
 

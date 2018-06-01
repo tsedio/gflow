@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback */
 const exec = require('../exec');
 const { spawnSync, execSync } = require('child_process');
 
@@ -14,10 +15,31 @@ function gitAsync(cmd, ...args) {
 }
 
 module.exports = {
+  /**
+   * @deprecated
+   */
   git: gitSync,
+  /**
+   * @deprecated
+   */
   egit: gitAsync,
-  gitSync,
-  gitAsync,
+  /**
+   *
+   */
+  sync: gitSync,
+  /**
+   *
+   */
+  async: gitAsync,
+  /**
+   *
+   * @param args
+   * @returns {*}
+   */
+  config(...args) {
+    return gitSync('config', ...args).join('').trim();
+  },
+
   /**
    *
    * @param args
@@ -202,9 +224,7 @@ module.exports = {
    * @param branch
    */
   checkBranchRemoteStatus(branch) {
-    return gitAsync('cherry', branch, `origin/${branch}`)
-      .join('')
-      .trim();
+    return gitAsync('cherry', branch, `origin/${branch}`).join('').trim();
   },
   /**
    *
@@ -270,5 +290,10 @@ module.exports = {
         };
       })
       .sort((info1, info2) => info1.date < info2.date);
+  },
+
+  hasStagedChanges() {
+    return gitSync('status', '-s').join('').trim().length > 0;
   }
 };
+

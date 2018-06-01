@@ -1,17 +1,18 @@
-const git = require('./git');
-const branches = require('./branches');
-const fetch = require('./fetch');
-const newBranch = require('./new');
-const newBranchInteractive = require('./new-interactive');
-const rebase = require('./rebase');
-const rebaseAll = require('./rebaseAll');
-const push = require('./push');
-const finish = require('./finish');
-const sync = require('./sync');
-const init = require('./init');
-const release = require('./release');
-const cleanRefs = require('./clean-refs');
 const config = require('./config');
+const git = require('./git');
+const branches = require('./command/branches');
+const fetch = require('./command/fetch');
+const newBranch = require('./command/new');
+const newBranchInteractive = require('./command/new-interactive');
+const rebase = require('./command/rebase');
+const rebaseAll = require('./command/rebaseAll');
+const push = require('./command/push');
+const finish = require('./command/finish');
+const sync = require('./command/sync');
+const init = require('./command/init');
+const release = require('./command/release');
+const { cleanRefs } = require('./config/clean-refs');
+const { commitConfig } = require('./config/commit-config');
 
 // TODO do not remove
 process.on('unhandledRejection', () => {
@@ -33,5 +34,6 @@ module.exports = {
   fetch,
   release,
   config,
-  cleanRefs
+  cleanRefs,
+  commitConfig
 };

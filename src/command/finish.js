@@ -1,16 +1,17 @@
-/* eslint-disable global-require */
 const Listr = require('listr');
+
+/* eslint-disable global-require */
 const chalk = require('chalk');
 const figures = require('figures');
-const sync = require('./sync');
-const cleanRefs = require('./clean-refs');
-const { getBranchName } = require('./utils');
-const { getRebaseInfo } = require('./utils/get-rebase-info');
-const config = require('./config');
 const execa = require('execa');
-const {
-  refreshRepository, branchExists, checkout, branch, merge, push, rebase, addSync, commit
-} = require('./git/index');
+const sync = require('./sync');
+const config = require('../config');
+const git = require('../git');
+const { cleanRefs } = require('../config/clean-refs');
+const { getBranchName } = require('../utils/get-branche-name');
+const { getRebaseInfo } = require('../utils/get-rebase-info');
+const { commitConfig } = require('../config/commit-config');
+
 
 const DEFAULT_OPTIONS = {
   test: true
@@ -22,7 +23,7 @@ const DEFAULT_OPTIONS = {
  * @returns {*|boolean}
  */
 function removeRemoteBranch(featureBranch) {
-  return branchExists(featureBranch, config.remote) && featureBranch !== config.develop;
+  return git.branchExists(featureBranch, config.remote) && featureBranch !== config.develop;
 }
 
 /**
@@ -53,7 +54,7 @@ function runInteractive(options = {}) {
     [
       {
         title: 'Refresh local repository',
-        task: () => refreshRepository()
+        task: () => git.refreshRepository()
       },
       {
         title: 'Rebase and prepare workspace',
@@ -62,40 +63,37 @@ function runInteractive(options = {}) {
             [
               {
                 title: `Rebase ${chalk.green(featureBranch)} from ${chalk.green(fromBranch)}`,
-                task: () => rebase(fromBranch)
+                task: () => git.rebase(fromBranch)
               },
               {
                 title: 'Clean references configuration',
                 task: () => {
                   config.refs.delete(featureBranch);
-                  cleanRefs();
-
-                  addSync('.gflowrc');
-                  return commit('--amend', '--no-edit');
+                  return commitConfig();
                 }
               },
               {
                 title: `Delete locale branch ${chalk.green(fromLocalBranch)}`,
                 task: (ctx, task) =>
-                  branch('-D', fromLocalBranch).catch(() => {
+                  git.branch('-D', fromLocalBranch).catch(() => {
                     task.skip(`Local branch ${chalk.green(fromLocalBranch)} not found`);
                     return Promise.resolve();
                   })
               },
               {
                 title: `Checkout branch ${chalk.green(fromLocalBranch)}`,
-                task: () => checkout('-b', fromLocalBranch, fromBranch)
+                task: () => git.checkout('-b', fromLocalBranch, fromBranch)
               },
               {
                 title: `Merging branch ${chalk.green(featureBranch)}`,
-                task: () => merge('--no-ff', '-m', `Merge ${featureBranch}`, featureBranch)
+                task: () => git.merge('--no-ff', '-m', `Merge ${featureBranch}`, featureBranch)
               }
             ],
             { concurrency: false }
           )
       },
-      require('./install')(options),
-      require('./test')(options),
+      require('../install/index')(options),
+      require('../test/index')(options),
       {
         title: 'Push',
         task: () =>
@@ -103,17 +101,17 @@ function runInteractive(options = {}) {
             [
               {
                 title: `Push ${fromLocalBranch}`,
-                task: () => push(config.remote, fromLocalBranch)
+                task: () => git.push(config.remote, fromLocalBranch)
               },
               {
                 title: `Remove ${chalk.green(`${config.remote}/${featureBranch}`)}`,
                 enabled: () => removeRemoteBranch(featureBranch),
-                task: () => push(config.remote, `:${featureBranch}`)
+                task: () => git.push(config.remote, `:${featureBranch}`)
               },
               {
                 title: `Remove ${chalk.green(featureBranch)}`,
                 enabled: () => removeBranch(featureBranch),
-                task: () => branch('-d', featureBranch)
+                task: () => git.branch('-d', featureBranch)
               }
             ],
             { concurrency: false }

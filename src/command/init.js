@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const config = require('./config');
+const config = require('../config/index');
 
 module.exports = () =>
   inquirer
