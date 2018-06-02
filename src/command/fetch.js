@@ -1,6 +1,6 @@
 const chalk = require('chalk');
 const Listr = require('listr');
-const { refreshRepository } = require('./git');
+const git = require('../git/index');
 
 function runInteractive() {
   const output = [];
@@ -8,7 +8,7 @@ function runInteractive() {
     {
       title: 'Refresh local repository',
       task: () => {
-        const observable = refreshRepository();
+        const observable = git.refreshRepository();
 
         observable.subscribe(result => {
           output.push(result);

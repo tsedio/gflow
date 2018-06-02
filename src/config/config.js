@@ -107,6 +107,10 @@ class Config extends Map {
     return this._refs;
   }
 
+  hasChanged() {
+
+  }
+
   /**
    *
    * @returns {{label: *, value: string}[]}

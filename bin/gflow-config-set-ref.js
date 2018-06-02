@@ -3,7 +3,7 @@
 const commander = require('commander');
 const chalk = require('chalk');
 const figures = require('figures');
-const { config } = require('../src');
+const { config, commitConfig } = require('../src');
 const { assert } = require('./utils/assert');
 
 const options = {};
@@ -20,7 +20,8 @@ assert(!options.branchName, 'The branchName is required');
 assert(!options.refBranch, 'The refBranch is required');
 
 if (config.refs.set(options.branchName, options.refBranch)) {
-  config.writeConfiguration();
+  commitConfig();
+
   console.log(
     chalk.green(figures.tick),
     `Branch ${chalk.green(options.branchName)} is configured on ${chalk.green(`${config.remote}/${options.refBranch}`)} reference`

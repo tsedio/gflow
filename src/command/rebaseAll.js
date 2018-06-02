@@ -2,11 +2,9 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-const config = require('./config');
-const {
-  refreshRepository, rebase, branchesInfos, checkout, push, branch
-} = require('./git/index');
-const { getBrancheName } = require('./utils/get-branche-name');
+const config = require('../config');
+const git = require('../git/index');
+const { getBrancheName } = require('../utils/get-branche-name');
 
 /**
  *
@@ -14,7 +12,7 @@ const { getBrancheName } = require('./utils/get-branche-name');
  * @returns {Listr}
  */
 function rebaseBranches(options) {
-  const remoteBranches = branchesInfos('-r');
+  const remoteBranches = git.branchesInfos('-r');
 
   const rules = Object.concat(
     [options.production, options.master, 'legacy', /\d+\.\d+\.\d+/gi],
@@ -35,31 +33,31 @@ function rebaseBranches(options) {
             task: (ctx) => {
               ctx.branchesFailed = branchesFailed;
               ctx.skipPush = false;
-              return checkout('-b', `branch-${branchName}`, branchInfo.branch);
+              return git.checkout('-b', `branch-${branchName}`, branchInfo.branch);
             }
           },
           {
             title: 'Rebase',
             task: (ctx, task) =>
-              rebase(config.refs.referenceOf(branchInfo.branch)).catch(() => {
+              git.rebase(config.refs.referenceOf(branchInfo.branch)).catch(() => {
                 ctx.skipPush = true;
                 branchesFailed.push(branchInfo);
                 task.skip('Rebase failed');
-                return rebase('--abort');
+                return git.rebase('--abort');
               })
           },
           {
             title: 'Push',
             skip: ctx => ctx.skipPush,
-            task: () => push('-f', config.remote, `HEAD:${branchName}`)
+            task: () => git.push('-f', config.remote, `HEAD:${branchName}`)
           },
           {
             title: 'Clean',
-            task: () => checkout(options.production)
+            task: () => git.checkout(options.production)
           },
           {
             title: 'Remove',
-            task: () => branch('-D', `branch-${branchName}`)
+            task: () => git.branch('-D', `branch-${branchName}`)
           }
         ])
     };
@@ -72,7 +70,7 @@ function runInteractive(options) {
   const tasks = new Listr([
     {
       title: 'Refresh local repository',
-      task: () => refreshRepository(options)
+      task: () => git.refreshRepository(options)
     },
     {
       title: 'Rebase branches',

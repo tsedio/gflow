@@ -1,11 +1,9 @@
+const fs = require('fs');
 const chalk = require('chalk');
 const figures = require('figures');
-const {
-  git, addSync, commitSync, resetSync, pushSync, remoteSync
-} = require('./git/index');
-const CI = require('./ci');
-const fs = require('fs');
-const config = require('./config');
+const git = require('../git/index');
+const CI = require('../config/ci');
+const config = require('../config');
 /**
  *
  * @returns {any}
@@ -30,12 +28,12 @@ module.exports = {
 
     if (CI) {
       if (EMAIL && USER) {
-        git('config', '--global', 'user.email', EMAIL);
-        git('config', '--global', 'user.name', USER);
+        git.config('--global', 'user.email', EMAIL);
+        git.config('--global', 'user.name', USER);
       }
 
-      git('checkout', config.production);
-      git('branch', `--set-upstream-to=${config.remoteProduction}`, config.production);
+      git.checkoutSync(config.production);
+      git.branchSync(`--set-upstream-to=${config.remoteProduction}`, config.production);
 
       console.log('[Gflow release]', chalk.green(figures.tick), `${CI.NAME} CI Installed`);
     } else {
@@ -71,23 +69,23 @@ module.exports = {
 
       if (GH_TOKEN) {
         console.log('[Gflow release]', `Configure remote repository ${repository}`);
-        remoteSync('add', CI.ORIGIN, `https://${GH_TOKEN}@${repository}`);
+        git.remoteSync('add', CI.ORIGIN, `https://${GH_TOKEN}@${repository}`);
       }
 
       console.log('[Gflow release]', 'Adding files to commit');
-      addSync('-A');
+      git.addSync('-A');
 
       console.log('[Gflow release]', 'Reset .npmrc');
-      resetSync('--', '.npmrc');
+      git.resetSync('--', '.npmrc');
 
       console.log('[Gflow release]', 'Commit files');
-      commitSync('-m', `${CI.NAME} build: ${CI.BUILD_NUMBER} v${version} [ci skip]`);
+      git.commitSync('-m', `${CI.NAME} build: ${CI.BUILD_NUMBER} v${version} [ci skip]`);
 
       console.log('[Gflow release]', `Push to ${config.production}`);
-      pushSync('--quiet', '--set-upstream', CI.ORIGIN, config.production);
+      git.pushSync('--quiet', '--set-upstream', CI.ORIGIN, config.production);
 
       console.log('[Gflow release]', `Sync ${config.develop} with ${config.production}`);
-      pushSync('-f', CI.ORIGIN, `${config.production}:refs/heads/${config.develop}`);
+      git.pushSync('-f', CI.ORIGIN, `${config.production}:refs/heads/${config.develop}`);
 
       console.log(chalk.green(figures.tick), 'Release tag are applied on git');
     } catch (er) {

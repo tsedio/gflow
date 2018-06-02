@@ -1,5 +1,4 @@
-const { getBranchName } = require('./utils/get-branche-name');
-const { branchExists } = require('./git');
+const { branchExists } = require('../git/index');
 
 class Refs extends Map {
   constructor(hooks) {
@@ -15,7 +14,10 @@ class Refs extends Map {
    */
   set(key, value) {
     if (!this.callHook('onSet', value)) {
-      return super.set(getBranchName(key), value);
+      key = key.replace(`${this.callHook('onRemote')}/`, '');
+      value = value.replace(`${this.callHook('onRemote')}/`, '');
+
+      return super.set(key, value);
     }
 
     return undefined;
@@ -27,7 +29,9 @@ class Refs extends Map {
    * @returns {V | undefined}
    */
   get(key) {
-    return super.get(getBranchName(key));
+    key = key.replace(`${this.callHook('onRemote')}/`, '');
+
+    return super.get(key);
   }
 
   /**
@@ -36,7 +40,9 @@ class Refs extends Map {
    * @returns {V | undefined}
    */
   has(key) {
-    return super.get(getBranchName(key));
+    key = key.replace(`${this.callHook('onRemote')}/`, '');
+
+    return super.get(key);
   }
 
   /**
@@ -45,7 +51,7 @@ class Refs extends Map {
    * @returns {Array}
    */
   relatedBranchesOf(refBranch) {
-    refBranch = getBranchName(refBranch);
+    refBranch = refBranch.replace(`${this.callHook('onRemote')}/`, '');
 
     return Array.from(this.keys()).reduce((acc, branchName) => {
       if (this.get(branchName) === refBranch) {

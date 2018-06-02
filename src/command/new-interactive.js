@@ -1,31 +1,30 @@
 const inquirer = require('inquirer');
-const config = require('./config');
+const config = require('../config/index');
 const newBranch = require('./new');
-const {
-  currentBranchName, refreshRepository, branchesInfos, branchExists
-} = require('./git');
-const { toRemote, normalizeBranchName } = require('./utils');
+const git = require('../git/index');
+const { normalizeBranchName } = require('../utils/normalize-branch');
+const { toRemote } = require('../utils/to-remote');
 
 function runInteractive(options = {}) {
-  refreshRepository();
+  git.refreshRepository();
 
-  const currentBranch = currentBranchName();
+  const currentBranch = git.currentBranchName();
   let startFromBranches = [config.remoteProduction];
 
-  if (startFromBranches.indexOf(toRemote(currentBranch)) === -1) {
+  if (startFromBranches.indexOf(toRemote(currentBranch)) === -1 && git.branchExists(currentBranch, config.remote)) {
     startFromBranches = startFromBranches.concat(toRemote(currentBranch));
   }
 
   const refBranches = config.refs
     .references()
-    .filter(name => branchExists(name, config.remote))
+    .filter(name => git.branchExists(name, config.remote))
     .map(name => toRemote(name));
 
   if (refBranches.length) {
     startFromBranches = startFromBranches.concat(new inquirer.Separator(), refBranches);
   }
 
-  const remoteBranches = branchesInfos('-r')
+  const remoteBranches = git.branchesInfos('-r')
     .map(info => info.branch)
     .filter(name => startFromBranches.indexOf(name) === -1 && !(name === config.remoteDevelop || name === config.remoteProduction));
 
@@ -52,7 +51,7 @@ function runInteractive(options = {}) {
             return 'Branch name is required';
           }
 
-          if (branchExists(branch, config.remote)) {
+          if (git.branchExists(branch, config.remote)) {
             return `${branch} already exists`;
           }
 
