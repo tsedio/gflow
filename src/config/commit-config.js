@@ -14,7 +14,7 @@ module.exports = {
       const indexOf = git.sync('log', '-1').join('|').indexOf('chore: gflow update configuration [ci skip]');
 
       if (indexOf === -1) {
-        return git.commit('-m', '"chore: gflow update configuration [ci skip]"', '--no-verify');
+        return git.commit('-m', 'chore: gflow update configuration [ci skip]', '--no-verify');
       }
 
       return git.commit('--amend', '--no-edit');
