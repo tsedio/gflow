@@ -12,7 +12,7 @@ class Config extends Map {
        * @param branch
        * @returns {boolean}
        */
-      onSet: branch => branch === this.production,
+      onSet: branch => branch.replace(`${this.remote}/`, '') === this.production,
       /**
        *
        * @returns {string}
