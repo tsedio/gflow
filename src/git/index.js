@@ -292,8 +292,17 @@ module.exports = {
       .sort((info1, info2) => info1.date < info2.date);
   },
 
-  hasStagedChanges() {
-    return gitSync('status', '-s').join('').trim().length > 0;
+  hasStagedChanges(cb) {
+    const list = gitSync('status', '-s').filter(o => !!o);
+
+    if (list.length > 0) {
+      if (cb) {
+        return list.find(cb);
+      }
+      return true;
+    }
+
+    return false;
   }
 };
 
