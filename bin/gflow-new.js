@@ -5,8 +5,10 @@ const { newBranchInteractive, config } = require('../src');
 
 const options = {};
 
+const branches = Object.keys(config.branchTypes).join('|');
+
 commander
-  .usage('[feat|fix|chore|docs] <branchName> <fromBranch>')
+  .usage(`[${branches}] <branchName> <fromBranch>`)
   .alias('gflow new')
   .action((...args) => {
     const [_type_, _branchName_, _fromBranch_] = args.slice(0, args.length - 1);
