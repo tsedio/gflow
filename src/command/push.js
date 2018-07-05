@@ -67,7 +67,7 @@ function runInteractive(options = DEFAULT_OPTIONS) {
     require('../test/index')(options),
     {
       title: 'Push',
-      task: () => git.push('-u', '-f', config.remote, branch)
+      task: () => git.push('-u', '-f', config.remote, branch, '--no-verify')
     }
   ]);
 
