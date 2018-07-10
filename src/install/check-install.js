@@ -5,7 +5,7 @@ const git = require('../git');
 module.exports = {
 
   getHash() {
-    const { pkg } = readPkgUp.sync();
+    const { pkg = {} } = readPkgUp.sync();
     let hash = '';
 
     if (pkg.dependencies) {
