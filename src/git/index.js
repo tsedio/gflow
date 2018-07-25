@@ -293,7 +293,7 @@ module.exports = {
   },
 
   hasStagedChanges(cb) {
-    const list = gitSync('status', '-s').filter(o => !!o);
+    const list = gitSync('status', '-s').filter(o => !!o).map(o => o.trim());
 
     if (list.length > 0) {
       if (cb) {

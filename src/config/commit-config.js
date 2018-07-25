@@ -8,7 +8,7 @@ module.exports = {
   commitConfig() {
     config.writeConfiguration();
 
-    if (git.hasStagedChanges((item) => item === '.gflowrc')) {
+    if (git.hasStagedChanges((item) => item === 'M .gflowrc')) {
       git.addSync('.gflowrc');
 
       const indexOf = git.sync('log', '-1').join('|').indexOf('chore: gflow update configuration [ci skip]');
