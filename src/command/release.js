@@ -64,7 +64,7 @@ module.exports = {
       console.log('[Gflow release]', `Generate release tag for v${version}`);
       console.log('[Gflow release]', `REPOSITORY:      ${repository}`);
       console.log('[Gflow release]', `RELEASE_BRANCH:  ${config.production}`);
-      console.log('[Gflow release]', `MASTER_BRANCH:   ${config.master}`);
+      console.log('[Gflow release]', `DEVELOP_BRANCH:   ${config.develop}`);
       console.log('[Gflow release]', `BUILD:           ${CI.BUILD_NUMBER}`);
 
       if (GH_TOKEN) {
