@@ -5,7 +5,6 @@ const figures = require('figures');
 const config = require('../config/index');
 const git = require('../git/index');
 const { getRebaseInfo } = require('../utils/get-rebase-info');
-const { cleanRefs } = require('../config/clean-refs');
 
 const DEFAULT_OPTIONS = {
   test: false,
@@ -33,8 +32,6 @@ function doCheck(options) {
  * @param options
  */
 function runInteractive(options = DEFAULT_OPTIONS) {
-  cleanRefs();
-
   const { branch, fromBranch } = getRebaseInfo(options.fromBranch);
 
   const tasks = new Listr([

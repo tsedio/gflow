@@ -11,8 +11,6 @@ const finish = require('./command/finish');
 const sync = require('./command/sync');
 const init = require('./command/init');
 const release = require('./command/release');
-const { cleanRefs } = require('./config/clean-refs');
-const { commitConfig } = require('./config/commit-config');
 
 // TODO do not remove
 process.on('unhandledRejection', () => {
@@ -33,7 +31,5 @@ module.exports = {
   init,
   fetch,
   release,
-  config,
-  cleanRefs,
-  commitConfig
+  config
 };
