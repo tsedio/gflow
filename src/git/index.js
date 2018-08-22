@@ -267,7 +267,7 @@ module.exports = {
    * @param branch
    */
   show(branch) {
-    const response = execSync(`git show --format="%ci|%cr|%an" ${branch}`);
+    const response = execSync(`git show --format="%ci|%cr|%an" ${branch} --`);
     return response
       .toString()
       .split('\n')[0]

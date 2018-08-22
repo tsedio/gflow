@@ -14,24 +14,6 @@ const DEFAULT_OPTIONS = {
   test: true
 };
 
-/**
- *
- * @param featureBranch
- * @returns {*|boolean}
- */
-function removeRemoteBranch(featureBranch) {
-  return git.branchExists(featureBranch, config.remote) && featureBranch !== config.develop;
-}
-
-/**
- *
- * @param featureBranch
- * @returns {boolean}
- */
-function removeBranch(featureBranch) {
-  return featureBranch !== config.develop && featureBranch !== config.production;
-}
-
 function runInteractive(options = {}) {
   options = Object.assign({}, DEFAULT_OPTIONS, options);
 
@@ -89,16 +71,6 @@ function runInteractive(options = {}) {
               {
                 title: `Push ${fromLocalBranch}`,
                 task: () => git.push(config.remote, fromLocalBranch, '--no-verify')
-              },
-              {
-                title: `Remove ${chalk.green(`${config.remote}/${featureBranch}`)}`,
-                enabled: () => removeRemoteBranch(featureBranch),
-                task: () => git.push(config.remote, `:${featureBranch}`, '--no-verify')
-              },
-              {
-                title: `Remove ${chalk.green(featureBranch)}`,
-                enabled: () => removeBranch(featureBranch),
-                task: () => git.branch('-d', featureBranch)
               }
             ],
             { concurrency: false }
@@ -112,20 +84,6 @@ function runInteractive(options = {}) {
     .run()
     .then(() => {
       console.log(chalk.green(figures.tick), 'Branch', chalk.green(featureBranch), ' is finished');
-    })
-    .then(() => {
-      if (config.postFinish) {
-        return execa.shell(config.postFinish, { stdio: ['inherit', 'inherit', 'inherit'] });
-      }
-
-      return undefined;
-    })
-    .then(() => {
-      if (config.syncAfterFinish) {
-        return sync();
-      }
-
-      return undefined;
     })
     .catch(err => {
       console.error(String(err));

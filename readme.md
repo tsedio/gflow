@@ -33,7 +33,8 @@ npm install -g gflow
   Commands:
 
     branches    List all branches status
-    finish      Merge the current branch on the production branch and delete it
+    finish      Merge the current branch on the referenced branch (production or ancestor) and delete it
+    merge       Merge the current branch on the referenced branch (production or ancestor) without deleting branch
     release     Create the release tag on the production branch. Synchronize the dev branch and production branch  (for CI like travis)
     init        Create a new git flow project
     new         Create a new branch from the latest commit of production branch
