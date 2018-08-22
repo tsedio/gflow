@@ -14,15 +14,6 @@ function runInteractive(options = {}) {
     startFromBranches = startFromBranches.concat(toRemote(currentBranch));
   }
 
-  const refBranches = config.refs
-    .references()
-    .filter(name => git.branchExists(name, config.remote))
-    .map(name => toRemote(name));
-
-  if (refBranches.length) {
-    startFromBranches = startFromBranches.concat(new inquirer.Separator(), refBranches);
-  }
-
   const remoteBranches = git.branchesInfos('-r')
     .map(info => info.branch)
     .filter(name => startFromBranches.indexOf(name) === -1 && !(name === config.remoteDevelop || name === config.remoteProduction));
