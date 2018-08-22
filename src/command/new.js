@@ -3,10 +3,8 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-const config = require('../config/index');
 const git = require('../git/index');
 const { normalizeBranchName } = require('../utils/normalize-branch');
-const { commitConfig } = require('../config/commit-config');
 
 const DEFAULT_OPTIONS = {
   branchName: 'branch_name',
@@ -15,9 +13,7 @@ const DEFAULT_OPTIONS = {
 
 function runInteractive(options = DEFAULT_OPTIONS) {
   const from = options.fromBranch;
-  const branchName = normalizeBranchName(options.branchName, options.type);
-
-  config.refs.set(branchName, options.fromBranch);
+  const branchName = normalizeBranchName(options);
 
   const tasks = new Listr([
     {
@@ -28,11 +24,6 @@ function runInteractive(options = DEFAULT_OPTIONS) {
       title: `Create branch from ${chalk.green(from)}`,
       task: () => git.checkout('--no-track', '-b', branchName, from)
     },
-    {
-      title: `Update refs ${chalk.green(from)}`,
-      task: () => commitConfig()
-    },
-
     require('../install/index')(options)
   ]);
 

@@ -10,7 +10,8 @@ updateNotifier({ pkg, updateCheckInterval: 0 }).notify();
 commander
   .version(cliPkg.version)
   .command('branches', 'List all branches status')
-  .command('finish', 'Merge the current branch on the production branch and delete it')
+  .command('finish', 'Merge the current branch on the referenced branch (production or ancestor) and delete it')
+  .command('merge', 'Merge the current branch on the referenced branch (production or ancestor) without delete it')
   .command(
     'release',
     'Create the release tag on the production branch. Synchronize the dev branch and production branch  (for CI like travis)'

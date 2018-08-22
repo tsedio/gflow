@@ -8,7 +8,7 @@ const options = {
 };
 commander
   .alias('gflow release')
-  .usage('gflow release [pre|post]')
+  .usage('gflow release [pre|prepare|success|post]')
   .arguments('<action>')
   .action(action => {
     options.action = action || 'post';

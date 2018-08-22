@@ -5,6 +5,7 @@ const figures = require('figures');
 const config = require('../config');
 const git = require('../git/index');
 const { getBrancheName } = require('../utils/get-branche-name');
+const { getRebaseInfo } = require('../utils/get-rebase-info');
 
 /**
  *
@@ -15,7 +16,7 @@ function rebaseBranches(options) {
   const remoteBranches = git.branchesInfos('-r');
 
   const rules = Object.concat(
-    [options.production, options.master, 'legacy', /\d+\.\d+\.\d+/gi],
+    [options.production, options.develop, 'legacy', /\d+\.\d+\.\d+/gi],
     (options.ignores || []).map(o => new RegExp(o))
   );
 
@@ -38,13 +39,16 @@ function rebaseBranches(options) {
           },
           {
             title: 'Rebase',
-            task: (ctx, task) =>
-              git.rebase(config.refs.referenceOf(branchInfo.branch)).catch(() => {
+            task: (ctx, task) => {
+              const { fromBranch } = getRebaseInfo();
+
+              return git.rebase(fromBranch).catch(() => {
                 ctx.skipPush = true;
                 branchesFailed.push(branchInfo);
                 task.skip('Rebase failed');
                 return git.rebase('--abort');
-              })
+              });
+            }
           },
           {
             title: 'Push',

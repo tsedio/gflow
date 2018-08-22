@@ -8,10 +8,6 @@ const DEFAULT_CONFIG = {
   /**
    *
    */
-  charBranchNameSeparator: '_',
-  /**
-   *
-   */
   remote: 'origin',
   /**
    *
@@ -36,12 +32,9 @@ const DEFAULT_CONFIG = {
     feat: 'feat',
     fix: 'fix',
     chore: 'chore',
-    docs: 'docs'
-  },
-  /**
-   * List of branches that not follow the default develop/production branches.
-   */
-  refs: {}
+    docs: 'docs',
+    release: 'release'
+  }
 };
 
 module.exports = {

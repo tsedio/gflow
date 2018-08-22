@@ -7,11 +7,8 @@ const execa = require('execa');
 const sync = require('./sync');
 const config = require('../config');
 const git = require('../git');
-const { cleanRefs } = require('../config/clean-refs');
 const { getBranchName } = require('../utils/get-branche-name');
 const { getRebaseInfo } = require('../utils/get-rebase-info');
-const { commitConfig } = require('../config/commit-config');
-
 
 const DEFAULT_OPTIONS = {
   test: true
@@ -36,12 +33,9 @@ function removeBranch(featureBranch) {
 }
 
 function runInteractive(options = {}) {
-  cleanRefs();
-
   options = Object.assign({}, DEFAULT_OPTIONS, options);
 
   const { branch: featureBranch, fromBranch } = getRebaseInfo(options.fromBranch);
-
   const fromLocalBranch = getBranchName(fromBranch);
 
   // Can't finish a production branch
@@ -64,13 +58,6 @@ function runInteractive(options = {}) {
               {
                 title: `Rebase ${chalk.green(featureBranch)} from ${chalk.green(fromBranch)}`,
                 task: () => git.rebase(fromBranch)
-              },
-              {
-                title: 'Clean references configuration',
-                task: () => {
-                  config.refs.delete(featureBranch);
-                  return commitConfig();
-                }
               },
               {
                 title: `Delete locale branch ${chalk.green(fromLocalBranch)}`,

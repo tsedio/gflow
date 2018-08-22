@@ -2,7 +2,6 @@ const inquirer = require('inquirer');
 const config = require('../config/index');
 const newBranch = require('./new');
 const git = require('../git/index');
-const { normalizeBranchName } = require('../utils/normalize-branch');
 const { toRemote } = require('../utils/to-remote');
 
 function runInteractive(options = {}) {
@@ -58,9 +57,9 @@ function runInteractive(options = {}) {
           return true;
         },
 
-        transformer(value) {
-          return normalizeBranchName(value);
-        },
+        // transformer(value) {
+        //  return normalizeBranchName(value);
+        // },
 
         when: !options.branchName
       },

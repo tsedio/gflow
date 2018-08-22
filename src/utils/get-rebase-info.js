@@ -1,14 +1,13 @@
 const git = require('../git');
-const config = require('../config');
+const { getAncestorBranch } = require('./get-ancestor-branch');
 
 module.exports = {
   getRebaseInfo(fromBranch) {
     const branch = git.currentBranchName();
-    fromBranch = fromBranch || config.refs.referenceOf(branch);
 
     return {
       branch,
-      fromBranch
+      fromBranch: fromBranch || getAncestorBranch(branch)
     };
   }
 };

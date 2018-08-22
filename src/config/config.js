@@ -1,4 +1,3 @@
-const { Refs } = require('./refs');
 const path = require('path');
 const fs = require('fs');
 const { DEFAULT_CONFIG, CONFIG_BASENAME } = require('./base-config');
@@ -6,24 +5,6 @@ const { DEFAULT_CONFIG, CONFIG_BASENAME } = require('./base-config');
 class Config extends Map {
   constructor() {
     super();
-    this._refs = new Refs({
-      /**
-       *
-       * @param branch
-       * @returns {boolean}
-       */
-      onSet: branch => branch.replace(`${this.remote}/`, '') === this.production,
-      /**
-       *
-       * @returns {string}
-       */
-      onReferenceOf: () => this.remoteProduction,
-      /**
-       *
-       * @returns {*}
-       */
-      onRemote: () => this.remote
-    });
     this.load();
   }
 
@@ -71,14 +52,6 @@ class Config extends Map {
    *
    * @returns {*}
    */
-  get charBranchNameSeparator() {
-    return this.get('charBranchNameSeparator');
-  }
-
-  /**
-   *
-   * @returns {*}
-   */
   get syncAfterFinish() {
     return this.get('syncAfterFinish');
   }
@@ -101,18 +74,6 @@ class Config extends Map {
 
   /**
    *
-   * @returns {V | undefined}
-   */
-  get refs() {
-    return this._refs;
-  }
-
-  hasChanged() {
-
-  }
-
-  /**
-   *
    * @returns {{label: *, value: string}[]}
    */
   getBranchTypes() {
@@ -127,7 +88,6 @@ class Config extends Map {
       return this.promise;
     }
 
-    this._refs.clear();
     this.clear();
     this.setConfig(DEFAULT_CONFIG);
     this.readConfiguration();
@@ -190,7 +150,6 @@ class Config extends Map {
    */
   toObject() {
     return Array.from(this.keys())
-      .concat('refs')
       .reduce((acc, key) => {
         if (this[`_${key}`] instanceof Map) {
           acc[key] = {};
