@@ -7,6 +7,7 @@ const options = {};
 
 commander
   .alias('gflow rebase <fromBranch>')
+  .arguments('<fromBranch>')
   .action(fromBranch => {
     options.fromBranch = fromBranch;
   })

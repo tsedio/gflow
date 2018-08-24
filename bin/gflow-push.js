@@ -6,8 +6,9 @@ const { config, push } = require('../src');
 const options = {};
 
 commander
-  .usage('[options]')
+  .usage('<fromBranch> [options]')
   .alias('gflow push <fromBranch>')
+  .arguments('<fromBranch>')
   .option('-f, --force', 'Force pushing branch.', (v, t) => t + 1, 0)
   .option('-s, --skip', 'Skip the unit test.', (v, t) => t + 1, 0)
   .action(fromBranch => {

@@ -9,6 +9,7 @@ const branches = Object.keys(config.branchTypes).join('|');
 
 commander
   .usage(`[${branches}] <branchName> <fromBranch>`)
+  .arguments('<branchName> <fromBranch>')
   .alias('gflow new')
   .action((...args) => {
     const [_type_, _branchName_, _fromBranch_] = args.slice(0, args.length - 1);
