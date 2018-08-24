@@ -1,5 +1,5 @@
 {
-  "production": "production",
+  "production": "master",
   "develop": "master",
   "charBranchNameSeparator": "_",
   "remote": "origin",
