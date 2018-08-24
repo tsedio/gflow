@@ -1,5 +1,5 @@
 module.exports = {
-  branch: 'production',
+  branch: 'master',
   prepare: ['@semantic-release/npm', './src/command/release.js'],
   success: ['@semantic-release/github', './src/command/release.js'], // ,
   fail: ['@semantic-release/github'],
