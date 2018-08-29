@@ -92,7 +92,7 @@ module.exports = {
 
       console.log(chalk.green(figures.tick), 'Release tag are applied on git');
     } catch (er) {
-      console.log(chalk.red(figures.cross), String(er));
+      console.log(chalk.red(figures.cross), String(er), er.stack);
     }
 
     return Promise.resolve();
