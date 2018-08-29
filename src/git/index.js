@@ -140,7 +140,7 @@ module.exports = {
    * @param args
    */
   pushSync(...args) {
-    return gitAsync('push', ...args);
+    return gitSync('push', ...args);
   },
   /**
    *

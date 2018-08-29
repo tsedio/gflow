@@ -1,4 +1,5 @@
 require('any-observable/register/rxjs-all'); // eslint-disable-line import/no-unassigned-import
+require('rxjs/add/operator/merge');
 const Observable = require('any-observable');
 const streamToObservable = require('stream-to-observable');
 const execa = require('execa');
