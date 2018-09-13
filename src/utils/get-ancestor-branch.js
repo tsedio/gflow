@@ -21,6 +21,6 @@ module.exports = {
       }
     }
 
-    return config.remoteProduction;
+    return config.remoteDevelop;
   }
 };
