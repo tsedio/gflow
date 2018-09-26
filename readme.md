@@ -41,7 +41,6 @@ npm install -g gflow
     push        Rebase the current branch from production and push all commit (run test before)
     publish     Alias of push command
     rebase      Rebase the current branch from production
-    rebase-all  Rebase all branches from production
     fetch       Download objects and refs from another repository (--all and --prune)
     sync        Synchronize dev branch and production
     config      Configuration
@@ -97,19 +96,3 @@ Key | Description
 `refs` | List of references for each branch when you create your from another branch.
 
 
-### Rebase all
-
-Rebase-all command rebase all branches from the branch reference.
-You can add rules to ignore some branches when you run the `gflow rebase-all` command.
-
-Edit your `package.json` and add this configuration:
-
-```json
-{
-  "gflow": {
-    "ignores": [
-      "ignored-branch"
-    ]
-  }
-}
-```
