@@ -8,6 +8,10 @@ class Config extends Map {
     this.load();
   }
 
+  get charReplacement() {
+    return this.get('charReplacement');
+  }
+
   /**
    *
    * @returns {*}

@@ -28,6 +28,10 @@ const DEFAULT_CONFIG = {
   /**
    *
    */
+  charReplacement: '-',
+  /**
+   *
+   */
   branchTypes: {
     feat: 'feat',
     fix: 'fix',
