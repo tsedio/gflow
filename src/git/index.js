@@ -281,14 +281,19 @@ module.exports = {
     return module.exports
       .branches(...args)
       .map(branch => {
-        const [date, creation, author] = module.exports.show(branch).split('|');
-        return {
-          branch,
-          date,
-          creation,
-          author
-        };
+        try {
+          const [date, creation, author] = module.exports.show(branch).split('|');
+          return {
+            branch,
+            date,
+            creation,
+            author
+          };
+        } catch (er) {
+          return undefined;
+        }
       })
+      .filter((b) => !!b)
       .sort((info1, info2) => info1.date < info2.date);
   },
 

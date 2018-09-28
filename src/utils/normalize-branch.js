@@ -2,7 +2,7 @@ const config = require('../config');
 
 module.exports = {
   normalizeBranchName({ fromBranch, branchName, type }) {
-    const paths = [type || config.branchTypes.default, branchName.replace(/[- _/]/gi, config.charReplacement)];
+    const paths = [config.branchTypes[type] || config.branchTypes.default, branchName.replace(/[- _/]/gi, config.charReplacement)];
 
     fromBranch = fromBranch.replace(`${config.remote}/`, '');
 
