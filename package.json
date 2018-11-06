@@ -10,7 +10,12 @@
     "lint:fix": "eslint --fix  \"{bin,src,test}/**/*.js\"",
     "prettier": "prettier '{bin,src,test}/**/*.js' --write",
     "travis-deploy-once": "travis-deploy-once",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "semantic-release:dryRun": "semantic-release --dryRun"
+  },
+  "husky": {
+    "pre-commit": "lint-staged",
+    "post-commit": "git update-index --again"
   },
   "author": "Romain Lenzotti",
   "license": "MIT",
@@ -37,11 +42,8 @@
     "eslint-plugin-import": "^2.12.0",
     "husky": "^0.14.3",
     "prettier": "^1.13.3",
-    "travis-deploy-once": "^5.0.2",
-    "semantic-release": "^15.9.9"
-  },
-  "husky": {
-    "pre-commit": "lint-staged"
+    "semantic-release": "^15.9.9",
+    "travis-deploy-once": "^5.0.2"
   },
   "files": [
     "bin/gflow.js",
