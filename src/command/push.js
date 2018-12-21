@@ -2,81 +2,57 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-const config = require('../config/index');
-const git = require('../git/index');
 const { getRebaseInfo } = require('../utils/get-rebase-info');
+const runRefreshRepository = require('./refresh-repository');
+const runInstall = require('./install');
+const runTest = require('./test');
+const runRebaseBranch = require('./rebase-branch');
+const runPushBranch = require('./push-branch');
 
 const DEFAULT_OPTIONS = {
   test: false,
+  checkStatus: true,
   force: false,
   fromBranch: undefined
 };
 
-/**
- *
- * @param options
- * @returns {*}
- */
-function doCheck(options) {
-  const isBranchExists = git.branchExists(options.branch, config.remote);
+module.exports = {
+  DEFAULT_OPTIONS,
+  /**
+   *
+   * @param options
+   * @returns {{fromBranch: *, featureBranch: *}}
+   */
+  getOptions(options = {}) {
+    options = { ...DEFAULT_OPTIONS, ...options };
 
-  if (isBranchExists && !options.force) {
-    const result = git.checkBranchRemoteStatusSync(options.branch);
-    return result ? Promise.resolve(options) : Promise.reject(new Error('Remote branch changed, check diff before continue'));
-  }
-  return Promise.resolve(options);
-}
+    return {
+      ...options,
+      ...getRebaseInfo(options.fromBranch)
+    };
+  },
+  /**
+   *
+   * @param options
+   * @returns {Listr}
+   */
+  getTasks(options) {
+    return new Listr([
+      runRefreshRepository(),
+      runRebaseBranch(options),
+      runInstall(options),
+      runTest(options),
+      runPushBranch({ ...options, upstream: true, noVerify: true, force: true })
+    ]);
+  },
 
-/**
- *
- * @param options
- */
-function runInteractive(options = DEFAULT_OPTIONS) {
-  const { branch, fromBranch } = getRebaseInfo(options.fromBranch);
-
-  const tasks = new Listr([
-    {
-      title: 'Refresh local repository',
-      task: () =>
-        new Listr(
-          [
-            {
-              title: 'Remote',
-              task: () => git.remote('-v')
-            },
-            {
-              title: 'Fetch',
-              task: () => git.refreshRepository()
-            },
-            {
-              title: 'Check status',
-              task: () => doCheck({ force: options.force, branch })
-            },
-            {
-              title: `Rebase from ${chalk.green(fromBranch)}`,
-              task: () => git.rebase(fromBranch)
-            }
-          ],
-          { concurrent: false }
-        )
-    },
-    require('../install/index')(options),
-    require('../test/index')(options),
-    {
-      title: 'Push',
-      task: () => git.push('-u', '-f', config.remote, branch, '--no-verify')
+  async pushBranch(options) {
+    try {
+      options = module.exports.getOptions(options);
+      await module.exports.getTasks(options).run();
+      console.log(chalk.green(figures.tick), 'Branch', chalk.green(options.featureBranch), 'rebased and pushed.');
+    } catch (err) {
+      console.error(chalk.red(String(err)));
     }
-  ]);
-
-  return tasks
-    .run()
-    .then(() => {
-      console.log(chalk.green(figures.tick), 'Branch', chalk.green(branch), 'rebased and pushed.');
-    })
-    .catch(err => {
-      console.error(String(err));
-      return Promise.resolve();
-    });
-}
-
-module.exports = runInteractive;
+  }
+};

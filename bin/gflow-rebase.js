@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const commander = require('commander');
-const { rebase, config } = require('../src');
+const { commands, config } = require('../src');
 
 const options = {};
 
@@ -22,4 +22,4 @@ commander
   })
   .parse(process.argv);
 
-rebase(options);
+commands.Rebase.rebaseBranch(options);

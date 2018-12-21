@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const commander = require('commander');
-const { finish, config } = require('../src');
+const { commands, config } = require('../src');
 
 const options = {};
 
@@ -14,9 +14,9 @@ commander
   })
   .parse(process.argv);
 
-finish({
+commands.Finish.finishBranch({
   ...options,
   test: commander.skip === undefined ? !config.skipTest : !commander.skip
 }).catch(er => {
-  console.log(er);
+  console.error(er);
 });

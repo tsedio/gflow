@@ -2,30 +2,48 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-const git = require('../git/index');
 const { getRebaseInfo } = require('../utils/get-rebase-info');
+const runRefreshRepository = require('./refresh-repository');
+const runRebaseBranch = require('./rebase-branch');
+const runInstall = require('./install');
 
-module.exports = options => {
-  const { branch, fromBranch } = getRebaseInfo(options.fromBranch);
+const DEFAULT_OPTIONS = {
+  test: false,
+  force: false,
+  fromBranch: undefined
+};
 
-  const tasks = new Listr([
-    {
-      title: 'Refresh local repository',
-      task: () => git.refreshRepository()
-    },
-    {
-      title: `Rebase current branch from ${chalk.green(fromBranch)}`,
-      task: () => git.rebase(fromBranch)
-    },
-    require('../install/index')(options)
-  ]);
+module.exports = {
+  /**
+   *
+   * @param options
+   * @returns {{fromBranch: *, featureBranch: *}}
+   */
+  getOptions(options = {}) {
+    options = { ...DEFAULT_OPTIONS, ...options };
 
-  return tasks
-    .run()
-    .then(() => {
-      console.log(chalk.green(figures.tick), `Branch ${chalk.green(branch)} rebased from ${chalk.green(fromBranch)} HEAD`);
-    })
-    .catch(err => {
+    return {
+      ...options,
+      ...getRebaseInfo(options.fromBranch)
+    };
+  },
+
+  getTasks(options) {
+    return new Listr([
+      runRefreshRepository(),
+      runRebaseBranch({ ...options, checkStatus: false }),
+      runInstall(options)
+    ]);
+  },
+
+  async rebaseBranch(options) {
+    try {
+      options = module.exports.getOptions(options);
+
+      await this.getTasks(options).run();
+      console.log(chalk.green(figures.tick), `Branch ${chalk.green(options.featureBranch)} rebased from ${chalk.green(options.fromBranch)} HEAD`);
+    } catch (err) {
       console.error(chalk.red(String(err)));
-    });
+    }
+  }
 };

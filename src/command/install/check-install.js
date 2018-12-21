@@ -1,6 +1,6 @@
 const readPkgUp = require('read-pkg-up');
 const md5 = require('md5');
-const git = require('../git');
+const git = require('../../git');
 
 module.exports = {
 

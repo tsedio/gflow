@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 const commander = require('commander');
-const { newBranchInteractive, config } = require('../src');
+const { config } = require('../src');
+const { commands } = require('../src');
 
 const options = {};
 
@@ -26,4 +27,4 @@ commander
   })
   .parse(process.argv);
 
-newBranchInteractive(options).catch(er => console.error(er));
+commands.NewBranch.askQuestions(options).catch(er => console.error(er));

@@ -11,7 +11,7 @@ function gitSync(cmd, ...args) {
 }
 
 function gitAsync(cmd, ...args) {
-  return exec('git', [cmd].concat(args));
+  return exec('git', [cmd].concat(args.filter(o => !!o)));
 }
 
 module.exports = {

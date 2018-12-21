@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const commander = require('commander');
-const { config, push } = require('../src');
+const { config, commands } = require('../src');
 
 const options = {};
 
@@ -25,7 +25,7 @@ commander
   })
   .parse(process.argv);
 
-push({
+commands.Push.pushBranch({
   fromBranch: options.fromBranch,
   test: commander.skip === undefined ? !config.skipTest : !commander.skip,
   force: !!commander.force

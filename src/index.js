@@ -1,15 +1,15 @@
 const config = require('./config');
 const git = require('./git');
+const Fetch = require('./command/fetch');
+const NewBranch = require('./command/new');
+const Rebase = require('./command/rebase');
+const Merge = require('./command/rebase');
+const Push = require('./command/push');
+const Finish = require('./command/finish');
+const Sync = require('./command/sync');
+const Init = require('./command/init');
 const branches = require('./command/branches');
-const fetch = require('./command/fetch');
-const newBranch = require('./command/new');
-const newBranchInteractive = require('./command/new-interactive');
-const rebase = require('./command/rebase');
 const rebaseAll = require('./command/rebaseAll');
-const push = require('./command/push');
-const finish = require('./command/finish');
-const sync = require('./command/sync');
-const init = require('./command/init');
 const release = require('./command/release');
 
 // TODO do not remove
@@ -20,16 +20,18 @@ process.on('unhandledRejection', () => {
 
 module.exports = {
   git,
+  commands: {
+    NewBranch,
+    Fetch,
+    Merge,
+    Init,
+    Push,
+    Rebase,
+    Finish,
+    Sync
+  },
   branches,
-  newBranch,
-  newBranchInteractive,
-  rebase,
   rebaseAll,
-  push,
-  finish,
-  sync,
-  init,
-  fetch,
   release,
   config
 };

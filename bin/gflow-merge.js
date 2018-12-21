@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 const commander = require('commander');
-const { finish, config } = require('../src');
+const { config } = require('../src');
+const { mergeBranch } = require('../src/command/merge');
 
 const options = {};
 
@@ -14,7 +15,7 @@ commander
   })
   .parse(process.argv);
 
-finish({
+mergeBranch({
   ...options,
   test: commander.skip === undefined ? !config.skipTest : !commander.skip
 }).catch(er => {

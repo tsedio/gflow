@@ -1,4 +1,4 @@
-const exec = require('../exec');
+const exec = require('../../exec');
 
 module.exports = options => ({
   title: 'Test',

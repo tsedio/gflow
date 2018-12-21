@@ -1,15 +1,10 @@
 const config = require('../config');
 
 module.exports = {
-  normalizeBranchName({ fromBranch, branchName, type }) {
-    const paths = [config.branchTypes[type] || config.branchTypes.default, branchName.replace(/[- _/]/gi, config.charReplacement)];
+  normalizeBranchName({ branchName, type }) {
+    const branchType = config.branchTypes[type] || config.branchTypes.default;
+    const branchPath = branchName.replace(/[- _/]/gi, config.charReplacement);
 
-    fromBranch = fromBranch.replace(`${config.remote}/`, '');
-
-    if (fromBranch && [config.develop, config.production].indexOf(fromBranch) === -1) {
-      paths.unshift(fromBranch);
-    }
-
-    return paths.join('/').replace('\\/');
+    return [branchType, branchPath].join('/').replace('\\/');
   }
 };
