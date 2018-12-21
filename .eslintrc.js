@@ -6,6 +6,7 @@ module.exports = {
     'mocha': true
   },
   rules: {
+    'object-curly-newline': 'off',
     'function-paren-newline': 'off',
     'no-underscore-dangle': 'off',
     'array-bracket-spacing': 'off',

@@ -19,7 +19,6 @@ commander
   .command('init', 'Create a new git flow project')
   .command('new', 'Create a new branch from the latest commit of production branch')
   .command('push', 'Rebase the current branch from production and push all commit (run test before)')
-  .command('publish', 'Alias of push command')
   .command('rebase', 'Rebase the current branch from production')
   .command('rebase-all', 'Rebase all branches from production')
   .command('fetch', 'Download objects and refs from another repository (--all and --prune)')

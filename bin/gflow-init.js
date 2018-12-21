@@ -1,5 +1,4 @@
 #!/usr/bin/env node
+const { commands } = require('../src');
 
-const { init } = require('../src');
-
-init();
+commands.Init.askQuestions();

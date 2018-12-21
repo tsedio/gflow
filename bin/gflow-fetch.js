@@ -1,5 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env nodegg
+const { commands } = require('../src');
 
-const { fetch } = require('../src');
-
-fetch();
+commands.Fetch.fetch();

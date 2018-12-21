@@ -1,6 +1,6 @@
 const hasYarn = require('has-yarn');
 const Listr = require('listr');
-const exec = require('../exec');
+const exec = require('../../exec');
 const checkInstall = require('./check-install');
 
 module.exports = () => ({

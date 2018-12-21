@@ -1,13 +1,17 @@
+const { getBranchName } = require('./get-branche-name');
+
 const git = require('../git');
-const { getAncestorBranch } = require('./get-ancestor-branch');
+const config = require('../config');
 
 module.exports = {
   getRebaseInfo(fromBranch) {
-    const branch = git.currentBranchName();
-
+    fromBranch = fromBranch || config.remoteProduction;
+    const featureBranch = git.currentBranchName();
     return {
-      branch,
-      fromBranch: fromBranch || getAncestorBranch(branch)
+      featureBranch,
+      featureLocaleBranch: getBranchName(featureBranch),
+      fromBranch,
+      fromLocalBranch: getBranchName(fromBranch)
     };
   }
 };

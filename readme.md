@@ -40,7 +40,6 @@ npm install -g gflow
     init        Create a new git flow project
     new         Create a new branch from the latest commit of production branch
     push        Rebase the current branch from production and push all commit (run test before)
-    publish     Alias of push command
     rebase      Rebase the current branch from production
     fetch       Download objects and refs from another repository (--all and --prune)
     sync        Synchronize dev branch and production

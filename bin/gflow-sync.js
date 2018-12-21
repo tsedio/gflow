@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
 const commander = require('commander');
-const { sync, config } = require('../src');
+const { commands, config } = require('../src');
 
 commander
-  .usage('gflow-rebase')
-  .action(() => {})
+  .usage('gflow sync')
+  .action(() => {
+  })
   .parse(process.argv);
 
-sync(config.toObject());
+commands.Sync.syncBranches(config.toObject());
