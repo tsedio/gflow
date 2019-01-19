@@ -1,4 +1,5 @@
 /* eslint-disable no-shadow */
+const { catchError } = require('rxjs/operators');
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
@@ -41,12 +42,17 @@ function rebaseBranches(options) {
           task: (ctx, task) => {
             const { fromBranch } = getRebaseInfo();
 
-            return git.rebase(fromBranch).catch(() => {
-              ctx.skipPush = true;
-              branchesFailed.push(branchInfo);
-              task.skip('Rebase failed');
-              return git.rebase('--abort');
-            });
+            return git
+              .rebase(fromBranch)
+              .pipe(
+                catchError(() => {
+                  ctx.skipPush = true;
+                  branchesFailed.push(branchInfo);
+                  task.skip('Rebase failed');
+
+                  return git.rebase('--abort');
+                })
+              );
           }
         },
         {

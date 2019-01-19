@@ -1,6 +1,7 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
+const { catchError } = require('rxjs/operators');
 const config = require('../config');
 const git = require('../git/index');
 const refreshRepository = require('./refresh-repository');
@@ -16,24 +17,24 @@ module.exports = {
           [
             {
               title: `Checkout branch ${config.develop}`,
-              task: (ctx, task) => git.checkout('-b', config.develop, `${config.remote}/${config.develop}`).catch(() => {
-                task.skip(`Local branch ${config.develop} exists`);
-                return Promise.resolve();
-              })
+              task: (ctx, task) => git.checkout('-b', config.develop, `${config.remote}/${config.develop}`)
+                .pipe(catchError(() => {
+                  task.skip(`Local branch ${config.develop} exists`);
+                }))
             },
             {
               title: `Checkout branch ${config.develop}`,
-              task: (ctx, task) => git.checkout(config.develop).catch(() => {
-                task.skip(`Already on branch ${config.develop}`);
-                return Promise.resolve();
-              })
+              task: (ctx, task) => git.checkout(config.develop)
+                .pipe(catchError(() => {
+                  task.skip(`Already on branch ${config.develop}`);
+                }))
             },
             {
               title: `Delete locale branch ${config.production}`,
-              task: (ctx, task) => git.branch('-D', config.production).catch(() => {
-                task.skip(`Local branch ${config.production} not found`);
-                return Promise.resolve();
-              })
+              task: (ctx, task) => git.branch('-D', config.production)
+                .pipe(catchError(() => {
+                  task.skip(`Local branch ${config.production} not found`);
+                }))
             },
             {
               title: `Checkout branch ${config.production}`,
@@ -41,10 +42,10 @@ module.exports = {
             },
             {
               title: `Checkout branch ${config.develop}`,
-              task: (ctx, task) => git.checkout(config.develop).catch(() => {
-                task.skip(`Already on branch ${config.develop}`);
-                return Promise.resolve();
-              })
+              task: (ctx, task) => git.checkout(config.develop)
+                .pipe(catchError(() => {
+                  task.skip(`Already on branch ${config.develop}`);
+                }))
             },
             {
               title: `Reset hard ${config.develop}`,
