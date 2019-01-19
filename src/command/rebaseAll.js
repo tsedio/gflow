@@ -27,43 +27,42 @@ function rebaseBranches(options) {
 
     return {
       title: `${branchInfo.branch}`,
-      task: () =>
-        new Listr([
-          {
-            title: 'Checkout',
-            task: (ctx) => {
-              ctx.branchesFailed = branchesFailed;
-              ctx.skipPush = false;
-              return git.checkout('-b', `branch-${branchName}`, branchInfo.branch);
-            }
-          },
-          {
-            title: 'Rebase',
-            task: (ctx, task) => {
-              const { fromBranch } = getRebaseInfo();
-
-              return git.rebase(fromBranch).catch(() => {
-                ctx.skipPush = true;
-                branchesFailed.push(branchInfo);
-                task.skip('Rebase failed');
-                return git.rebase('--abort');
-              });
-            }
-          },
-          {
-            title: 'Push',
-            skip: ctx => ctx.skipPush,
-            task: () => git.push('-f', config.remote, `HEAD:${branchName}`)
-          },
-          {
-            title: 'Clean',
-            task: () => git.checkout(options.production)
-          },
-          {
-            title: 'Remove',
-            task: () => git.branch('-D', `branch-${branchName}`)
+      task: () => new Listr([
+        {
+          title: 'Checkout',
+          task: (ctx) => {
+            ctx.branchesFailed = branchesFailed;
+            ctx.skipPush = false;
+            return git.checkout('-b', `branch-${branchName}`, branchInfo.branch);
           }
-        ])
+        },
+        {
+          title: 'Rebase',
+          task: (ctx, task) => {
+            const { fromBranch } = getRebaseInfo();
+
+            return git.rebase(fromBranch).catch(() => {
+              ctx.skipPush = true;
+              branchesFailed.push(branchInfo);
+              task.skip('Rebase failed');
+              return git.rebase('--abort');
+            });
+          }
+        },
+        {
+          title: 'Push',
+          skip: ctx => ctx.skipPush,
+          task: () => git.push('-f', config.remote, `HEAD:${branchName}`)
+        },
+        {
+          title: 'Clean',
+          task: () => git.checkout(options.production)
+        },
+        {
+          title: 'Remove',
+          task: () => git.branch('-D', `branch-${branchName}`)
+        }
+      ])
     };
   });
 
