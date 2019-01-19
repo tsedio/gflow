@@ -1,6 +1,6 @@
 const Listr = require('listr');
 const chalk = require('chalk');
-const { catchError } = require('rxjs/operators');
+const { catchError, of } = require('rxjs/operators');
 const git = require('../../git');
 
 
@@ -18,6 +18,7 @@ module.exports = ({ featureBranch, fromBranch, fromLocalBranch, rebase = true })
         task: (ctx, task) => git.branch('-D', fromLocalBranch)
           .pipe(catchError(() => {
             task.skip(`Local branch ${chalk.green(fromLocalBranch)} not found`);
+            return of(undefined);
           }))
       },
       {

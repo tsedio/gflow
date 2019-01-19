@@ -1,7 +1,7 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-const { catchError } = require('rxjs/operators');
+const { catchError, of } = require('rxjs/operators');
 const config = require('../config');
 const git = require('../git/index');
 const refreshRepository = require('./refresh-repository');
@@ -20,6 +20,7 @@ module.exports = {
               task: (ctx, task) => git.checkout('-b', config.develop, `${config.remote}/${config.develop}`)
                 .pipe(catchError(() => {
                   task.skip(`Local branch ${config.develop} exists`);
+                  return of(undefined);
                 }))
             },
             {
@@ -27,6 +28,7 @@ module.exports = {
               task: (ctx, task) => git.checkout(config.develop)
                 .pipe(catchError(() => {
                   task.skip(`Already on branch ${config.develop}`);
+                  return of(undefined);
                 }))
             },
             {
@@ -34,6 +36,7 @@ module.exports = {
               task: (ctx, task) => git.branch('-D', config.production)
                 .pipe(catchError(() => {
                   task.skip(`Local branch ${config.production} not found`);
+                  return of(undefined);
                 }))
             },
             {
@@ -45,6 +48,7 @@ module.exports = {
               task: (ctx, task) => git.checkout(config.develop)
                 .pipe(catchError(() => {
                   task.skip(`Already on branch ${config.develop}`);
+                  return of(undefined);
                 }))
             },
             {
