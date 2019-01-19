@@ -6,13 +6,12 @@ const runRemoveLocaleBranch = require('../remove-locale-branch');
 module.exports = ({ featureBranch, fromLocalBranch } = {}) => (
   {
     title: 'Push and clean',
-    task: () =>
-      new Listr(
-        [
-          runPushBranch({ featureBranch: fromLocalBranch, force: false, noVerify: true }),
-          runRemoveRemoteBranch({ featureBranch }),
-          runRemoveLocaleBranch({ featureBranch })
-        ],
-        { concurrency: false }
-      )
+    task: () => new Listr(
+      [
+        runPushBranch({ featureBranch: fromLocalBranch, force: false, noVerify: true }),
+        runRemoveRemoteBranch({ featureBranch }),
+        runRemoveLocaleBranch({ featureBranch })
+      ],
+      { concurrency: false }
+    )
   });

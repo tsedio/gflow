@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback */
-const exec = require('../exec');
 const { spawnSync, execSync } = require('child_process');
+const exec = require('../exec');
 
 function gitSync(cmd, ...args) {
   const response = spawnSync('git', [cmd].concat(args));
@@ -310,4 +310,3 @@ module.exports = {
     return false;
   }
 };
-
