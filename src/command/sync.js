@@ -1,7 +1,8 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
-const { catchError, of } = require('rxjs/operators');
+const { catchError } = require('rxjs/operators');
+const { of } = require('rxjs');
 const config = require('../config');
 const git = require('../git/index');
 const refreshRepository = require('./refresh-repository');
