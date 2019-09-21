@@ -64,7 +64,7 @@ module.exports = {
         await Sync.syncBranches();
       }
     } catch (err) {
-      console.error(chalk.red(String(err)));
+      console.error(chalk.red(String(err.all || err)));
     }
   }
 };

@@ -24,7 +24,7 @@ module.exports = {
       await module.exports.getTasks(options).run();
       console.log(options.output.filter(l => !l.match('Fetching')).join('\n'));
     } catch (err) {
-      console.error(chalk.red(String(err)));
+      console.error(chalk.red(String(err.all || err)));
     }
   }
 };

@@ -54,7 +54,7 @@ module.exports = {
       await module.exports.getTasks(options).run();
       console.log(chalk.green(figures.tick), 'Branch', chalk.green(options.featureBranch), 'rebased and pushed.');
     } catch (err) {
-      console.error(chalk.red(String(err)));
+      console.error(chalk.red(String(err.all || err)));
     }
   }
 };

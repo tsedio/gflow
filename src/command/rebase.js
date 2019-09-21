@@ -43,7 +43,7 @@ module.exports = {
       await this.getTasks(options).run();
       console.log(chalk.green(figures.tick), `Branch ${chalk.green(options.featureBranch)} rebased from ${chalk.green(options.fromBranch)} HEAD`);
     } catch (err) {
-      console.error(chalk.red(String(err)));
+      console.error(chalk.red(String(err.all || err)));
     }
   }
 };

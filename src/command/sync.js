@@ -70,7 +70,7 @@ module.exports = {
       await module.exports.getTasks().run();
       console.log(chalk.green(figures.tick), 'Branch', config.develop, 'synchronized with', config.production);
     } catch (err) {
-      console.error(chalk.red(String(err)));
+      console.error(chalk.red(String(err.all || err)));
     }
   }
 };
