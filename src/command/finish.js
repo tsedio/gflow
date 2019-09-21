@@ -13,7 +13,9 @@ const runPushAndClean = require('./push-and-clean');
 const runRebaseBranch = require('./rebase-branch');
 
 const DEFAULT_OPTIONS = {
-  test: true
+  checkStatus: false,
+  test: !config.skipTest,
+  rebase: config.flow === 'gflow'
 };
 
 module.exports = {
@@ -22,8 +24,7 @@ module.exports = {
 
     return {
       ...options,
-      ...getRebaseInfo(options.fromBranch),
-      rebase: true
+      ...getRebaseInfo(options.fromBranch)
     };
   },
 
@@ -31,7 +32,7 @@ module.exports = {
     return new Listr(
       [
         runRefreshRepository(),
-        runRebaseBranch({ ...options, checkStatus: false }),
+        runRebaseBranch({ ...options }),
         runInstall(options),
         runTest(options),
         runPrepareWorkspace(options),

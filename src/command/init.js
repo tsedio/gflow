@@ -1,26 +1,15 @@
 const inquirer = require('inquirer');
 const config = require('../config/index');
+const { ConfigSchema } = require('../config/base-config');
 
-const QUESTIONS = [
-  {
-    type: 'input',
-    name: 'remote',
-    message: 'What is your remote alias name ?',
-    default: config.remote
-  },
-  {
-    type: 'input',
-    name: 'develop',
-    message: 'What is your development branch name ?',
-    default: config.develop
-  },
-  {
-    type: 'input',
-    name: 'production',
-    message: 'What is your production branch name ?',
-    default: config.production
-  }
-];
+const QUESTIONS = ConfigSchema
+  .filter(c => !!c.message)
+  .map((c) => (
+    {
+      ...c,
+      default: config.get(c.name) || c.default
+    }
+  ));
 
 module.exports = {
   QUESTIONS,

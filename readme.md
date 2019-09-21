@@ -43,7 +43,7 @@ npm install -g gflow
     rebase      Rebase the current branch from production
     fetch       Download objects and refs from another repository (--all and --prune)
     sync        Synchronize dev branch and production
-    config      Configuration
+    config      Operation about configuration
     help [cmd]  display help for [cmd]
 ```
 
@@ -62,8 +62,9 @@ This command will configure the production and development branches.
 
 Gflow init command generate a `.glfowrc` config file with some options look like:
 
-```json
+```jsonc
 {
+  "flow": "gflow", // gflow || gitflow
   "production": "production",
   "develop": "master",
   "charBranchNameSeparator": "_",
@@ -83,6 +84,7 @@ Gflow init command generate a `.glfowrc` config file with some options look like
 
 Key | Description
 ---|---
+`flow` | Change flow used by GFlow. `gflow` use rebase command  and `gitflow` use merge command.
 `production` | Name of the production branch or the branch use as reference to rebase a feature branch.
 `develop` | Name of the development branch (or the release candidate branch).
 `charBranchNameSeparator` | Char separator of the a branch between branchName and task type (feat, fix, chore, etc...). Example: if char = "/" `feat/branch_name`.
@@ -92,26 +94,3 @@ Key | Description
 `postFinish` | Run command after the `finish` command.
 `skipTest` | Disable unit test step.
 `branchTypes` | Configure the branch types for the command `gflow new`.
-
-
-## Use travis and semantic release
-
-Gflow is compliante with [semantic-release](https://github.com/semantic-release/semantic-release) and provide
-plugin for this.
-
-
-To begin generate your semantic-release configuration with [semantic-release-cli](https://www.npmjs.com/package/semantic-release-cli)
-then create `release.config.js` and add these lines:
-
-```json
-module.exports = {
-  branch: 'production',
-  plugins: [
-    '@semantic-release/commit-analyzer',
-    '@semantic-release/release-notes-generator',
-    '@semantic-release/npm',
-    '@gflow/src/command/release'
-  ]
-};
-```
-

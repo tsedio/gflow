@@ -12,6 +12,5 @@
     "fix": "fix",
     "chore": "chore",
     "docs": "docs"
-  },
-  "refs": {}
+  }
 }
