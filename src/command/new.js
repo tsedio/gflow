@@ -97,7 +97,7 @@ module.exports = {
       await module.exports.getTasks(options).run();
       console.log(chalk.green(figures.tick), `New branch ${chalk.green(options.featureBranch)} created from ${chalk.green(options.fromBranch)} HEAD`);
     } catch (err) {
-      console.error(chalk.red(String(err)));
+      console.error(chalk.red(String(err.all || err)));
     }
   }
 };
