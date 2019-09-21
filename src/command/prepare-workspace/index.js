@@ -6,7 +6,7 @@ const git = require('../../git');
 
 
 module.exports = ({ featureBranch, fromBranch, fromLocalBranch }) => ({
-  title: 'Rebase and prepare workspace',
+  title: 'Prepare workspace',
   task: () => new Listr(
     [
       {
