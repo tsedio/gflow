@@ -10,6 +10,7 @@ const runTest = require('./test/index');
 const runRefreshRepository = require('./refresh-repository');
 const runPrepareWorkspace = require('./prepare-workspace');
 const runPushAndClean = require('./push-and-clean');
+const runRebaseBranch = require('./rebase-branch');
 
 const DEFAULT_OPTIONS = {
   test: true
@@ -30,9 +31,10 @@ module.exports = {
     return new Listr(
       [
         runRefreshRepository(),
-        runPrepareWorkspace(options),
+        runRebaseBranch({ ...options, checkStatus: false }),
         runInstall(options),
         runTest(options),
+        runPrepareWorkspace(options),
         runPushAndClean(options)
       ],
       {}
