@@ -34,5 +34,5 @@ commander
     options.fromBranch = _fromBranch_;
   })
   .parse(process.argv);
-console.log(options);
+
 commands.NewBranch.askQuestions(options).catch(er => console.error(er));
