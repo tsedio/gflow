@@ -30,6 +30,14 @@ class Config extends Map {
 
   /**
    *
+   * @returns {*}
+   */
+  get flow() {
+    return this.get('flow') || 'gflow';
+  }
+
+  /**
+   *
    * @returns {string}
    */
   get remoteProduction() {

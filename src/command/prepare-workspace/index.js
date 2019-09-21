@@ -5,15 +5,10 @@ const { of } = require('rxjs');
 const git = require('../../git');
 
 
-module.exports = ({ featureBranch, fromBranch, fromLocalBranch, rebase = true }) => ({
+module.exports = ({ featureBranch, fromBranch, fromLocalBranch }) => ({
   title: 'Rebase and prepare workspace',
   task: () => new Listr(
     [
-      {
-        title: `Rebase ${chalk.green(featureBranch)} from ${chalk.green(fromBranch)}`,
-        enabled: () => rebase,
-        task: () => git.rebase(fromBranch)
-      },
       {
         title: `Delete locale branch ${chalk.green(fromLocalBranch)}`,
         task: (ctx, task) => git.branch('-D', fromLocalBranch)

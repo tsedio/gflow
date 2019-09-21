@@ -2,6 +2,7 @@
 const Listr = require('listr');
 const chalk = require('chalk');
 const figures = require('figures');
+const config = require('../config');
 const { getRebaseInfo } = require('../utils/get-rebase-info');
 const runRefreshRepository = require('./refresh-repository');
 const runInstall = require('./install');
@@ -10,10 +11,11 @@ const runRebaseBranch = require('./rebase-branch');
 const runPushBranch = require('./push-branch');
 
 const DEFAULT_OPTIONS = {
-  test: false,
   checkStatus: true,
   force: false,
-  fromBranch: undefined
+  fromBranch: undefined,
+  test: !config.skipTest,
+  rebase: config.flow === 'gflow'
 };
 
 module.exports = {

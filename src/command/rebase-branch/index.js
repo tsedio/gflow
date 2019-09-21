@@ -20,12 +20,13 @@ async function checkBranchRemoteStatus({ featureBranch, force }) {
 }
 
 
-module.exports = ({ featureBranch, fromBranch, force, checkStatus = true }) => ({
+module.exports = ({ featureBranch, fromBranch, force, checkStatus = true, rebase = true }) => ({
   title: 'Rebase branch',
   task: () => new Listr(
     [
       {
         title: 'Remote info',
+        enabled: () => rebase,
         task: () => git.remote('-v')
       },
       {
@@ -35,6 +36,7 @@ module.exports = ({ featureBranch, fromBranch, force, checkStatus = true }) => (
       },
       {
         title: `Rebase from ${chalk.green(fromBranch)}`,
+        enabled: () => rebase,
         task: () => git.rebase(fromBranch)
       }
     ],

@@ -18,9 +18,7 @@ commander
     console.log('');
     console.log('  Examples:');
     console.log('');
-    console.log('    $ gflow rebase');
-    console.log('    Is shortcut to: ');
-    console.log(`    $ gflow rebase ${config.remoteProduction}`);
+    console.log('    $ gflow push');
     console.log('');
   })
   .parse(process.argv);
