@@ -5,6 +5,6 @@ module.exports = {
     const branchType = config.branchTypes[type] || config.branchTypes.default;
     const branchPath = branchName.replace(/[- _/]/gi, config.charReplacement);
 
-    return [branchType, branchPath].join('/').replace('\\/');
+    return [branchType, branchPath].join(config.charReplacement).replace('\\/');
   }
 };
