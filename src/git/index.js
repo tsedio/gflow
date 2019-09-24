@@ -119,7 +119,7 @@ module.exports = {
    * @returns {*}
    */
   refreshRepository() {
-    return gitAsync('fetch', '--all', '--prune', '--tags');
+    return gitAsync('fetch', '--prune');
   },
   /**
    *
