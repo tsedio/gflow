@@ -2,7 +2,6 @@ const chalk = require('chalk');
 const Listr = require('listr');
 const refreshRepository = require('./refresh-repository');
 
-
 module.exports = {
   getOptions(options = {}) {
     return {

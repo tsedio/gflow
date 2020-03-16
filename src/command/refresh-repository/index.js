@@ -1,19 +1,29 @@
 const { of } = require('rxjs');
 const { catchError } = require('rxjs/operators');
+const Listr = require('listr');
 
 const git = require('../../git/index');
 
+function pipe(observable, output) {
+  observable.pipe(catchError((err) => of(err)));
+
+  observable.subscribe(result => {
+    output.push(result);
+  });
+
+  return observable;
+}
+
 module.exports = ({ output = [] } = {}) => ({
   title: 'Refresh local repository',
-  task: () => {
-    const observable = git.refreshRepository();
-
-    observable.pipe(catchError((err) => of(err)));
-
-    observable.subscribe(result => {
-      output.push(result);
-    });
-
-    return observable;
-  }
+  task: () => new Listr([
+    {
+      title: 'Git fetch',
+      task: () => pipe(git.fetch(), output)
+    },
+    {
+      title: 'Git prune',
+      task: () => pipe(git.prune(), output)
+    }
+  ])
 });

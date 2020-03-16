@@ -7,6 +7,7 @@ const config = require('../config');
 const git = require('../git/index');
 const { getBrancheName } = require('../utils/get-branche-name');
 const { getRebaseInfo } = require('../utils/get-rebase-info');
+const refreshRepository = require('./refresh-repository');
 
 /**
  *
@@ -77,10 +78,7 @@ function rebaseBranches(options) {
 
 function runInteractive(options) {
   const tasks = new Listr([
-    {
-      title: 'Refresh local repository',
-      task: () => git.refreshRepository(options)
-    },
+    refreshRepository(options),
     {
       title: 'Rebase branches',
       task: () => rebaseBranches(options)

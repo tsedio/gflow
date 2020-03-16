@@ -116,6 +116,21 @@ module.exports = {
   },
   /**
    *
+   * @param args
+   */
+  prune(...args) {
+    return gitAsync('prune', ...args);
+  },
+  /**
+   *
+   * @param args
+   * @returns {*}
+   */
+  pruneSync(...args) {
+    return gitSync('prune', ...args);
+  },
+  /**
+   *
    * @returns {*}
    */
   refreshRepository() {

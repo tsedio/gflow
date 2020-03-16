@@ -1,13 +1,9 @@
-// gconst fs = require('fs');
-// const path = require('path');
 const hasYarn = require('has-yarn');
 const Listr = require('listr');
-// const pkgDir = require('pkg-dir');
 const { catchError, throwError } = require('rxjs/operators');
 const exec = require('../../exec');
 const checkInstall = require('./check-install');
-// const rootDir = pkgDir.sync();
-// const hasLockFile = fs.existsSync(path.resolve(rootDir, 'package-lock.json')) || fs.existsSync(path.resolve(rootDir, 'npm-shrinkwrap.json'));
+
 module.exports = () => ({
   title: 'Install',
   enabled: () => checkInstall.requiredInstall(),
@@ -29,7 +25,7 @@ module.exports = () => ({
         title: 'Installing dependencies using npm',
         enabled: () => hasYarn() === false,
         task: () => {
-          const args = /* hasLockFile ? ['ci'] : */ ['install', '--no-package-lock', '--no-production'];
+          const args = ['install', '--no-package-lock', '--no-production'];
           return exec('npm', args);
         }
       },

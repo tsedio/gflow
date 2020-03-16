@@ -36,8 +36,6 @@ module.exports = {
    * @returns {Promise<*>}
    */
   async askQuestions(options = {}) {
-    git.refreshRepository();
-
     const questions = [
       {
         type: 'list',
