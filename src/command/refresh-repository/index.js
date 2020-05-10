@@ -1,11 +1,14 @@
-const { of } = require('rxjs');
+const { EMPTY } = require('rxjs');
 const { catchError } = require('rxjs/operators');
 const Listr = require('listr');
 
 const git = require('../../git/index');
 
 function pipe(observable, output) {
-  observable.pipe(catchError((err) => of(err)));
+  observable.pipe(catchError((err) => {
+    output.push(err);
+    return EMPTY;
+  }));
 
   observable.subscribe(result => {
     output.push(result);
