@@ -1,7 +1,7 @@
 # Contributing 
 ## Introduction
 
-First, thank you for considering contributing to Ts.ED! It is people like you that make the open source community such a great community! 😊
+First, thank you for considering contributing to GFlow! It is people like you that make the open source community such a great community! 😊
 
 We welcome any type of contribution, not just code. You can help with:
 
@@ -25,7 +25,7 @@ The bigger the pull request, the longer it will take to review and merge. Try to
 ---
 ### WARNING
 
-Ts.ED project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0-beta.4/) as format commit message.
+GFlow project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0-beta.4/) as format commit message.
 
 Release note and tagging version are based on the message commits.
 If you don't follow the format, our CI won't be able to increment the version correctly and your feature won't be released on NPM.
@@ -47,16 +47,13 @@ If you have any questions, create an [issue](https://github.com/TypedProject/tse
 Clone your fork of the repository
 
 ```bash
-$ git clone https://github.com/YOUR_USERNAME/tsed.git
+$ git clone https://github.com/YOUR_USERNAME/gflow.git
 ```
 
 Install npm dependencies with yarn (not with NPM!):
 ```bash
 yarn
 ```
-> After installing dependencies, yarn/npm run the `postinstall` hook and mounted all packages with `npm link` (e.g. `yarn run repo:bootstrap`).
-
-Compile TypeScript:
 
 ```bash
 yarn build
@@ -112,7 +109,7 @@ git push -f
 gflow push
 ```
 
-When your feature is ready to review, you can open a PR on Ts.ED github.
+When your feature is ready to review, you can open a PR on Gflow github.
 
 ### Submitting your PR
 
@@ -126,7 +123,7 @@ The review is always takes priority over other tasks. We can validate the PR ver
 
 ### Write documentation
 
-Ts.ED use vuepress to convert markdown to web application. In addition, all documentation in your code will be used to generate
+Gflow use vuepress to convert markdown to web application. In addition, all documentation in your code will be used to generate
 the API documentation. To run the website on your local, run this command:
 
 ```sh
@@ -135,12 +132,12 @@ yarn vuepress:serve
 
 ### Guidelines
 
-- Ts.ED follows the git flow to generate a release note. To write your commit message see [convention page](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit).
+- Gflow follows the git flow to generate a release note. To write your commit message see [convention page](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit).
 - Please try to combine multiple commits before pushing.
 - Please use TDD when fixing bugs. This means that you should write a unit test that fails because it reproduces the issue, then fix the issue and finally run the test to ensure that the issue has been resolved. This helps us prevent fixed bugs from happening again in the future.
 - Please keep the test coverage. Write additional unit tests if necessary.
-- Please create an issue before sending a PR if it is going to change the public interface of Ts.ED or includes significant architecture changes.
-- Feel free to ask for help from other members of the Ts.ED team.
+- Please create an issue before sending a PR if it is going to change the public interface of Gflow or includes significant architecture changes.
+- Feel free to ask for help from other members of the Gflow team.
 
 ## Credits
 ### Contributors
