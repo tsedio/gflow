@@ -1,6 +1,6 @@
-const chalk = require('chalk');
-const config = require('../../config');
-const git = require('../../git');
+const chalk = require("chalk");
+const config = require("../../config");
+const git = require("../../git");
 
 /**
  *
@@ -8,11 +8,13 @@ const git = require('../../git');
  * @returns {boolean}
  */
 function removeBranch(featureBranch) {
-  return featureBranch !== config.develop && featureBranch !== config.production;
+  return (
+    featureBranch !== config.develop && featureBranch !== config.production
+  );
 }
 
 module.exports = ({ featureBranch }) => ({
   title: `Remove ${chalk.green(featureBranch)}`,
   enabled: () => removeBranch(featureBranch),
-  task: () => git.branch('-d', featureBranch)
+  task: () => git.branch("-d", featureBranch)
 });

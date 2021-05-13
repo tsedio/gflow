@@ -1,18 +1,18 @@
-const Listr = require('listr');
-const chalk = require('chalk');
-const figures = require('figures');
-const inquirer = require('inquirer');
-const branches = require('./branches/index');
-const config = require('../config/index');
-const git = require('../git/index');
-const { normalizeBranchName } = require('../utils/normalize-branch');
-const runInstall = require('./install/index');
-const runRefreshRepository = require('./refresh-repository');
-const runCreateBranch = require('./create-branch');
+const Listr = require("listr");
+const chalk = require("chalk");
+const figures = require("figures");
+const inquirer = require("inquirer");
+const branches = require("./branches/index");
+const config = require("../config/index");
+const git = require("../git/index");
+const { normalizeBranchName } = require("../utils/normalize-branch");
+const runInstall = require("./install/index");
+const runRefreshRepository = require("./refresh-repository");
+const runCreateBranch = require("./create-branch");
 
 const DEFAULT_OPTIONS = {
-  branchName: 'branch_name',
-  type: 'feat'
+  branchName: "branch_name",
+  type: "feat"
 };
 
 module.exports = {
@@ -38,20 +38,20 @@ module.exports = {
   async askQuestions(options = {}) {
     const questions = [
       {
-        type: 'list',
-        name: 'type',
-        message: 'Choose the type of your branch:',
+        type: "list",
+        name: "type",
+        message: "Choose the type of your branch:",
         choices: config.getBranchTypes(),
         default: options.type,
         when: !options.type
       },
       {
-        type: 'input',
-        name: 'branchName',
-        message: 'What is the branch name ?',
+        type: "input",
+        name: "branchName",
+        message: "What is the branch name ?",
         validate(branch) {
           if (!branch.length) {
-            return 'Branch name is required';
+            return "Branch name is required";
           }
 
           if (git.branchExists(branch, config.remote)) {
@@ -93,7 +93,12 @@ module.exports = {
       options = module.exports.getOptions(options);
 
       await module.exports.getTasks(options).run();
-      console.log(chalk.green(figures.tick), `New branch ${chalk.green(options.featureBranch)} created from ${chalk.green(options.fromBranch)} HEAD`);
+      console.log(
+        chalk.green(figures.tick),
+        `New branch ${chalk.green(
+          options.featureBranch
+        )} created from ${chalk.green(options.fromBranch)} HEAD`
+      );
     } catch (err) {
       console.error(chalk.red(String(err.all || err)));
     }

@@ -1,7 +1,7 @@
-const config = require('../config');
+const config = require("../config");
 
 module.exports = {
   getBranchName(branch) {
-    return branch.replace(`${config.remote}/`, '');
+    return branch.replace(`${config.remote}/`, "");
   }
 };

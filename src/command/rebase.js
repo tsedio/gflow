@@ -1,11 +1,11 @@
 /* eslint-disable global-require */
-const Listr = require('listr');
-const chalk = require('chalk');
-const figures = require('figures');
-const { getRebaseInfo } = require('../utils/get-rebase-info');
-const runRefreshRepository = require('./refresh-repository');
-const runRebaseBranch = require('./rebase-branch');
-const runInstall = require('./install');
+const Listr = require("listr");
+const chalk = require("chalk");
+const figures = require("figures");
+const { getRebaseInfo } = require("../utils/get-rebase-info");
+const runRefreshRepository = require("./refresh-repository");
+const runRebaseBranch = require("./rebase-branch");
+const runInstall = require("./install");
 
 const DEFAULT_OPTIONS = {
   test: false,
@@ -41,7 +41,12 @@ module.exports = {
       options = module.exports.getOptions(options);
 
       await this.getTasks(options).run();
-      console.log(chalk.green(figures.tick), `Branch ${chalk.green(options.featureBranch)} rebased from ${chalk.green(options.fromBranch)} HEAD`);
+      console.log(
+        chalk.green(figures.tick),
+        `Branch ${chalk.green(
+          options.featureBranch
+        )} rebased from ${chalk.green(options.fromBranch)} HEAD`
+      );
     } catch (err) {
       console.error(chalk.red(String(err.all || err)));
     }

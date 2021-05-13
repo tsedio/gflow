@@ -1,7 +1,7 @@
-const { getBranchName } = require('./get-branche-name');
+const { getBranchName } = require("./get-branche-name");
 
-const git = require('../git');
-const config = require('../config');
+const git = require("../git");
+const config = require("../config");
 
 module.exports = {
   getRebaseInfo(fromBranch) {

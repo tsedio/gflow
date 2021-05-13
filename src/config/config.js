@@ -1,6 +1,6 @@
-const path = require('path');
-const fs = require('fs');
-const { DEFAULT_CONFIG, CONFIG_BASENAME } = require('./base-config');
+const path = require("path");
+const fs = require("fs");
+const { DEFAULT_CONFIG, CONFIG_BASENAME } = require("./base-config");
 
 class Config extends Map {
   constructor() {
@@ -9,7 +9,7 @@ class Config extends Map {
   }
 
   get charReplacement() {
-    return this.get('charReplacement');
+    return this.get("charReplacement");
   }
 
   /**
@@ -17,7 +17,7 @@ class Config extends Map {
    * @returns {*}
    */
   get remote() {
-    return this.get('remote');
+    return this.get("remote");
   }
 
   /**
@@ -25,7 +25,7 @@ class Config extends Map {
    * @returns {*}
    */
   get production() {
-    return this.get('production');
+    return this.get("production");
   }
 
   /**
@@ -33,7 +33,7 @@ class Config extends Map {
    * @returns {*}
    */
   get flow() {
-    return this.get('flow') || 'gflow';
+    return this.get("flow") || "gflow";
   }
 
   /**
@@ -41,7 +41,7 @@ class Config extends Map {
    * @returns {string}
    */
   get remoteProduction() {
-    return `${this.get('remote')}/${this.get('production')}`;
+    return `${this.get("remote")}/${this.get("production")}`;
   }
 
   /**
@@ -49,7 +49,7 @@ class Config extends Map {
    * @returns {*|string}
    */
   get develop() {
-    return this.get('develop');
+    return this.get("develop");
   }
 
   /**
@@ -57,7 +57,7 @@ class Config extends Map {
    * @returns {string}
    */
   get remoteDevelop() {
-    return `${this.get('remote')}/${this.get('develop')}`;
+    return `${this.get("remote")}/${this.get("develop")}`;
   }
 
   /**
@@ -65,7 +65,7 @@ class Config extends Map {
    * @returns {*}
    */
   get syncAfterFinish() {
-    return this.get('syncAfterFinish');
+    return this.get("syncAfterFinish");
   }
 
   /**
@@ -73,15 +73,15 @@ class Config extends Map {
    * @returns {*}
    */
   get postFinish() {
-    return this.get('postFinish');
+    return this.get("postFinish");
   }
 
   get skipTest() {
-    return this.get('skipTest');
+    return this.get("skipTest");
   }
 
   get branchTypes() {
-    return this.get('branchTypes') || {};
+    return this.get("branchTypes") || {};
   }
 
   /**
@@ -115,8 +115,8 @@ class Config extends Map {
     Object.keys(config).forEach(key => {
       const value = config[key];
 
-      if (key === 'master') {
-        key = 'develop';
+      if (key === "master") {
+        key = "develop";
       }
 
       if (this[`_${key}`] instanceof Map) {
@@ -134,7 +134,9 @@ class Config extends Map {
    */
   readConfiguration() {
     if (this.hasConfiguration()) {
-      const conf = JSON.parse(fs.readFileSync(path.join(process.cwd(), CONFIG_BASENAME), 'utf8'));
+      const conf = JSON.parse(
+        fs.readFileSync(path.join(process.cwd(), CONFIG_BASENAME), "utf8")
+      );
       this.setConfig(conf);
     }
   }
@@ -144,7 +146,7 @@ class Config extends Map {
    * @returns {boolean}
    */
   hasConfiguration() {
-    return fs.existsSync(path.join(process.cwd(), CONFIG_BASENAME), 'utf8');
+    return fs.existsSync(path.join(process.cwd(), CONFIG_BASENAME), "utf8");
   }
 
   /**
@@ -153,7 +155,11 @@ class Config extends Map {
   writeConfiguration() {
     const conf = this.toObject();
 
-    fs.writeFileSync(path.join(process.cwd(), CONFIG_BASENAME), JSON.stringify(conf, null, 2), { encoding: 'utf8' });
+    fs.writeFileSync(
+      path.join(process.cwd(), CONFIG_BASENAME),
+      JSON.stringify(conf, null, 2),
+      { encoding: "utf8" }
+    );
   }
 
   /**
@@ -161,20 +167,19 @@ class Config extends Map {
    * @returns {K}
    */
   toObject() {
-    return Array.from(this.keys())
-      .reduce((acc, key) => {
-        if (this[`_${key}`] instanceof Map) {
-          acc[key] = {};
+    return Array.from(this.keys()).reduce((acc, key) => {
+      if (this[`_${key}`] instanceof Map) {
+        acc[key] = {};
 
-          this[`_${key}`].forEach((v, k) => {
-            acc[key][k] = v;
-          });
-        } else {
-          acc[key] = this.get(key);
-        }
+        this[`_${key}`].forEach((v, k) => {
+          acc[key][k] = v;
+        });
+      } else {
+        acc[key] = this.get(key);
+      }
 
-        return acc;
-      }, {});
+      return acc;
+    }, {});
   }
 }
 
