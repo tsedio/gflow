@@ -1,26 +1,30 @@
 /* eslint-disable no-shadow */
-const chalk = require('chalk');
-const figures = require('figures');
-const inquirer = require('inquirer');
-const config = require('../config/config');
-const git = require('../git/index');
+const chalk = require("chalk");
+const figures = require("figures");
+const inquirer = require("inquirer");
+const config = require("../config/config");
+const git = require("../git/index");
 
 const BRANCHES = new Map();
 
 function runInteractive() {
-  const choices = buildBranchesList().map(info => ({ value: info.branch, name: info.message, short: info.branch }));
+  const choices = buildBranchesList().map(info => ({
+    value: info.branch,
+    name: info.message,
+    short: info.branch
+  }));
 
   inquirer
     .prompt([
       {
-        type: 'list',
-        name: 'branchChoice',
-        message: 'Select branch to switch on',
-        choices: choices.concat([new inquirer.Separator(), 'exit'])
+        type: "list",
+        name: "branchChoice",
+        message: "Select branch to switch on",
+        choices: choices.concat([new inquirer.Separator(), "exit"])
       }
     ])
     .then(answers => {
-      if (answers.branchChoice !== 'exit') {
+      if (answers.branchChoice !== "exit") {
         switchBranch(answers.branchChoice);
       }
     })
@@ -36,14 +40,16 @@ function switchBranch(branch) {
   let observable;
 
   if (branchInfo) {
-    observable = git.checkout(branchInfo.local ? branchInfo.local.branch : branchInfo.branch);
+    observable = git.checkout(
+      branchInfo.local ? branchInfo.local.branch : branchInfo.branch
+    );
   } else {
-    const branchName = branch.split('/')[1];
+    const branchName = branch.split("/")[1];
     branchInfo = BRANCHES.get(branchName);
     if (branchInfo.local) {
       observable = git.checkout(branchInfo.local.branch);
     } else {
-      observable = git.checkout('-b', branchName, branchInfo.branch);
+      observable = git.checkout("-b", branchName, branchInfo.branch);
     }
   }
 
@@ -59,11 +65,11 @@ function switchBranch(branch) {
  * @returns {Array.<*>}
  */
 function branches() {
-  const remoteBranches = git.branchesInfos('-r');
+  const remoteBranches = git.branchesInfos("-r");
   const localBranches = git.branchesInfos();
 
   remoteBranches.forEach(branchInfo => {
-    const branch = branchInfo.branch.split('/')[1];
+    const branch = branchInfo.branch.split("/")[1];
 
     if (branch === config.production) {
       branchInfo.$order = -1;
@@ -112,21 +118,28 @@ function buildBranchesList() {
   const currentBranch = git.currentBranchName();
 
   return branches().map(info => {
-    const branch = info.branch.split('/')[1] || info.branch;
-    const line = `${info.date} ${column(info.creation, 15)}  ${column(info.author, 20)} ${info.branch}`;
-    let current = ' ';
+    const branch = info.branch.split("/")[1] || info.branch;
+    const line = `${info.date} ${column(info.creation, 15)}  ${column(
+      info.author,
+      20
+    )} ${info.branch}`;
+    let current = " ";
     if (currentBranch === branch) {
       current = chalk.yellow(figures.star);
     }
 
     if (branch === config.production) {
       isUnderProduction = true;
-      info.message = `${current} ${chalk.yellow(figures.warning)} ${chalk.yellow(line)}`;
+      info.message = `${current} ${chalk.yellow(
+        figures.warning
+      )} ${chalk.yellow(line)}`;
       return info;
     }
 
     if (branch === config.remoteDevelop) {
-      info.message = `${current} ${chalk.gray(figures.bullet)} ${chalk.gray(line)}`;
+      info.message = `${current} ${chalk.gray(figures.bullet)} ${chalk.gray(
+        line
+      )}`;
       return info;
     }
 
@@ -140,7 +153,7 @@ function buildBranchesList() {
   });
 }
 
-function line(str = '', length = 100, char = '-') {
+function line(str = "", length = 100, char = "-") {
   let finalStr = str;
   for (let i = str.length; i < length; i++) {
     finalStr += char;
@@ -148,7 +161,7 @@ function line(str = '', length = 100, char = '-') {
   return finalStr;
 }
 
-function column(str = '', length = 30, char = ' ') {
+function column(str = "", length = 30, char = " ") {
   return line(str, length, char);
 }
 

@@ -1,7 +1,7 @@
-const Listr = require('listr');
-const chalk = require('chalk');
-const git = require('../../git/index');
-const config = require('../../config/index');
+const Listr = require("listr");
+const chalk = require("chalk");
+const git = require("../../git/index");
+const config = require("../../config/index");
 
 /**
  *
@@ -14,32 +14,38 @@ async function checkBranchRemoteStatus({ featureBranch, force }) {
   if (isBranchExists && !force) {
     const result = git.checkBranchRemoteStatusSync(featureBranch);
     if (!result) {
-      throw new Error('Remote branch changed, check diff before continue');
+      throw new Error("Remote branch changed, check diff before continue");
     }
   }
 }
 
-
-module.exports = ({ featureBranch, fromBranch, force, checkStatus = true, rebase = true }) => ({
-  title: 'Rebase branch',
-  task: () => new Listr(
-    [
-      {
-        title: 'Remote info',
-        enabled: () => rebase,
-        task: () => git.remote('-v')
-      },
-      {
-        title: 'Check status',
-        enabled: () => checkStatus,
-        task: () => checkBranchRemoteStatus({ force, featureBranch })
-      },
-      {
-        title: `Rebase from ${chalk.green(fromBranch)}`,
-        enabled: () => rebase,
-        task: () => git.rebase(fromBranch)
-      }
-    ],
-    { concurrent: false }
-  )
+module.exports = ({
+  featureBranch,
+  fromBranch,
+  force,
+  checkStatus = true,
+  rebase = true
+}) => ({
+  title: "Rebase branch",
+  task: () =>
+    new Listr(
+      [
+        {
+          title: "Remote info",
+          enabled: () => rebase,
+          task: () => git.remote("-v")
+        },
+        {
+          title: "Check status",
+          enabled: () => checkStatus,
+          task: () => checkBranchRemoteStatus({ force, featureBranch })
+        },
+        {
+          title: `Rebase from ${chalk.green(fromBranch)}`,
+          enabled: () => rebase,
+          task: () => git.rebase(fromBranch)
+        }
+      ],
+      { concurrent: false }
+    )
 });

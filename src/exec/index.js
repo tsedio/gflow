@@ -1,9 +1,9 @@
-require('any-observable/register/rxjs-all'); // eslint-disable-line import/no-unassigned-import
-const streamToObservable = require('@samverschueren/stream-to-observable');
-const { merge } = require('rxjs');
-const { filter } = require('rxjs/operators');
-const execa = require('execa');
-const split = require('split');
+require("any-observable/register/rxjs-all"); // eslint-disable-line import/no-unassigned-import
+const streamToObservable = require("@samverschueren/stream-to-observable");
+const { merge } = require("rxjs");
+const { filter } = require("rxjs/operators");
+const execa = require("execa");
+const split = require("split");
 
 module.exports = (cmd, args, opts) => {
   // Use `Observable` support if merged https://github.com/sindresorhus/execa/pull/26

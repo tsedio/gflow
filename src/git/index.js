@@ -1,9 +1,9 @@
 /* eslint-disable prefer-arrow-callback */
-const { spawnSync, execSync } = require('child_process');
-const exec = require('../exec');
+const { spawnSync, execSync } = require("child_process");
+const exec = require("../exec");
 
 function gitSync(cmd, ...args) {
-  const response = spawnSync('git', [cmd].concat(args));
+  const response = spawnSync("git", [cmd].concat(args));
   if (response.error) {
     throw response.error;
   }
@@ -11,7 +11,7 @@ function gitSync(cmd, ...args) {
 }
 
 function gitAsync(cmd, ...args) {
-  return exec('git', [cmd].concat(args.filter(o => !!o)));
+  return exec("git", [cmd].concat(args.filter(o => !!o)));
 }
 
 module.exports = {
@@ -37,7 +37,9 @@ module.exports = {
    * @returns {*}
    */
   config(...args) {
-    return gitSync('config', ...args).join('').trim();
+    return gitSync("config", ...args)
+      .join("")
+      .trim();
   },
 
   /**
@@ -45,7 +47,7 @@ module.exports = {
    * @param args
    */
   checkout(...args) {
-    return gitAsync('checkout', ...args);
+    return gitAsync("checkout", ...args);
   },
   /**
    *
@@ -53,14 +55,14 @@ module.exports = {
    * @returns {*}
    */
   checkoutSync(...args) {
-    return gitSync('checkout', ...args);
+    return gitSync("checkout", ...args);
   },
   /**
    *
    * @param args
    */
   branch(...args) {
-    return gitAsync('branch', ...args);
+    return gitAsync("branch", ...args);
   },
   /**
    *
@@ -68,28 +70,28 @@ module.exports = {
    * @returns {*}
    */
   branchSync(...args) {
-    return gitSync('branch', ...args);
+    return gitSync("branch", ...args);
   },
   /**
    *
    * @param args
    */
   merge(...args) {
-    return gitAsync('merge', ...args);
+    return gitAsync("merge", ...args);
   },
   /**
    *
    * @param args
    */
   mergeSync(...args) {
-    return gitSync('merge', ...args);
+    return gitSync("merge", ...args);
   },
   /**
    *
    * @param args
    */
   remote(...args) {
-    return gitAsync('remote', ...args);
+    return gitAsync("remote", ...args);
   },
   /**
    *
@@ -97,14 +99,14 @@ module.exports = {
    * @returns {*}
    */
   remoteSync(...args) {
-    return gitSync('remote', ...args);
+    return gitSync("remote", ...args);
   },
   /**
    *
    * @param args
    */
   fetch(...args) {
-    return gitAsync('fetch', ...args);
+    return gitAsync("fetch", ...args);
   },
   /**
    *
@@ -112,14 +114,14 @@ module.exports = {
    * @returns {*}
    */
   fetchSync(...args) {
-    return gitSync('fetch', ...args);
+    return gitSync("fetch", ...args);
   },
   /**
    *
    * @param args
    */
   prune(...args) {
-    return gitAsync('prune', ...args);
+    return gitAsync("prune", ...args);
   },
   /**
    *
@@ -127,35 +129,35 @@ module.exports = {
    * @returns {*}
    */
   pruneSync(...args) {
-    return gitSync('prune', ...args);
+    return gitSync("prune", ...args);
   },
   /**
    *
    * @returns {*}
    */
   refreshRepository() {
-    return gitAsync('fetch', '--prune');
+    return gitAsync("fetch", "--prune");
   },
   /**
    *
    * @returns {*}
    */
   refreshRepositorySync() {
-    return gitSync('fetch', '--all', '--prune', '--tags');
+    return gitSync("fetch", "--all", "--prune", "--tags");
   },
   /**
    *
    * @param args
    */
   push(...args) {
-    return gitAsync('push', ...args);
+    return gitAsync("push", ...args);
   },
   /**
    *
    * @param args
    */
   pushSync(...args) {
-    return gitSync('push', ...args);
+    return gitSync("push", ...args);
   },
   /**
    *
@@ -163,7 +165,7 @@ module.exports = {
    * @returns {*}
    */
   add(...args) {
-    return gitAsync('add', ...args);
+    return gitAsync("add", ...args);
   },
   /**
    *
@@ -171,7 +173,7 @@ module.exports = {
    * @returns {*}
    */
   addSync(...args) {
-    return gitSync('add', ...args);
+    return gitSync("add", ...args);
   },
   /**
    *
@@ -179,7 +181,7 @@ module.exports = {
    * @returns {*}
    */
   reset(...args) {
-    return gitAsync('reset', ...args);
+    return gitAsync("reset", ...args);
   },
   /**
    *
@@ -187,7 +189,7 @@ module.exports = {
    * @returns {*}
    */
   resetSync(...args) {
-    return gitSync('reset', ...args);
+    return gitSync("reset", ...args);
   },
   /**
    *
@@ -195,7 +197,7 @@ module.exports = {
    * @returns {*}
    */
   commit(...args) {
-    return gitAsync('commit', ...args);
+    return gitAsync("commit", ...args);
   },
   /**
    *
@@ -203,7 +205,7 @@ module.exports = {
    * @returns {*}
    */
   commitSync(...args) {
-    return gitSync('commit', ...args);
+    return gitSync("commit", ...args);
   },
   /**
    *
@@ -211,7 +213,7 @@ module.exports = {
    * @returns {*}
    */
   removeSync(...args) {
-    return gitSync('remote', ...args);
+    return gitSync("remote", ...args);
   },
 
   /**
@@ -219,17 +221,17 @@ module.exports = {
    * @returns {string}
    */
   currentBranchName() {
-    return gitSync('rev-parse', '--abbrev-ref', 'HEAD')[0].trim();
+    return gitSync("rev-parse", "--abbrev-ref", "HEAD")[0].trim();
   },
   /**
    *
    * @param branch
    * @returns {boolean}
    */
-  branchExists(branch, remote = 'origin') {
+  branchExists(branch, remote = "origin") {
     return (
-      gitSync('branch', '-a')
-        .join('\n')
+      gitSync("branch", "-a")
+        .join("\n")
         .trim()
         .indexOf(`remotes/${remote}/${branch}`) > -1
     );
@@ -239,7 +241,9 @@ module.exports = {
    * @param branch
    */
   checkBranchRemoteStatus(branch) {
-    return gitAsync('cherry', branch, `origin/${branch}`).join('').trim();
+    return gitAsync("cherry", branch, `origin/${branch}`)
+      .join("")
+      .trim();
   },
   /**
    *
@@ -247,14 +251,14 @@ module.exports = {
    * @returns {*}
    */
   checkBranchRemoteStatusSync(branch) {
-    return gitSync('cherry', branch, `origin/${branch}`);
+    return gitSync("cherry", branch, `origin/${branch}`);
   },
   /**
    *
    * @param args
    */
   rebase(...args) {
-    return gitAsync('rebase', ...args);
+    return gitAsync("rebase", ...args);
   },
 
   /**
@@ -262,18 +266,18 @@ module.exports = {
    * @param args
    */
   rebaseAsync(...args) {
-    return gitSync('rebase', ...args);
+    return gitSync("rebase", ...args);
   },
   /**
    *
    * @returns {Array}
    */
   branches(...args) {
-    const branches = gitSync('branch', ...args)[0].split('\n');
+    const branches = gitSync("branch", ...args)[0].split("\n");
 
     return branches
-      .map(branch => branch.replace('* ', ''))
-      .filter(branch => String(branch).indexOf('HEAD') === -1)
+      .map(branch => branch.replace("* ", ""))
+      .filter(branch => String(branch).indexOf("HEAD") === -1)
       .filter(branch => !!branch)
       .map(o => o.trim());
   },
@@ -285,7 +289,7 @@ module.exports = {
     const response = execSync(`git show --format="%ci|%cr|%an" ${branch} --`);
     return response
       .toString()
-      .split('\n')[0]
+      .split("\n")[0]
       .trim();
   },
   /**
@@ -297,7 +301,9 @@ module.exports = {
       .branches(...args)
       .map(branch => {
         try {
-          const [date, creation, author] = module.exports.show(branch).split('|');
+          const [date, creation, author] = module.exports
+            .show(branch)
+            .split("|");
           return {
             branch,
             date,
@@ -308,12 +314,14 @@ module.exports = {
           return undefined;
         }
       })
-      .filter((b) => !!b)
+      .filter(b => !!b)
       .sort((info1, info2) => info1.date < info2.date);
   },
 
   hasStagedChanges(cb) {
-    const list = gitSync('status', '-s').filter(o => !!o).map(o => o.trim());
+    const list = gitSync("status", "-s")
+      .filter(o => !!o)
+      .map(o => o.trim());
 
     if (list.length > 0) {
       if (cb) {

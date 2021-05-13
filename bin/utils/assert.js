@@ -1,5 +1,5 @@
-const commander = require('commander');
-const chalk = require('chalk');
+const commander = require("commander");
+const chalk = require("chalk");
 
 module.exports = {
   assert(test, msg) {

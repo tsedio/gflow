@@ -6,16 +6,17 @@
   "bin": "bin/gflow.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "lint": "eslint \"{bin,src,test}/**/*.js\"",
-    "lint:fix": "eslint --fix  \"{bin,src,test}/**/*.js\"",
+    "test:lint": "eslint \"{bin,src,test}/**/*.js\"",
+    "test:lint:fix": "eslint --fix  \"{bin,src,test}/**/*.js\"",
     "prettier": "prettier '{bin,src,test}/**/*.js' --write",
-    "travis-deploy-once": "travis-deploy-once",
-    "semantic-release": "semantic-release",
-    "semantic-release:dryRun": "semantic-release --dryRun"
+    "release": "semantic-release",
+    "release:dryRun": "semantic-release --dryRun"
   },
   "husky": {
-    "pre-commit": "lint-staged",
-    "post-commit": "git update-index --again"
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "post-commit": "git update-index --again"
+    }
   },
   "author": "Romain Lenzotti",
   "license": "MIT",
@@ -59,10 +60,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Romakita/gflow.git"
+    "url": "https://github.com/tsed/gflow.git"
   },
   "bugs": {
-    "url": "https://github.com/Romakita/gflow/issues"
+    "url": "https://github.com/tsedio/gflow/issues"
   },
-  "homepage": "https://github.com/Romakita/gflow"
+  "homepage": "https://github.com/tsedio/gflow"
 }
