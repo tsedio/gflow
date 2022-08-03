@@ -1,5 +1,5 @@
-const exec = require('../../exec');
 const hasYarn = require('has-yarn');
+const exec = require('../../exec');
 
 module.exports = options => ({
   title: 'Test',

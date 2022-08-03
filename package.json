@@ -9,9 +9,8 @@
     "lint": "eslint \"{bin,src,test}/**/*.js\"",
     "lint:fix": "eslint --fix  \"{bin,src,test}/**/*.js\"",
     "prettier": "prettier '{bin,src,test}/**/*.js' --write",
-    "travis-deploy-once": "travis-deploy-once",
-    "semantic-release": "semantic-release",
-    "semantic-release:dryRun": "semantic-release --dryRun"
+    "release": "semantic-release",
+    "release:dryRun": "semantic-release --dryRun"
   },
   "husky": {
     "pre-commit": "lint-staged",
