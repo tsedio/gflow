@@ -12,7 +12,7 @@ module.exports = () => ({
       {
         title: 'Installing dependencies using Yarn',
         enabled: () => hasYarn() === true,
-        task: () => exec('yarn', ['install', '--frozen-lockfile', '--production=false'])
+        task: () => exec('yarn', ['install'])
           .pipe(catchError(error => {
             if (error.stderr.startsWith('error Your lockfile needs to be updated')) {
               throwError(new Error('yarn.lock file is outdated. Run yarn, commit the updated lockfile and try again.'));
