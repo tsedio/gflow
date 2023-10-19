@@ -2,11 +2,9 @@ const hasYarn = require('has-yarn');
 const Listr = require('listr');
 const { catchError, throwError } = require('rxjs/operators');
 const exec = require('../../exec');
-const checkInstall = require('./check-install');
 
 module.exports = () => ({
   title: 'Install',
-  enabled: () => checkInstall.requiredInstall(),
   task: () => new Listr(
     [
       {
@@ -25,13 +23,9 @@ module.exports = () => ({
         title: 'Installing dependencies using npm',
         enabled: () => hasYarn() === false,
         task: () => {
-          const args = ['install', '--no-package-lock', '--no-production'];
+          const args = ['install'];
           return exec('npm', args);
         }
-      },
-      {
-        title: 'Refresh metadata',
-        task: () => checkInstall.refresh()
       }
     ],
     { concurrency: false }
