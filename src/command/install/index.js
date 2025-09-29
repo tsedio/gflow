@@ -1,7 +1,17 @@
 const hasYarn = require('has-yarn');
 const Listr = require('listr');
 const { catchError, throwError } = require('rxjs/operators');
+const { existsSync } = require('fs');
+const { join } = require('path');
 const exec = require('../../exec');
+
+function hasPnpm() {
+  try {
+    return existsSync(join(process.cwd(), 'pnpm-lock.yaml')) || existsSync(join(process.cwd(), 'pnpm-workspace.yaml'));
+  } catch (e) {
+    return false;
+  }
+}
 
 module.exports = () => ({
   title: 'Install',
@@ -20,8 +30,16 @@ module.exports = () => ({
           }))
       },
       {
+        title: 'Installing dependencies using pnpm',
+        enabled: () => hasPnpm() === false,
+        task: () => {
+          const args = ['install'];
+          return exec('npm', args);
+        }
+      },
+      {
         title: 'Installing dependencies using npm',
-        enabled: () => hasYarn() === false,
+        enabled: () => hasYarn() === false && hasPnpm() === false,
         task: () => {
           const args = ['install'];
           return exec('npm', args);
