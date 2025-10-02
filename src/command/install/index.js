@@ -31,7 +31,7 @@ module.exports = () => ({
       },
       {
         title: 'Installing dependencies using pnpm',
-        enabled: () => hasPnpm() === false,
+        enabled: () => hasPnpm() === true,
         task: () => {
           const args = ['install'];
           return exec('npm', args);
